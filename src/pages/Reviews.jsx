@@ -1,38 +1,42 @@
 import { useMemo, useState } from "react";
-import { Container, Button } from "react-bootstrap";
+import { Container, Button, Alert } from "react-bootstrap";
 import SearchBar from "../components/SearchBar.jsx";
 import ReviewForm from "../components/ReviewForm.jsx";
 import ReviewList from "../components/ReviewList.jsx";
+import { getImageForItem } from "../data/menu.js";
 
-// starter data so the page looks alive
+// starter data
 const INITIAL = [
   {
     hall: "Four Lakes Market",
-    item: "Burger",
+    item: "Cheeseburger",
     rating: 4,
     wouldAgain: true,
     text: "Juicy patty, fresh toppings. Bun a little dry.",
-    imageUrl: "https://images.unsplash.com/photo-1550547660-d9450f859349"
+    imageUrl: getImageForItem("Cheeseburger"),
+    author: "sample-user"
   },
   {
-    hall: "Gordon",
+    hall: "Gordon's Market",
     item: "Chicken Tenders",
     rating: 5,
     wouldAgain: true,
     text: "Crispy and hot, would devour again.",
-    imageUrl: "https://images.unsplash.com/photo-1625944520301-9a4ac2740d37"
+    imageUrl: getImageForItem("Chicken Tenders"),
+    author: "sample-user"
   },
   {
-    hall: "Rheta's",
-    item: "Veggie Wrap",
+    hall: "Rheta's Market",
+    item: "Veggie Burger",
     rating: 3,
     wouldAgain: false,
-    text: "Healthy but bland. Needs sauce.",
-    imageUrl: ""
+    text: "Pretty average — good if you're in a rush.",
+    imageUrl: getImageForItem("Veggie Burger"),
+    author: "sample-user"
   }
 ];
 
-export default function Reviews() {
+export default function Reviews({ currentUser }) {
   const [reviews, setReviews] = useState(INITIAL);
   const [hall, setHall] = useState("");
   const [item, setItem] = useState("");
@@ -42,7 +46,7 @@ export default function Reviews() {
   const filtered = useMemo(() => {
     const h = hall.trim().toLowerCase();
     const i = item.trim().toLowerCase();
-    return reviews.filter(r => {
+    return reviews.filter((r) => {
       const hallOk = !h || r.hall.toLowerCase().includes(h);
       const itemOk = !i || r.item.toLowerCase().includes(i);
       return hallOk && itemOk;
@@ -50,24 +54,50 @@ export default function Reviews() {
   }, [reviews, hall, item]);
 
   const addReview = (r) => {
-    setReviews(prev => [r, ...prev]);
-    setPage(1); // jump to first page so user sees their review
+    const withImage = {
+      ...r,
+      imageUrl: getImageForItem(r.item),
+      author: currentUser || "anon"
+    };
+    setReviews((prev) => [withImage, ...prev]);
+    setPage(1);
   };
+
+  const canPost = Boolean(currentUser);
 
   return (
     <Container className="page">
       <div className="d-flex align-items-center justify-content-between mb-2">
         <h2 className="mb-0">Reviews</h2>
-        <Button onClick={() => setShowForm(true)}>Add Review</Button>
+        <Button
+          onClick={() => canPost && setShowForm(true)}
+          disabled={!canPost}
+        >
+          Add Review
+        </Button>
       </div>
 
+      {!canPost && (
+        <Alert variant="warning" className="py-2">
+          You must be signed in to add a review. Use the <strong>Sign In</strong>{" "}
+          tab first.
+        </Alert>
+      )}
+
       <SearchBar
-        hall={hall} setHall={setHall}
-        item={item} setItem={setItem}
+        hall={hall}
+        setHall={setHall}
+        item={item}
+        setItem={setItem}
         onSearch={() => setPage(1)}
       />
 
-      <ReviewList reviews={filtered} page={page} setPage={setPage} pageSize={5} />
+      <ReviewList
+        reviews={filtered}
+        page={page}
+        setPage={setPage}
+        pageSize={5}
+      />
 
       <ReviewForm
         show={showForm}
