@@ -10,6 +10,7 @@ export default function SearchableSelect({
   placeholder
 }) {
   const [inputValue, setInputValue] = useState(value || "");
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setInputValue(value || "");
@@ -24,22 +25,32 @@ export default function SearchableSelect({
   const handleSelect = (opt) => {
     setInputValue(opt);
     onChange?.(opt);
+    setOpen(false); // hide list after selecting
+  };
+
+  const handleBlur = () => {
+    // small delay so clicks on the list still register
+    setTimeout(() => setOpen(false), 100);
   };
 
   return (
-    <div className="mb-2 position-relative">
+    <div className="mb-2">
       <Form.Label>{label}</Form.Label>
       <Form.Control
         value={inputValue}
         placeholder={placeholder || `Type to search...`}
-        onChange={(e) => setInputValue(e.target.value)}
+        onChange={(e) => {
+          setInputValue(e.target.value);
+          setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+        onBlur={handleBlur}
         autoComplete="off"
       />
-      {filtered.length > 0 && (
+      {open && filtered.length > 0 && (
         <ListGroup
-          className="position-absolute w-100 shadow-sm"
+          className="mt-1"
           style={{
-            zIndex: 1000,
             maxHeight: "200px",
             overflowY: "auto"
           }}
@@ -49,7 +60,7 @@ export default function SearchableSelect({
               action
               key={opt}
               onMouseDown={(e) => {
-                e.preventDefault(); // prevent blur before click
+                e.preventDefault(); // don't blur before click
                 handleSelect(opt);
               }}
             >

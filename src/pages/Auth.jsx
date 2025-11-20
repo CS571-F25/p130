@@ -38,6 +38,14 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
       return;
     }
 
+    if (p.length < 4 || p.length > 6) {
+      setMessage({
+        variant: "danger",
+        text: "PIN must be between 4 and 6 characters long."
+      });
+      return;
+    }
+
     const accounts = loadAccounts();
 
     if (mode === "create") {
@@ -116,7 +124,7 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
             <Form.Label>PIN</Form.Label>
             <Form.Control
               type="password"
-              placeholder="4–6 digits"
+              placeholder="4–6 characters"
               value={pin}
               onChange={(e) => setPin(e.target.value)}
             />
