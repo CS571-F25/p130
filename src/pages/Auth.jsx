@@ -1,13 +1,14 @@
+import { Container, Button } from "react-bootstrap";
+
 export default function Auth() {
   return (
-    <div className="page">
+    <Container className="page">
       <h2>Sign In / Create Account</h2>
-      <p className="text-muted">Auth is not wired yet — this is a placeholder.</p>
-
+      <p className="text-muted">Auth is placeholder for now. In the full version users must sign in to post reviews.</p>
       <div className="d-flex gap-2">
-        <button className="btn btn-outline-primary" type="button">Sign In</button>
-        <button className="btn btn-primary" type="button">Create Account</button>
+        <Button variant="outline-primary" type="button">Sign In</Button>
+        <Button variant="primary" type="button">Create Account</Button>
       </div>
-    </div>
+    </Container>
   );
 }
