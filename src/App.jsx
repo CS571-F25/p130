@@ -5,29 +5,27 @@ import Home from "./pages/Home.jsx";
 import Reviews from "./pages/Reviews.jsx";
 import Auth from "./pages/Auth.jsx";
 import About from "./pages/About.jsx";
+import { getCookie, setCookie, eraseCookie } from "./utils/cookies.js";
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
 
-  // load from localStorage
+  // load from cookie on mount
   useEffect(() => {
-    const saved = window.localStorage.getItem("currentUser");
+    const saved = getCookie("diningUser");
     if (saved) {
       setCurrentUser(saved);
     }
   }, []);
 
-  // save to localStorage
-  useEffect(() => {
-    if (currentUser) {
-      window.localStorage.setItem("currentUser", currentUser);
-    } else {
-      window.localStorage.removeItem("currentUser");
-    }
-  }, [currentUser]);
+  const handleSignIn = (name) => {
+    setCurrentUser(name);
+    setCookie("diningUser", name, 30);
+  };
 
   const handleSignOut = () => {
     setCurrentUser(null);
+    eraseCookie("diningUser");
   };
 
   return (
@@ -44,7 +42,7 @@ export default function App() {
           element={
             <Auth
               currentUser={currentUser}
-              onSignIn={setCurrentUser}
+              onSignIn={handleSignIn}
               onSignOut={handleSignOut}
             />
           }

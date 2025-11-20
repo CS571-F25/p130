@@ -1,13 +1,16 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Container, Button, Alert } from "react-bootstrap";
 import SearchBar from "../components/SearchBar.jsx";
 import ReviewForm from "../components/ReviewForm.jsx";
 import ReviewList from "../components/ReviewList.jsx";
 import { getImageForItem } from "../data/menu.js";
 
+const STORAGE_KEY = "uwDiningReviews";
+
 // starter data
 const INITIAL = [
   {
+    id: "seed-1",
     hall: "Four Lakes Market",
     item: "Cheeseburger",
     rating: 4,
@@ -17,6 +20,7 @@ const INITIAL = [
     author: "sample-user"
   },
   {
+    id: "seed-2",
     hall: "Gordon's Market",
     item: "Chicken Tenders",
     rating: 5,
@@ -26,6 +30,7 @@ const INITIAL = [
     author: "sample-user"
   },
   {
+    id: "seed-3",
     hall: "Rheta's Market",
     item: "Veggie Burger",
     rating: 3,
@@ -43,6 +48,30 @@ export default function Reviews({ currentUser }) {
   const [showForm, setShowForm] = useState(false);
   const [page, setPage] = useState(1);
 
+  // load from localStorage on mount
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setReviews(parsed);
+        }
+      }
+    } catch {
+      // ignore corrupted storage
+    }
+  }, []);
+
+  // save to localStorage when reviews change
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
+    } catch {
+      // ignore quota / errors
+    }
+  }, [reviews]);
+
   const filtered = useMemo(() => {
     const h = hall.trim().toLowerCase();
     const i = item.trim().toLowerCase();
@@ -54,13 +83,23 @@ export default function Reviews({ currentUser }) {
   }, [reviews, hall, item]);
 
   const addReview = (r) => {
-    const withImage = {
+    const makeId =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : String(Date.now() + Math.random());
+
+    const withMeta = {
       ...r,
+      id: makeId,
       imageUrl: getImageForItem(r.item),
       author: currentUser || "anon"
     };
-    setReviews((prev) => [withImage, ...prev]);
+    setReviews((prev) => [withMeta, ...prev]);
     setPage(1);
+  };
+
+  const handleDeleteReview = (id) => {
+    setReviews((prev) => prev.filter((r) => r.id !== id));
   };
 
   const canPost = Boolean(currentUser);
@@ -97,6 +136,8 @@ export default function Reviews({ currentUser }) {
         page={page}
         setPage={setPage}
         pageSize={5}
+        currentUser={currentUser}
+        onDeleteReview={handleDeleteReview}
       />
 
       <ReviewForm

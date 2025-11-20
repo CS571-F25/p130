@@ -21,7 +21,7 @@ export default function ReviewForm({ show, onClose, onSave }) {
   const submit = () => {
     const trimmed = (s) => (s || "").trim();
     if (!trimmed(hall) || !trimmed(item)) {
-      // require both hall and item
+      // could add a toast / alert, but for now just ignore invalid submit
       return;
     }
     const review = {
@@ -50,7 +50,7 @@ export default function ReviewForm({ show, onClose, onSave }) {
                 options={DINING_HALLS}
                 value={hall}
                 onChange={setHall}
-                placeholder="dining halls..."
+                placeholder="Type hall name…"
               />
             </Col>
             <Col md={6}>
@@ -59,7 +59,7 @@ export default function ReviewForm({ show, onClose, onSave }) {
                 options={ITEM_NAMES}
                 value={item}
                 onChange={setItem}
-                placeholder="items..."
+                placeholder="Type item name…"
               />
             </Col>
           </Row>

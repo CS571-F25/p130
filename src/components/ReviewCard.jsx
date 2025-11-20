@@ -1,7 +1,7 @@
-import { Card, Row, Col, Image } from "react-bootstrap";
+import { Card, Row, Col, Image, Button } from "react-bootstrap";
 import RatingStars from "./RatingStars.jsx";
 
-export default function ReviewCard({ review }) {
+export default function ReviewCard({ review, currentUser, onDelete }) {
   const {
     hall,
     item,
@@ -11,6 +11,8 @@ export default function ReviewCard({ review }) {
     imageUrl,
     author = "anon"
   } = review;
+
+  const canDelete = currentUser && currentUser === author;
 
   return (
     <Card className="mb-3">
@@ -22,14 +24,29 @@ export default function ReviewCard({ review }) {
                 src={imageUrl}
                 alt={item}
                 thumbnail
-                style={{ maxHeight: "80px", objectFit: "cover", width: "100%" }}
+                style={{
+                  maxHeight: "80px",
+                  objectFit: "cover",
+                  width: "100%"
+                }}
               />
             ) : null}
           </Col>
           <Col xs={9} md={10}>
-            <Card.Title className="mb-2">
-              {hall} — {item}
-            </Card.Title>
+            <div className="d-flex justify-content-between align-items-start">
+              <Card.Title className="mb-2">
+                {hall} — {item}
+              </Card.Title>
+              {canDelete && (
+                <Button
+                  size="sm"
+                  variant="outline-danger"
+                  onClick={onDelete}
+                >
+                  Delete
+                </Button>
+              )}
+            </div>
             <div className="mb-1">
               <strong>Rating:</strong> <RatingStars value={rating} />
             </div>
