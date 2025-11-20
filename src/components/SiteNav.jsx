@@ -1,7 +1,9 @@
-import { Navbar, Container, Nav, Button } from "react-bootstrap";
+import { Navbar, Container, Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 export default function SiteNav({ currentUser, onSignOut }) {
+  const isSignedIn = !!currentUser;
+
   return (
     <Navbar bg="light" expand="md" className="border-bottom">
       <Container>
@@ -14,27 +16,32 @@ export default function SiteNav({ currentUser, onSignOut }) {
             <Nav.Link as={Link} to="/reviews">
               Reviews
             </Nav.Link>
-            <Nav.Link as={Link} to="/auth">
-              Sign In
-            </Nav.Link>
+
+            {!isSignedIn ? (
+              <Nav.Link as={Link} to="/auth">
+                Sign up / Login
+              </Nav.Link>
+            ) : (
+              <Nav.Link
+                onClick={(e) => {
+                  e.preventDefault();
+                  onSignOut?.();
+                }}
+              >
+                Sign Out
+              </Nav.Link>
+            )}
+
             <Nav.Link as={Link} to="/about">
               About
             </Nav.Link>
           </Nav>
+
           <div className="d-flex align-items-center gap-2">
-            {currentUser ? (
-              <>
-                <span className="text-muted small">
-                  Signed in as <strong>{currentUser}</strong>
-                </span>
-                <Button
-                  size="sm"
-                  variant="outline-danger"
-                  onClick={onSignOut}
-                >
-                  Sign Out
-                </Button>
-              </>
+            {isSignedIn ? (
+              <span className="text-muted small">
+                Signed in as <strong>{currentUser}</strong>
+              </span>
             ) : (
               <span className="text-muted small">Not signed in</span>
             )}

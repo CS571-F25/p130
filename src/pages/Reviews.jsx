@@ -16,7 +16,6 @@ const INITIAL = [
     rating: 4,
     wouldAgain: true,
     text: "Juicy patty, fresh toppings. Bun a little dry.",
-    imageUrl: getImageForItem("Cheeseburger"),
     author: "sample-user"
   },
   {
@@ -26,7 +25,6 @@ const INITIAL = [
     rating: 5,
     wouldAgain: true,
     text: "Crispy and hot, would devour again.",
-    imageUrl: getImageForItem("Chicken Tenders"),
     author: "sample-user"
   },
   {
@@ -36,7 +34,6 @@ const INITIAL = [
     rating: 3,
     wouldAgain: false,
     text: "Pretty average — good if you're in a rush.",
-    imageUrl: getImageForItem("Veggie Burger"),
     author: "sample-user"
   }
 ];
@@ -63,24 +60,37 @@ export default function Reviews({ currentUser }) {
     }
   }, []);
 
-  // save to localStorage when reviews change
+  // normalize images for every review (fixes old stored URLs)
+  const normalizedReviews = useMemo(
+    () =>
+      reviews.map((r) => ({
+        ...r,
+        imageUrl: getImageForItem(r.item)
+      })),
+    [reviews]
+  );
+
+  // save normalized reviews to storage
   useEffect(() => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
+      window.localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(normalizedReviews)
+      );
     } catch {
       // ignore quota / errors
     }
-  }, [reviews]);
+  }, [normalizedReviews]);
 
   const filtered = useMemo(() => {
     const h = hall.trim().toLowerCase();
     const i = item.trim().toLowerCase();
-    return reviews.filter((r) => {
+    return normalizedReviews.filter((r) => {
       const hallOk = !h || r.hall.toLowerCase().includes(h);
       const itemOk = !i || r.item.toLowerCase().includes(i);
       return hallOk && itemOk;
     });
-  }, [reviews, hall, item]);
+  }, [normalizedReviews, hall, item]);
 
   const addReview = (r) => {
     const makeId =
@@ -91,8 +101,8 @@ export default function Reviews({ currentUser }) {
     const withMeta = {
       ...r,
       id: makeId,
-      imageUrl: getImageForItem(r.item),
       author: currentUser || "anon"
+      // imageUrl will be filled in by normalizedReviews
     };
     setReviews((prev) => [withMeta, ...prev]);
     setPage(1);
@@ -118,8 +128,8 @@ export default function Reviews({ currentUser }) {
 
       {!canPost && (
         <Alert variant="warning" className="py-2">
-          You must be signed in to add a review. Use the <strong>Sign In</strong>{" "}
-          tab first.
+          You must be signed in to add a review. Use the{" "}
+          <strong>Sign up / Login</strong> tab first.
         </Alert>
       )}
 
