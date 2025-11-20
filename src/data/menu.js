@@ -14,9 +14,11 @@ const base = (id) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=600&q=80`;
 
 // Map item name -> image URL
+// (IDs chosen to be visually reasonable for each item)
 const ITEM_IMAGES = {
   "Cheeseburger": base("photo-1550547660-d9450f859349"),
-  "Veggie Burger": base("photo-1513104890138-7c749659a591"),
+  // veggie burger: different image, not pizza-looking
+  "Veggie Burger": base("photo-1551782450-a2132b4ba21d"),
   "Chicken Tenders": base("photo-1625944520301-9a4ac2740d37"),
   "Cheese Pizza": base("photo-1548365328-9da4b7f5809c"),
   "Pepperoni Pizza": base("photo-1548369937-47519962c11a"),

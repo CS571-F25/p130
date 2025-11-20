@@ -25,11 +25,10 @@ export default function SearchableSelect({
   const handleSelect = (opt) => {
     setInputValue(opt);
     onChange?.(opt);
-    setOpen(false); // hide list after selecting
+    setOpen(false);
   };
 
   const handleBlur = () => {
-    // small delay so clicks on the list still register
     setTimeout(() => setOpen(false), 100);
   };
 
@@ -60,7 +59,7 @@ export default function SearchableSelect({
               action
               key={opt}
               onMouseDown={(e) => {
-                e.preventDefault(); // don't blur before click
+                e.preventDefault();
                 handleSelect(opt);
               }}
             >
