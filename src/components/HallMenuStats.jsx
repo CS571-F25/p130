@@ -1,9 +1,9 @@
 // src/components/HallMenuStats.jsx
-import { Card, Table, Row, Col, Badge } from "react-bootstrap";
+import { Card, Table, Row, Col, Badge, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import {
   DINING_HALLS,
-  HALL_ITEMS,
-  HALL_MENU_LINKS
+  HALL_ITEMS
 } from "../data/menu.js";
 
 function computeStats(reviews, hall, item) {
@@ -22,48 +22,49 @@ function computeStats(reviews, hall, item) {
 }
 
 export default function HallMenuStats({ reviews }) {
+  const navigate = useNavigate();
+
+  const goToReviews = (hall, item) => {
+    navigate("/reviews", { state: { hall, item } });
+  };
+
   return (
     <div className="mt-4">
-      <h3 className="mb-3">Menus & Ratings Overview</h3>
+      <h2 className="h3 mb-3">Menus and Ratings by Dining Hall</h2>
       <p className="text-muted">
-        For each dining hall, you can open today&apos;s menu on Nutrislice and
-        see how students have rated the core items on this site.
+        This page acts as a simple menu snapshot for each dining hall. Click an
+        item name to jump to reviews filtered for that hall and item.
       </p>
 
       <Row className="g-3">
         {DINING_HALLS.map((hall) => {
           const items = HALL_ITEMS[hall] || [];
-          const url =
-            HALL_MENU_LINKS[hall] ||
-            "https://wisc-housingdining.nutrislice.com/menu/";
 
           return (
             <Col key={hall} md={6}>
               <Card className="h-100">
                 <Card.Body>
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <Card.Title className="mb-0">{hall}</Card.Title>
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="small"
-                    >
-                      View today&apos;s menu
-                    </a>
-                  </div>
+                  <Card.Title as="h3" className="h5">
+                    {hall}
+                  </Card.Title>
                   {items.length === 0 ? (
                     <p className="text-muted mb-0">
                       No items configured for this hall yet.
                     </p>
                   ) : (
-                    <Table size="sm" bordered hover responsive className="mb-0">
+                    <Table
+                      size="sm"
+                      bordered
+                      hover
+                      responsive
+                      className="mb-0"
+                    >
                       <thead>
                         <tr>
-                          <th>Item</th>
-                          <th>Avg rating</th>
-                          <th>% would order again</th>
-                          <th># reviews</th>
+                          <th scope="col">Item</th>
+                          <th scope="col">Avg rating</th>
+                          <th scope="col">% would order again</th>
+                          <th scope="col"># reviews</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -72,11 +73,21 @@ export default function HallMenuStats({ reviews }) {
                             computeStats(reviews, hall, item);
                           return (
                             <tr key={item}>
-                              <td>{item}</td>
                               <td>
-                                {count === 0
-                                  ? <span className="text-muted small">n/a</span>
-                                  : avgRating.toFixed(1)}
+                                <Button
+                                  variant="link"
+                                  className="p-0"
+                                  onClick={() => goToReviews(hall, item)}
+                                >
+                                  {item}
+                                </Button>
+                              </td>
+                              <td>
+                                {count === 0 ? (
+                                  <span className="text-muted small">n/a</span>
+                                ) : (
+                                  avgRating.toFixed(1)
+                                )}
                               </td>
                               <td>
                                 {count === 0 ? (

@@ -1,62 +1,58 @@
-import { Card, Row, Col, Image, Button } from "react-bootstrap";
+// src/components/ReviewCard.jsx
+import { Card, Button } from "react-bootstrap";
 import RatingStars from "./RatingStars.jsx";
 
-export default function ReviewCard({ review, currentUser, onDelete }) {
-  const {
-    hall,
-    item,
-    rating,
-    text,
-    wouldAgain,
-    imageUrl,
-    author = "anon"
-  } = review;
+export default function ReviewCard({
+  review,
+  currentUser,
+  onDeleteReview
+}) {
+  const { hall, item, rating, wouldAgain, text, author, imageUrl } = review;
 
   const canDelete = currentUser && currentUser === author;
 
   return (
     <Card className="mb-3">
-      <Card.Body>
-        <Row>
-          <Col xs={3} md={2} className="d-flex align-items-center">
-            {imageUrl ? (
-              <Image
-                src={imageUrl}
-                alt={item}
-                thumbnail
-                style={{
-                  maxHeight: "80px",
-                  objectFit: "cover",
-                  width: "100%"
-                }}
-              />
-            ) : null}
-          </Col>
-          <Col xs={9} md={10}>
-            <div className="d-flex justify-content-between align-items-start">
-              <Card.Title className="mb-2">
-                {hall} — {item}
-              </Card.Title>
-              {canDelete && (
-                <Button
-                  size="sm"
-                  variant="outline-danger"
-                  onClick={onDelete}
-                >
-                  Delete
-                </Button>
-              )}
-            </div>
-            <div className="mb-1">
-              <strong>Rating:</strong> <RatingStars value={rating} />
-            </div>
-            <div className="mb-1">
-              <strong>Would order again?</strong> {wouldAgain ? "Yes" : "No"}
-            </div>
-            {text ? <Card.Text className="mb-1">{text}</Card.Text> : null}
+      <Card.Body className="d-flex">
+        {imageUrl && (
+          <div className="me-3" style={{ minWidth: "140px" }}>
+            <img
+              src={imageUrl}
+              alt={`Photo of ${item}`}
+              style={{
+                width: "100%",
+                height: "90px",
+                objectFit: "cover",
+                borderRadius: "4px"
+              }}
+            />
+          </div>
+        )}
+        <div className="flex-grow-1">
+          <Card.Title as="h3" className="h5">
+            {hall} — {item}
+          </Card.Title>
+          <div className="mb-1">
+            <strong>Rating:</strong>{" "}
+            <RatingStars rating={rating} /> ({rating}/5)
+          </div>
+          <div className="mb-1">
+            <strong>Would order again?</strong> {wouldAgain ? "Yes" : "No"}
+          </div>
+          {text && <Card.Text className="mb-1">{text}</Card.Text>}
+          <div className="d-flex justify-content-between align-items-center">
             <small className="text-muted">by {author}</small>
-          </Col>
-        </Row>
+            {canDelete && (
+              <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={() => onDeleteReview?.(review.id)}
+              >
+                Delete
+              </Button>
+            )}
+          </div>
+        </div>
       </Card.Body>
     </Card>
   );

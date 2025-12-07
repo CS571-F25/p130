@@ -6,7 +6,6 @@ import { getImageForItem } from "../data/menu.js";
 
 const STORAGE_KEY = "uwDiningReviews";
 
-// re-use the same seed reviews so stats still have some data
 const INITIAL = [
   {
     id: "seed-1",
@@ -65,12 +64,11 @@ export default function Menus() {
 
   return (
     <Container className="page">
-      <h2>Menus and Ratings Overview</h2>
+      <h1 className="h2">Menus & Ratings</h1>
       <p className="text-muted">
-        Use this page to jump to the current Nutrislice menu for each dining
-        hall and see how students have rated the core items on this site,
-        including average rating and how many people say they would order it
-        again.
+        Browse the core menu items for each dining hall, see their average
+        ratings and how many students say they would order them again, and
+        click an item to jump directly to its reviews.
       </p>
       <HallMenuStats reviews={normalizedReviews} />
     </Container>

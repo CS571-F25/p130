@@ -62,13 +62,20 @@ export default function Reviews({ currentUser }) {
   }, []);
 
   // pre-select hall when coming from Home
+  // inside Reviews.jsx, keep everything as before EXCEPT this useEffect:
   useEffect(() => {
-    const viaStateHall = location.state && location.state.hall;
-    if (viaStateHall) {
-      setHall(viaStateHall);
+    const state = location.state || {};
+    if (state.hall) {
+      setHall(state.hall);
+    }
+    if (state.item) {
+      setItem(state.item);
+    }
+    if (state.hall || state.item) {
       setPage(1);
     }
   }, [location.state]);
+
 
   const normalizedReviews = useMemo(
     () =>

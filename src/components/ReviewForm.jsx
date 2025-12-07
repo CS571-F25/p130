@@ -1,3 +1,4 @@
+// src/components/ReviewForm.jsx
 import { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import SearchableSelect from "./SearchableSelect.jsx";
@@ -17,9 +18,9 @@ export default function ReviewForm({ show, onClose, onSave }) {
   const [availableItems, setAvailableItems] = useState(ITEM_NAMES);
 
   useEffect(() => {
-    setAvailableItems(getItemsForHall(hall));
-    // clear item if it no longer belongs to selected hall
-    if (item && !getItemsForHall(hall).includes(item)) {
+    const itemsForHall = getItemsForHall(hall);
+    setAvailableItems(itemsForHall);
+    if (item && !itemsForHall.includes(item)) {
       setItem("");
     }
   }, [hall, item]);
@@ -34,12 +35,14 @@ export default function ReviewForm({ show, onClose, onSave }) {
 
   const submit = () => {
     const trimmed = (s) => (s || "").trim();
-    if (!trimmed(hall) || !trimmed(item)) {
+    const hallVal = trimmed(hall);
+    const itemVal = trimmed(item);
+    if (!hallVal || !itemVal) {
       return;
     }
     const review = {
-      hall: trimmed(hall),
-      item: trimmed(item),
+      hall: hallVal,
+      item: itemVal,
       rating: Number(rating),
       wouldAgain: Boolean(wouldAgain),
       text: trimmed(text)
@@ -59,7 +62,8 @@ export default function ReviewForm({ show, onClose, onSave }) {
           <Row className="mb-2">
             <Col md={6}>
               <SearchableSelect
-                label="Dining Hall"
+                id="hall-select"
+                label="Dining hall"
                 options={DINING_HALLS}
                 value={hall}
                 onChange={setHall}
@@ -68,14 +72,13 @@ export default function ReviewForm({ show, onClose, onSave }) {
             </Col>
             <Col md={6}>
               <SearchableSelect
+                id="item-select"
                 label="Item (filtered by hall)"
                 options={availableItems}
                 value={item}
                 onChange={setItem}
                 placeholder={
-                  hall
-                    ? `Items at ${hall}…`
-                    : "Choose a hall first or browse all…"
+                  hall ? `Items at ${hall}…` : "Choose a hall or type to search…"
                 }
               />
             </Col>
@@ -83,31 +86,35 @@ export default function ReviewForm({ show, onClose, onSave }) {
 
           <Row className="mb-2">
             <Col md={6}>
-              <Form.Label>Rating</Form.Label>
-              <Form.Select
-                value={rating}
-                onChange={(e) => setRating(e.target.value)}
-              >
-                {[5, 4, 3, 2, 1].map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </Form.Select>
+              <Form.Group controlId="rating-select">
+                <Form.Label>Rating (1–5)</Form.Label>
+                <Form.Select
+                  value={rating}
+                  onChange={(e) => setRating(e.target.value)}
+                >
+                  {[5, 4, 3, 2, 1].map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
             </Col>
             <Col md={6}>
-              <Form.Label>Would order again?</Form.Label>
-              <Form.Select
-                value={wouldAgain ? "yes" : "no"}
-                onChange={(e) => setWouldAgain(e.target.value === "yes")}
-              >
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-              </Form.Select>
+              <Form.Group controlId="would-again-select">
+                <Form.Label>Would order again?</Form.Label>
+                <Form.Select
+                  value={wouldAgain ? "yes" : "no"}
+                  onChange={(e) => setWouldAgain(e.target.value === "yes")}
+                >
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </Form.Select>
+              </Form.Group>
             </Col>
           </Row>
 
-          <div className="mb-0">
+          <Form.Group controlId="review-text">
             <Form.Label>Short description</Form.Label>
             <Form.Control
               as="textarea"
@@ -116,7 +123,7 @@ export default function ReviewForm({ show, onClose, onSave }) {
               onChange={(e) => setText(e.target.value)}
               placeholder="What did you think of this item?"
             />
-          </div>
+          </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>

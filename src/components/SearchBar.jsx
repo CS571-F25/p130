@@ -11,46 +11,42 @@ export default function SearchBar({
 }) {
   const isAll = !hall;
 
-  const changeHall = (newHall) => {
-    setHall(newHall);
-  };
-
-  const changeItem = (val) => {
-    setItem(val);
-  };
-
   return (
     <div className="mb-3">
       <Row className="align-items-center g-2">
         <Col md={8}>
-          <Form.Label className="mb-1">Filter by dining hall</Form.Label>
-          <div className="d-flex flex-wrap gap-2">
-            <Button
-              size="sm"
-              variant={isAll ? "primary" : "outline-primary"}
-              onClick={() => changeHall("")}
-            >
-              All halls
-            </Button>
-            {DINING_HALLS.map((h) => (
+          <Form.Group>
+            <Form.Label className="mb-1">Filter by dining hall</Form.Label>
+            <div className="d-flex flex-wrap gap-2">
               <Button
-                key={h}
                 size="sm"
-                variant={hall === h ? "primary" : "outline-primary"}
-                onClick={() => changeHall(h)}
+                variant={isAll ? "primary" : "outline-primary"}
+                onClick={() => setHall("")}
               >
-                {h}
+                All halls
               </Button>
-            ))}
-          </div>
+              {DINING_HALLS.map((h) => (
+                <Button
+                  key={h}
+                  size="sm"
+                  variant={hall === h ? "primary" : "outline-primary"}
+                  onClick={() => setHall(h)}
+                >
+                  {h}
+                </Button>
+              ))}
+            </div>
+          </Form.Group>
         </Col>
         <Col md={4}>
-          <Form.Label className="mb-1">Filter by item name</Form.Label>
-          <Form.Control
-            value={item}
-            placeholder="e.g., pizza, burger, salad…"
-            onChange={(e) => changeItem(e.target.value)}
-          />
+          <Form.Group controlId="item-filter">
+            <Form.Label className="mb-1">Filter by item name</Form.Label>
+            <Form.Control
+              value={item}
+              placeholder="e.g., pizza, burger, salad…"
+              onChange={(e) => setItem(e.target.value)}
+            />
+          </Form.Group>
         </Col>
       </Row>
 
