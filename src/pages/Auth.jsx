@@ -100,7 +100,7 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
 
   return (
     <Container className="page">
-      <h2>Sign Up / Login</h2>
+      <h1 className="h2">Sign up / Login</h1>
 
       <p className="text-muted">
         Create a simple account with a display name and 4–6 digit PIN. Your
@@ -109,7 +109,7 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
       </p>
 
       {currentUser && (
-        <Alert variant="success">
+        <Alert variant="success" role="status">
           You are currently signed in as <strong>{currentUser}</strong>.
         </Alert>
       )}
@@ -126,56 +126,59 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
 
       {showForm && (
         <Form onSubmit={handleSubmit}>
-          <Row className="g-2 mb-3">
+          <Row className="g-3 mb-3">
             <Col sm={6} md={4}>
-              <Form.Label>Display name</Form.Label>
-              <Form.Control
-                placeholder="e.g., badger-foodie"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+              <Form.Group controlId="auth-name">
+                <Form.Label>Display name</Form.Label>
+                <Form.Control
+                  placeholder="e.g., badger-foodie"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </Form.Group>
             </Col>
             <Col sm={6} md={4}>
-              <Form.Label>PIN (4–6 digits)</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="e.g., 1234"
-                value={pin}
-                onChange={(e) => setPin(e.target.value)}
-              />
+              <Form.Group controlId="auth-pin">
+                <Form.Label>PIN (4–6 digits)</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="e.g., 1234"
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value)}
+                />
+              </Form.Group>
             </Col>
           </Row>
 
-          <Row className="g-2 mb-3">
-            <Col sm="auto">
-              <Form.Check
-                type="radio"
-                label="Sign in to existing account"
-                name="auth-mode"
-                id="auth-signin"
-                checked={mode === "signin"}
-                onChange={() => setMode("signin")}
-              />
-            </Col>
-            <Col sm="auto">
-              <Form.Check
-                type="radio"
-                label="Create new account"
-                name="auth-mode"
-                id="auth-create"
-                checked={mode === "create"}
-                onChange={() => setMode("create")}
-              />
-            </Col>
-          </Row>
+          <Form.Group as="fieldset" className="mb-3">
+            <Form.Label as="legend">Sign-in mode</Form.Label>
+            <Row className="g-2">
+              <Col sm="auto">
+                <Form.Check
+                  type="radio"
+                  id="auth-signin"
+                  name="auth-mode"
+                  label="Sign in to existing account"
+                  checked={mode === "signin"}
+                  onChange={() => setMode("signin")}
+                />
+              </Col>
+              <Col sm="auto">
+                <Form.Check
+                  type="radio"
+                  id="auth-create"
+                  name="auth-mode"
+                  label="Create new account"
+                  checked={mode === "create"}
+                  onChange={() => setMode("create")}
+                />
+              </Col>
+            </Row>
+          </Form.Group>
 
-          <Row className="g-2 mb-3">
-            <Col sm="auto">
-              <Button type="submit">
-                {mode === "signin" ? "Sign In" : "Create Account"}
-              </Button>
-            </Col>
-          </Row>
+          <Button type="submit">
+            {mode === "signin" ? "Sign In" : "Create Account"}
+          </Button>
         </Form>
       )}
 

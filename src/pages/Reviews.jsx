@@ -61,8 +61,6 @@ export default function Reviews({ currentUser }) {
     }
   }, []);
 
-  // pre-select hall when coming from Home
-  // inside Reviews.jsx, keep everything as before EXCEPT this useEffect:
   useEffect(() => {
     const state = location.state || {};
     if (state.hall) {
@@ -75,7 +73,6 @@ export default function Reviews({ currentUser }) {
       setPage(1);
     }
   }, [location.state]);
-
 
   const normalizedReviews = useMemo(
     () =>
@@ -131,7 +128,7 @@ export default function Reviews({ currentUser }) {
   return (
     <Container className="page">
       <div className="d-flex align-items-center justify-content-between mb-2">
-        <h2 className="mb-0">Reviews</h2>
+        <h1 className="h2 mb-0">Reviews</h1>
         <Button
           onClick={() => canPost && setShowForm(true)}
           disabled={!canPost}
@@ -141,7 +138,7 @@ export default function Reviews({ currentUser }) {
       </div>
 
       {!canPost && (
-        <Alert variant="warning" className="py-2">
+        <Alert variant="warning" className="py-2" role="status">
           You must be signed in to add a review. Use the{" "}
           <strong>Sign up / Login</strong> tab first.
         </Alert>
