@@ -7,10 +7,17 @@ export default function SearchBar({
   setHall,
   item,
   setItem,
-  onSearch,
-  onReset
+  onClear
 }) {
   const isAll = !hall;
+
+  const changeHall = (newHall) => {
+    setHall(newHall);
+  };
+
+  const changeItem = (val) => {
+    setItem(val);
+  };
 
   return (
     <div className="mb-3">
@@ -21,7 +28,7 @@ export default function SearchBar({
             <Button
               size="sm"
               variant={isAll ? "primary" : "outline-primary"}
-              onClick={() => setHall("")}
+              onClick={() => changeHall("")}
             >
               All halls
             </Button>
@@ -30,7 +37,7 @@ export default function SearchBar({
                 key={h}
                 size="sm"
                 variant={hall === h ? "primary" : "outline-primary"}
-                onClick={() => setHall(h)}
+                onClick={() => changeHall(h)}
               >
                 {h}
               </Button>
@@ -42,7 +49,7 @@ export default function SearchBar({
           <Form.Control
             value={item}
             placeholder="e.g., pizza, burger, salad…"
-            onChange={(e) => setItem(e.target.value)}
+            onChange={(e) => changeItem(e.target.value)}
           />
         </Col>
       </Row>
@@ -59,19 +66,16 @@ export default function SearchBar({
           )}
         </Col>
         <Col className="text-end">
-          <Button size="sm" className="me-2" onClick={onSearch}>
-            Apply Filters
-          </Button>
           <Button
             size="sm"
             variant="outline-secondary"
             onClick={() => {
               setHall("");
               setItem("");
-              onReset?.();
+              onClear?.();
             }}
           >
-            Clear
+            Clear filters
           </Button>
         </Col>
       </Row>

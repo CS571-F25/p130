@@ -13,12 +13,12 @@ export const DINING_HALLS = [
 const base = (id) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=600&q=80`;
 
-// Shared item -> image mapping. Items are a mix of
-// realistic campus options and typical college dining staples.
+// Shared item -> image mapping.
+// Chicken Tenders now reuses a known-working chicken image.
 const ITEM_IMAGES = {
   "Cheeseburger": base("photo-1550547660-d9450f859349"),
   "Veggie Burger": base("photo-1551782450-a2132b4ba21d"),
-  "Chicken Tenders": base("photo-1625944520301-9a4ac2740d37"),
+  "Chicken Tenders": base("photo-1562967914-608f82629710"), // fried chicken style
   "Cheese Pizza": base("photo-1548365328-9da4b7f5809c"),
   "Pepperoni Pizza": base("photo-1548369937-47519962c11a"),
   "Veggie Pizza": base("photo-1541745537411-b8046dc6d66c"),
@@ -48,16 +48,13 @@ const ITEM_IMAGES = {
   "Chocolate Chip Cookies": base("photo-1541976076758-25e062ca1920"),
   "Brownies": base("photo-1607958996333-41aef7caefaa"),
 
-  // Extra items used for specific halls
   "Soup of the Day": base("photo-1542838132-92c53300491e"),
   "Protein Smoothie": base("photo-1514996937319-344454492b37"),
   "Acai Bowl": base("photo-1512621776951-a57141f2eefd"),
   "Peanut Butter Smoothie": base("photo-1504753793650-d4a2b783c15e")
 };
 
-// Hall -> items mapping.
-// Partly inspired by real UW dining styles (via Nutrislice / Housing site)
-// and partly filled in with typical campus options.
+// Hall -> items mapping
 export const HALL_ITEMS = {
   "Four Lakes Market": [
     "Cheeseburger",
@@ -70,6 +67,7 @@ export const HALL_ITEMS = {
   ],
   "Gordon's Market": [
     "Chicken Sandwich",
+    "Chicken Tenders",
     "Mac and Cheese",
     "Cheese Pizza",
     "Pepperoni Pizza",
@@ -116,7 +114,6 @@ export const HALL_ITEMS = {
   ]
 };
 
-// Flattened item list for things like global search if needed.
 export const ITEM_NAMES = Array.from(
   new Set(Object.values(HALL_ITEMS).flat())
 );
@@ -130,8 +127,18 @@ export function getImageForItem(name) {
 }
 
 export function getItemsForHall(hallName) {
-  if (!hallName) {
-    return ITEM_NAMES;
-  }
+  if (!hallName) return ITEM_NAMES;
   return HALL_ITEMS[hallName] || ITEM_NAMES;
 }
+
+// Nutrislice / menu links for each hall
+export const HALL_MENU_LINKS = {
+  "Four Lakes Market": "https://wisc-housingdining.nutrislice.com/menu/four-lakes-market",
+  "Gordon's Market": "https://wisc-housingdining.nutrislice.com/menu/gordon-avenue-market",
+  "Rheta's Market": "https://wisc-housingdining.nutrislice.com/menu/rhetas-market",
+  "Carson's Market": "https://wisc-housingdining.nutrislice.com/menu/carsons-market",
+  "Lowell Market": "https://wisc-housingdining.nutrislice.com/menu/lowell-market",
+  "Liz's Market": "https://wisc-housingdining.nutrislice.com/menu/lizs-market",
+  // Shake Smart isn’t on Nutrislice; link to their main menu instead.
+  "Shake Smart": "https://shakesmart.com/menu/"
+};

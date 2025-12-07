@@ -1,8 +1,11 @@
+// src/pages/Reviews.jsx
 import { useEffect, useMemo, useState } from "react";
 import { Container, Button, Alert } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import SearchBar from "../components/SearchBar.jsx";
 import ReviewForm from "../components/ReviewForm.jsx";
 import ReviewList from "../components/ReviewList.jsx";
+import HallMenuStats from "../components/HallMenuStats.jsx";
 import { getImageForItem } from "../data/menu.js";
 
 const STORAGE_KEY = "uwDiningReviews";
@@ -38,12 +41,15 @@ const INITIAL = [
 ];
 
 export default function Reviews({ currentUser }) {
+  const location = useLocation();
+
   const [reviews, setReviews] = useState(INITIAL);
   const [hall, setHall] = useState("");
   const [item, setItem] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [page, setPage] = useState(1);
 
+  // Load from localStorage
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -58,6 +64,15 @@ export default function Reviews({ currentUser }) {
     }
   }, []);
 
+  // If navigated from Home with a hall in location.state, pre-select it
+  useEffect(() => {
+    const viaStateHall = location.state && location.state.hall;
+    if (viaStateHall) {
+      setHall(viaStateHall);
+      setPage(1);
+    }
+  }, [location.state]);
+
   const normalizedReviews = useMemo(
     () =>
       reviews.map((r) => ({
@@ -67,6 +82,7 @@ export default function Reviews({ currentUser }) {
     [reviews]
   );
 
+  // Persist normalized reviews
   useEffect(() => {
     try {
       window.localStorage.setItem(
@@ -78,6 +94,7 @@ export default function Reviews({ currentUser }) {
     }
   }, [normalizedReviews]);
 
+  // Live filtering by hall + item
   const filtered = useMemo(() => {
     const h = hall.trim().toLowerCase();
     const i = item.trim().toLowerCase();
@@ -130,11 +147,16 @@ export default function Reviews({ currentUser }) {
 
       <SearchBar
         hall={hall}
-        setHall={setHall}
+        setHall={(hVal) => {
+          setHall(hVal);
+          setPage(1);
+        }}
         item={item}
-        setItem={setItem}
-        onSearch={() => setPage(1)}
-        onReset={() => setPage(1)}
+        setItem={(iVal) => {
+          setItem(iVal);
+          setPage(1);
+        }}
+        onClear={() => setPage(1)}
       />
 
       <ReviewList
@@ -151,6 +173,9 @@ export default function Reviews({ currentUser }) {
         onClose={() => setShowForm(false)}
         onSave={addReview}
       />
+
+      {/* Nutrislice + per-item stats */}
+      <HallMenuStats reviews={normalizedReviews} />
     </Container>
   );
 }

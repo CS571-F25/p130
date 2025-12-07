@@ -13,7 +13,7 @@ export default function Home() {
             Use this site to see what other students think about different
             dining halls and menu items on campus. Browse reviews, filter by
             hall or item, and share your own experiences to help other students
-            dodge the mid cafeteria L meal.
+            find the W meals and dodge the L ones.
           </p>
         </Col>
         <Col md={4}>
@@ -41,26 +41,22 @@ export default function Home() {
                 <Card.Body>
                   <Card.Title>{hall}</Card.Title>
                   {sample.length > 0 && (
-                    <>
-                      <Card.Subtitle className="mb-2 text-muted">
-                        Example items
-                      </Card.Subtitle>
-                      <div className="mb-2 d-flex flex-wrap gap-1">
-                        {sample.map((it) => (
-                          <Badge key={it} bg="secondary">
-                            {it}
-                          </Badge>
-                        ))}
-                      </div>
-                    </>
+                    <div className="mb-2 d-flex flex-wrap gap-1">
+                      {sample.map((it) => (
+                        <Badge key={it} bg="secondary">
+                          {it}
+                        </Badge>
+                      ))}
+                    </div>
                   )}
                   <Button
                     as={Link}
                     to="/reviews"
+                    state={{ hall }}
                     size="sm"
                     variant="outline-primary"
                   >
-                    View reviews
+                    View reviews for {hall}
                   </Button>
                 </Card.Body>
               </Card>
