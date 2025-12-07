@@ -5,12 +5,12 @@ import Home from "./pages/Home.jsx";
 import Reviews from "./pages/Reviews.jsx";
 import Auth from "./pages/Auth.jsx";
 import About from "./pages/About.jsx";
+import Menus from "./pages/Menus.jsx";
 import { getCookie, setCookie, eraseCookie } from "./utils/cookies.js";
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
 
-  // load from cookie on mount
   useEffect(() => {
     const saved = getCookie("diningUser");
     if (saved) {
@@ -47,6 +47,7 @@ export default function App() {
             />
           }
         />
+        <Route path="/menus" element={<Menus />} />
         <Route path="/about" element={<About />} />
       </Routes>
     </HashRouter>

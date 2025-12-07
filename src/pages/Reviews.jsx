@@ -1,11 +1,9 @@
-// src/pages/Reviews.jsx
 import { useEffect, useMemo, useState } from "react";
 import { Container, Button, Alert } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import SearchBar from "../components/SearchBar.jsx";
 import ReviewForm from "../components/ReviewForm.jsx";
 import ReviewList from "../components/ReviewList.jsx";
-import HallMenuStats from "../components/HallMenuStats.jsx";
 import { getImageForItem } from "../data/menu.js";
 
 const STORAGE_KEY = "uwDiningReviews";
@@ -35,7 +33,7 @@ const INITIAL = [
     item: "Veggie Burger",
     rating: 3,
     wouldAgain: false,
-    text: "Pretty average — good if you're in a rush.",
+    text: "Pretty average, good if you're in a rush.",
     author: "sample-user"
   }
 ];
@@ -49,7 +47,6 @@ export default function Reviews({ currentUser }) {
   const [showForm, setShowForm] = useState(false);
   const [page, setPage] = useState(1);
 
-  // Load from localStorage
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -64,7 +61,7 @@ export default function Reviews({ currentUser }) {
     }
   }, []);
 
-  // If navigated from Home with a hall in location.state, pre-select it
+  // pre-select hall when coming from Home
   useEffect(() => {
     const viaStateHall = location.state && location.state.hall;
     if (viaStateHall) {
@@ -82,7 +79,6 @@ export default function Reviews({ currentUser }) {
     [reviews]
   );
 
-  // Persist normalized reviews
   useEffect(() => {
     try {
       window.localStorage.setItem(
@@ -94,7 +90,6 @@ export default function Reviews({ currentUser }) {
     }
   }, [normalizedReviews]);
 
-  // Live filtering by hall + item
   const filtered = useMemo(() => {
     const h = hall.trim().toLowerCase();
     const i = item.trim().toLowerCase();
@@ -173,9 +168,6 @@ export default function Reviews({ currentUser }) {
         onClose={() => setShowForm(false)}
         onSave={addReview}
       />
-
-      {/* Nutrislice + per-item stats */}
-      <HallMenuStats reviews={normalizedReviews} />
     </Container>
   );
 }

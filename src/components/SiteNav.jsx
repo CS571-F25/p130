@@ -16,6 +16,9 @@ export default function SiteNav({ currentUser, onSignOut }) {
             <Nav.Link as={Link} to="/reviews">
               Reviews
             </Nav.Link>
+            <Nav.Link as={Link} to="/menus">
+              Menus & Ratings
+            </Nav.Link>
 
             {!isSignedIn ? (
               <Nav.Link as={Link} to="/auth">
