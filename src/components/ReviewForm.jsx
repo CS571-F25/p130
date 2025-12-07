@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import SearchableSelect from "./SearchableSelect.jsx";
-import { DINING_HALLS, ITEM_NAMES } from "../data/menu.js";
+import {
+  DINING_HALLS,
+  getItemsForHall,
+  ITEM_NAMES
+} from "../data/menu.js";
 
 export default function ReviewForm({ show, onClose, onSave }) {
   const [hall, setHall] = useState("");
@@ -9,6 +13,16 @@ export default function ReviewForm({ show, onClose, onSave }) {
   const [rating, setRating] = useState(5);
   const [wouldAgain, setWouldAgain] = useState(true);
   const [text, setText] = useState("");
+
+  const [availableItems, setAvailableItems] = useState(ITEM_NAMES);
+
+  useEffect(() => {
+    setAvailableItems(getItemsForHall(hall));
+    // clear item if it no longer belongs to selected hall
+    if (item && !getItemsForHall(hall).includes(item)) {
+      setItem("");
+    }
+  }, [hall, item]);
 
   const reset = () => {
     setHall("");
@@ -21,7 +35,6 @@ export default function ReviewForm({ show, onClose, onSave }) {
   const submit = () => {
     const trimmed = (s) => (s || "").trim();
     if (!trimmed(hall) || !trimmed(item)) {
-      // could add a toast / alert, but for now just ignore invalid submit
       return;
     }
     const review = {
@@ -55,11 +68,15 @@ export default function ReviewForm({ show, onClose, onSave }) {
             </Col>
             <Col md={6}>
               <SearchableSelect
-                label="Item"
-                options={ITEM_NAMES}
+                label="Item (filtered by hall)"
+                options={availableItems}
                 value={item}
                 onChange={setItem}
-                placeholder="Type item name…"
+                placeholder={
+                  hall
+                    ? `Items at ${hall}…`
+                    : "Choose a hall first or browse all…"
+                }
               />
             </Col>
           </Row>
@@ -97,6 +114,7 @@ export default function ReviewForm({ show, onClose, onSave }) {
               rows={3}
               value={text}
               onChange={(e) => setText(e.target.value)}
+              placeholder="What did you think of this item?"
             />
           </div>
         </Form>
@@ -105,7 +123,7 @@ export default function ReviewForm({ show, onClose, onSave }) {
         <Button variant="outline-secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button onClick={submit}>Save</Button>
+        <Button onClick={submit}>Save Review</Button>
       </Modal.Footer>
     </Modal>
   );

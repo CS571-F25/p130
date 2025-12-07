@@ -7,7 +7,6 @@ import { getImageForItem } from "../data/menu.js";
 
 const STORAGE_KEY = "uwDiningReviews";
 
-// starter data
 const INITIAL = [
   {
     id: "seed-1",
@@ -45,7 +44,6 @@ export default function Reviews({ currentUser }) {
   const [showForm, setShowForm] = useState(false);
   const [page, setPage] = useState(1);
 
-  // load from localStorage on mount
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -56,11 +54,10 @@ export default function Reviews({ currentUser }) {
         }
       }
     } catch {
-      // ignore corrupted storage
+      // ignore
     }
   }, []);
 
-  // normalize images for every review (fixes old stored URLs)
   const normalizedReviews = useMemo(
     () =>
       reviews.map((r) => ({
@@ -70,7 +67,6 @@ export default function Reviews({ currentUser }) {
     [reviews]
   );
 
-  // save normalized reviews to storage
   useEffect(() => {
     try {
       window.localStorage.setItem(
@@ -78,7 +74,7 @@ export default function Reviews({ currentUser }) {
         JSON.stringify(normalizedReviews)
       );
     } catch {
-      // ignore quota / errors
+      // ignore
     }
   }, [normalizedReviews]);
 
@@ -86,7 +82,7 @@ export default function Reviews({ currentUser }) {
     const h = hall.trim().toLowerCase();
     const i = item.trim().toLowerCase();
     return normalizedReviews.filter((r) => {
-      const hallOk = !h || r.hall.toLowerCase().includes(h);
+      const hallOk = !h || r.hall.toLowerCase() === h;
       const itemOk = !i || r.item.toLowerCase().includes(i);
       return hallOk && itemOk;
     });
@@ -102,7 +98,6 @@ export default function Reviews({ currentUser }) {
       ...r,
       id: makeId,
       author: currentUser || "anon"
-      // imageUrl will be filled in by normalizedReviews
     };
     setReviews((prev) => [withMeta, ...prev]);
     setPage(1);
@@ -139,6 +134,7 @@ export default function Reviews({ currentUser }) {
         item={item}
         setItem={setItem}
         onSearch={() => setPage(1)}
+        onReset={() => setPage(1)}
       />
 
       <ReviewList

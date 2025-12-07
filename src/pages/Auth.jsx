@@ -41,7 +41,6 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
     const accounts = loadAccounts();
 
     if (mode === "signin") {
-      // 1) Check if account exists FIRST
       if (!accounts[n]) {
         setMessage({
           variant: "danger",
@@ -49,8 +48,6 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
         });
         return;
       }
-
-      // 2) Then validate PIN length
       if (p.length < 4 || p.length > 6) {
         setMessage({
           variant: "danger",
@@ -58,8 +55,6 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
         });
         return;
       }
-
-      // 3) Then validate PIN value
       if (accounts[n] !== p) {
         setMessage({
           variant: "danger",
@@ -67,7 +62,6 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
         });
         return;
       }
-
       onSignIn?.(n);
       setMessage({
         variant: "success",
@@ -76,8 +70,6 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
       setName("");
       setPin("");
     } else {
-      // CREATE ACCOUNT MODE
-
       if (p.length < 4 || p.length > 6) {
         setMessage({
           variant: "danger",
@@ -85,7 +77,6 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
         });
         return;
       }
-
       if (accounts[n]) {
         setMessage({
           variant: "danger",
@@ -93,7 +84,6 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
         });
         return;
       }
-
       accounts[n] = p;
       saveAccounts(accounts);
       onSignIn?.(n);
@@ -106,11 +96,17 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
     }
   };
 
-  const showForm = !currentUser; // hide form if already signed in
+  const showForm = !currentUser;
 
   return (
     <Container className="page">
-      <h2>Sign In / Create Account</h2>
+      <h2>Sign Up / Login</h2>
+
+      <p className="text-muted">
+        Create a simple account with a display name and 4–6 digit PIN. Your
+        account info stays only in this browser, and we use cookies so you stay
+        signed in after refresh.
+      </p>
 
       {currentUser && (
         <Alert variant="success">
@@ -140,10 +136,10 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
               />
             </Col>
             <Col sm={6} md={4}>
-              <Form.Label>PIN</Form.Label>
+              <Form.Label>PIN (4–6 digits)</Form.Label>
               <Form.Control
                 type="password"
-                placeholder="4–6 characters"
+                placeholder="e.g., 1234"
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
               />
@@ -154,7 +150,7 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
             <Col sm="auto">
               <Form.Check
                 type="radio"
-                label="Sign in"
+                label="Sign in to existing account"
                 name="auth-mode"
                 id="auth-signin"
                 checked={mode === "signin"}
@@ -164,7 +160,7 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
             <Col sm="auto">
               <Form.Check
                 type="radio"
-                label="Create account"
+                label="Create new account"
                 name="auth-mode"
                 id="auth-create"
                 checked={mode === "create"}
@@ -190,10 +186,6 @@ export default function Auth({ currentUser, onSignIn, onSignOut }) {
           </Button>
         </div>
       )}
-
-      <p className="text-muted mt-3">
-        Your name and PIN are stored only in your browser for this demo.
-      </p>
     </Container>
   );
 }

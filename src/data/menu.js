@@ -13,11 +13,10 @@ export const DINING_HALLS = [
 const base = (id) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=600&q=80`;
 
-// Map item name -> image URL
-// (IDs chosen to be visually reasonable for each item)
+// Shared item -> image mapping. Items are a mix of
+// realistic campus options and typical college dining staples.
 const ITEM_IMAGES = {
   "Cheeseburger": base("photo-1550547660-d9450f859349"),
-  // veggie burger: different image, not pizza-looking
   "Veggie Burger": base("photo-1551782450-a2132b4ba21d"),
   "Chicken Tenders": base("photo-1625944520301-9a4ac2740d37"),
   "Cheese Pizza": base("photo-1548365328-9da4b7f5809c"),
@@ -47,10 +46,80 @@ const ITEM_IMAGES = {
   "Sushi Roll": base("photo-1562158075-8ba5f42b1c89"),
   "Ice Cream Sundae": base("photo-1527515637462-cff94eecc1ac"),
   "Chocolate Chip Cookies": base("photo-1541976076758-25e062ca1920"),
-  "Brownies": base("photo-1607958996333-41aef7caefaa")
+  "Brownies": base("photo-1607958996333-41aef7caefaa"),
+
+  // Extra items used for specific halls
+  "Soup of the Day": base("photo-1542838132-92c53300491e"),
+  "Protein Smoothie": base("photo-1514996937319-344454492b37"),
+  "Acai Bowl": base("photo-1512621776951-a57141f2eefd"),
+  "Peanut Butter Smoothie": base("photo-1504753793650-d4a2b783c15e")
 };
 
-export const ITEM_NAMES = Object.keys(ITEM_IMAGES);
+// Hall -> items mapping.
+// Partly inspired by real UW dining styles (via Nutrislice / Housing site)
+// and partly filled in with typical campus options.
+export const HALL_ITEMS = {
+  "Four Lakes Market": [
+    "Cheeseburger",
+    "Veggie Burger",
+    "Chicken Tenders",
+    "Pasta with Marinara",
+    "Pasta with Alfredo",
+    "Caesar Salad",
+    "Fruit Cup"
+  ],
+  "Gordon's Market": [
+    "Chicken Sandwich",
+    "Mac and Cheese",
+    "Cheese Pizza",
+    "Pepperoni Pizza",
+    "Garden Salad",
+    "Chili",
+    "Chocolate Chip Cookies"
+  ],
+  "Rheta's Market": [
+    "Omelet",
+    "Scrambled Eggs",
+    "Pancakes",
+    "Waffles",
+    "Yogurt Parfait",
+    "Brownies"
+  ],
+  "Carson's Market": [
+    "Turkey Sub",
+    "Ham & Cheese Sandwich",
+    "Bagel with Cream Cheese",
+    "Garden Salad",
+    "Soup of the Day",
+    "Chocolate Chip Cookies"
+  ],
+  "Liz's Market": [
+    "Fried Rice",
+    "Stir Fry Noodles",
+    "Tofu Stir Fry",
+    "Sushi Roll",
+    "Fruit Cup",
+    "Ice Cream Sundae"
+  ],
+  "Lowell Market": [
+    "Grilled Cheese",
+    "Mac and Cheese",
+    "Chicken Sandwich",
+    "Caesar Salad",
+    "Brownies"
+  ],
+  "Shake Smart": [
+    "Protein Smoothie",
+    "Acai Bowl",
+    "Peanut Butter Smoothie",
+    "Yogurt Parfait"
+  ]
+};
+
+// Flattened item list for things like global search if needed.
+export const ITEM_NAMES = Array.from(
+  new Set(Object.values(HALL_ITEMS).flat())
+);
 
 const FALLBACK_IMAGE = base("photo-1504674900247-0877df9cc836");
 
@@ -58,4 +127,11 @@ export function getImageForItem(name) {
   if (!name) return FALLBACK_IMAGE;
   const key = name.trim();
   return ITEM_IMAGES[key] || FALLBACK_IMAGE;
+}
+
+export function getItemsForHall(hallName) {
+  if (!hallName) {
+    return ITEM_NAMES;
+  }
+  return HALL_ITEMS[hallName] || ITEM_NAMES;
 }
