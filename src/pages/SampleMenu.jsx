@@ -1,13 +1,13 @@
-// src/pages/Menus.jsx
+// src/pages/SampleMenu.jsx
 import { useEffect, useMemo, useState } from "react";
 import { Container } from "react-bootstrap";
-import HallMenuStats from "../components/HallMenuStats.jsx";
+import CurrentMenuSection from "../components/CurrentMenuSection.jsx";
 import { getImageForItem } from "../data/menu.js";
 import { INITIAL_REVIEWS } from "../data/seedReviews.js";
 
 const STORAGE_KEY = "uwDiningReviews";
 
-export default function Menus() {
+export default function SampleMenu() {
   const [reviews, setReviews] = useState([]);
 
   // Load INITIAL_REVIEWS + user reviews from localStorage
@@ -40,23 +40,16 @@ export default function Menus() {
 
   return (
     <Container className="page">
-      <h1 className="h2">Menus &amp; Ratings Overview</h1>
+      <h1 className="h2">Sample Daily Menu</h1>
       <p className="text-muted">
-        This page shows a snapshot of core items at each dining hall, along
-        with average ratings and how many reviewers say they would order each
-        item again. Click an item name to jump into reviews filtered for that
-        hall and item.
+        This page shows a Nutrislice-inspired sample menu using items and
+        ratings from this site. Select a dining hall and meal to see what a
+        typical lineup might look like, along with how UW students rate each
+        item. For official menus and nutrition details, follow the Nutrislice
+        links.
       </p>
 
-      <section
-        aria-labelledby="menus-ratings-by-hall-heading"
-        className="mt-3"
-      >
-        <h2 id="menus-ratings-by-hall-heading" className="h3 mb-3">
-          Menus and Ratings by Dining Hall
-        </h2>
-        <HallMenuStats reviews={normalizedReviews} />
-      </section>
+      <CurrentMenuSection reviews={normalizedReviews} />
     </Container>
   );
 }

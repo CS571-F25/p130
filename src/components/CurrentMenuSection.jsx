@@ -59,7 +59,6 @@ const HALL_OPTIONS = [
 const MEAL_OPTIONS = ["Breakfast", "Lunch", "Dinner"];
 
 // Example "current menu" mapping by hall + meal.
-// Items are names that already exist in your menu/review data.
 const CURRENT_MENU = {
   "Carson's Market": {
     Breakfast: ["Bagel with Cream Cheese", "Yogurt Parfait"],
@@ -244,9 +243,9 @@ export default function CurrentMenuSection({ reviews }) {
         Today&apos;s Sample Menu
       </h2>
       <p className="text-muted">
-        This section mimics the style of the official Nutrislice menus using
-        data from this app. Select a dining hall and meal to see a sample
-        lineup and how students rate each item.
+        This page mimics the style of the official Nutrislice menus using data
+        from this app. Select a dining hall and meal to see a sample lineup and
+        how students rate each item.
       </p>
 
       <Card className="mb-3">

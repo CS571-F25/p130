@@ -1,54 +1,61 @@
-import { Navbar, Container, Nav } from "react-bootstrap";
-import { Link } from "react-router-dom";
+// src/components/SiteNav.jsx
+import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
 
-export default function SiteNav({ currentUser, onSignOut }) {
-  const isSignedIn = !!currentUser;
+export default function SiteNav({ currentUser, onLogout }) {
+  const handleLogoutClick = (e) => {
+    e.preventDefault();
+    onLogout?.();
+  };
 
   return (
-    <Navbar bg="light" expand="md" className="border-bottom">
+    <Navbar expand="md" className="mb-3" sticky="top">
       <Container>
-        <Navbar.Brand as={Link} to="/">
+        <Navbar.Brand as={NavLink} to="/">
           UW Dining Reviews
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="site-nav" />
-        <Navbar.Collapse id="site-nav">
+        <Navbar.Toggle aria-controls="main-nav" />
+        <Navbar.Collapse id="main-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/reviews">
+            <Nav.Link as={NavLink} to="/" end>
+              Home
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/reviews">
               Reviews
             </Nav.Link>
-            <Nav.Link as={Link} to="/menus">
-              Menus & Ratings
+            <Nav.Link as={NavLink} to="/menus">
+              Menus &amp; Ratings
             </Nav.Link>
-
-            {!isSignedIn ? (
-              <Nav.Link as={Link} to="/auth">
-                Sign up / Login
-              </Nav.Link>
-            ) : (
-              <Nav.Link
-                onClick={(e) => {
-                  e.preventDefault();
-                  onSignOut?.();
-                }}
-              >
-                Sign Out
-              </Nav.Link>
-            )}
-
-            <Nav.Link as={Link} to="/about">
+            <Nav.Link as={NavLink} to="/sample-menu">
+              Sample Menu
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/stats">
+              My Stats
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/about">
               About
             </Nav.Link>
           </Nav>
-
-          <div className="d-flex align-items-center gap-2">
-            {isSignedIn ? (
-              <span className="text-muted small">
-                Signed in as <strong>{currentUser}</strong>
-              </span>
+          <Nav className="ms-auto align-items-center">
+            {currentUser ? (
+              <>
+                <span className="me-2 small text-muted">
+                  Signed in as <strong>{currentUser}</strong>
+                </span>
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  onClick={handleLogoutClick}
+                >
+                  Sign Out
+                </Button>
+              </>
             ) : (
-              <span className="text-muted small">Not signed in</span>
+              <Nav.Link as={NavLink} to="/auth">
+                Sign up / Login
+              </Nav.Link>
             )}
-          </div>
+          </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
