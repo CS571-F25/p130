@@ -4,12 +4,11 @@ import { Row, Col, Form } from "react-bootstrap";
 export default function SearchBar({
   diningHalls,
   items,
-  users,
   selectedHall,
   onHallChange,
   selectedItem,
   onItemChange,
-  selectedUser,
+  userFilter,
   onUserChange,
   searchText,
   onSearchTextChange,
@@ -40,8 +39,11 @@ export default function SearchBar({
             <Form.Select
               value={selectedItem}
               onChange={(e) => onItemChange(e.target.value)}
+              disabled={items.length === 0}
             >
-              <option value="">All items</option>
+              <option value="">
+                {items.length === 0 ? "Select a hall first" : "All items"}
+              </option>
               {items.map((item) => (
                 <option key={item} value={item}>
                   {item}
@@ -54,17 +56,12 @@ export default function SearchBar({
         <Col xs={12} md={3}>
           <Form.Group controlId="filterUser">
             <Form.Label>Reviewer</Form.Label>
-            <Form.Select
-              value={selectedUser}
+            <Form.Control
+              type="text"
+              placeholder="Filter by username…"
+              value={userFilter}
               onChange={(e) => onUserChange(e.target.value)}
-            >
-              <option value="">All users</option>
-              {users.map((user) => (
-                <option key={user} value={user}>
-                  {user}
-                </option>
-              ))}
-            </Form.Select>
+            />
           </Form.Group>
         </Col>
 

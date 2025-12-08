@@ -45,33 +45,28 @@ export default function Reviews({ currentUser }) {
     [userReviews]
   );
 
-  // Build item list dynamically from all reviews
+  // Items are filtered down to only items at the currently selected hall
   const itemOptions = useMemo(() => {
     const set = new Set();
     allReviews.forEach((r) => {
-      if (r.item) {
-        set.add(r.item);
-      }
+      if (!r.item) return;
+      if (hallFilter && r.hall !== hallFilter) return;
+      set.add(r.item);
     });
     return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [allReviews]);
-
-  // Build user list dynamically from all reviews
-  const userOptions = useMemo(() => {
-    const set = new Set();
-    allReviews.forEach((r) => {
-      if (r.author) {
-        set.add(r.author);
-      }
-    });
-    return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [allReviews]);
+  }, [allReviews, hallFilter]);
 
   const filteredReviews = useMemo(() => {
     return allReviews.filter((r) => {
       if (hallFilter && r.hall !== hallFilter) return false;
       if (itemFilter && r.item !== itemFilter) return false;
-      if (userFilter && r.author !== userFilter) return false;
+
+      // text-based reviewer filter (substring, case-insensitive)
+      if (userFilter.trim()) {
+        const needle = userFilter.trim().toLowerCase();
+        const author = (r.author || "").toLowerCase();
+        if (!author.includes(needle)) return false;
+      }
 
       if (searchText.trim()) {
         const needle = searchText.trim().toLowerCase();
@@ -134,12 +129,12 @@ export default function Reviews({ currentUser }) {
       <SearchBar
         diningHalls={DINING_HALLS}
         items={itemOptions}
-        users={userOptions}
+        // reviewer filter now a text box
         selectedHall={hallFilter}
         onHallChange={setHallFilter}
         selectedItem={itemFilter}
         onItemChange={setItemFilter}
-        selectedUser={userFilter}
+        userFilter={userFilter}
         onUserChange={setUserFilter}
         searchText={searchText}
         onSearchTextChange={setSearchText}
