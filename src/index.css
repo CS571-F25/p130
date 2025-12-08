@@ -4,12 +4,12 @@
   line-height: 1.5;
   font-weight: 400;
 
-  /* UW-ish theme colors */
+  /* UW theme palette */
   --uw-primary: #c5050c;       /* UW red */
   --uw-primary-dark: #8e0509;
-  --uw-bg-dark: #0f172a;       /* deep navy overlay */
+  --uw-bg-overlay: #0b1120;    /* deep navy overlay */
   --uw-text: #111827;          /* main text on light */
-  --uw-text-on-dark: #f9fafb;  /* text on background image */
+  --uw-text-on-dark: #f9fafb;  /* text on image bg */
 
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -26,14 +26,15 @@ body {
   margin: 0;
   min-height: 100vh;
 
-  /* UW-themed background: gradient + photo you add as /public/uw-campus.jpg */
+  /* UW hero background: dark red/navy gradient over your campus image */
   background:
+    radial-gradient(circle at top, rgba(197, 5, 12, 0.65), transparent 55%),
     linear-gradient(
       135deg,
-      rgba(15, 23, 42, 0.9),
-      rgba(15, 23, 42, 0.7)
+      rgba(11, 17, 32, 0.9),
+      rgba(11, 17, 32, 0.75)
     ),
-    url("/uw-campus.jpg") center / cover fixed no-repeat;
+    url("/uw-hero.jpg") center / cover fixed no-repeat;
 
   color: var(--uw-text-on-dark);
 }
@@ -46,15 +47,18 @@ body {
   background: rgba(255, 255, 255, 0.96);
   color: var(--uw-text);
   border-radius: 1.25rem;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.5);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(6px);
 }
 
 /* Headings */
 h1,
 .h1,
+h2,
 .h2,
+h3,
 .h3,
+h4,
 .h4 {
   color: var(--uw-text);
 }
@@ -69,7 +73,7 @@ a:focus {
   text-decoration: underline;
 }
 
-/* Navbar theming */
+/* Navbar */
 .navbar {
   background-color: rgba(255, 255, 255, 0.96) !important;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
@@ -128,8 +132,9 @@ a:focus {
   background-color: #f3f4f6;
 }
 
-/* Badges + text-primary + pagination in UW red instead of light blue */
-.badge.bg-primary {
+/* Badges / primary text / pagination tuned to UW red instead of bootstrap blue */
+.badge.bg-primary,
+.badge.text-bg-primary {
   background-color: var(--uw-primary) !important;
 }
 .text-primary {
@@ -143,12 +148,12 @@ a:focus {
   color: var(--uw-primary-dark);
 }
 
-/* Muted text tuned to theme */
+/* Muted text */
 .text-muted {
   color: #6b7280 !important;
 }
 
-/* Small helper for intro card on home */
+/* Helper for intro card on home */
 .page-intro-card {
   margin-bottom: 1.5rem;
 }

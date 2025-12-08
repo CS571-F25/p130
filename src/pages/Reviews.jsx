@@ -5,43 +5,14 @@ import SearchBar from "../components/SearchBar.jsx";
 import ReviewForm from "../components/ReviewForm.jsx";
 import ReviewList from "../components/ReviewList.jsx";
 import { getImageForItem } from "../data/menu.js";
+import { INITIAL_REVIEWS } from "../data/seedReviews.js";
 
 const STORAGE_KEY = "uwDiningReviews";
-
-const INITIAL = [
-  {
-    id: "seed-1",
-    hall: "Four Lakes Market",
-    item: "Cheeseburger",
-    rating: 4,
-    wouldAgain: true,
-    text: "Juicy patty, fresh toppings. Bun a little dry.",
-    author: "sample-user"
-  },
-  {
-    id: "seed-2",
-    hall: "Gordon's Market",
-    item: "Chicken Tenders",
-    rating: 5,
-    wouldAgain: true,
-    text: "Crispy and hot, would devour again.",
-    author: "sample-user"
-  },
-  {
-    id: "seed-3",
-    hall: "Rheta's Market",
-    item: "Veggie Burger",
-    rating: 3,
-    wouldAgain: false,
-    text: "Pretty average, good if you're in a rush.",
-    author: "sample-user"
-  }
-];
 
 export default function Reviews({ currentUser }) {
   const location = useLocation();
 
-  const [reviews, setReviews] = useState(INITIAL);
+  const [reviews, setReviews] = useState(INITIAL_REVIEWS);
   const [hall, setHall] = useState("");
   const [item, setItem] = useState("");
   const [showForm, setShowForm] = useState(false);
