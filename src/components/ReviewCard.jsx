@@ -1,77 +1,60 @@
-// src/components/ReviewCard.jsx
-import { Card, Button, Badge } from "react-bootstrap";
+import React from "react";
+import { Card, Button } from "react-bootstrap";
 import RatingStars from "./RatingStars.jsx";
-import { getImageForItem } from "../data/menu.js";
+import FoodIcon from "./FoodIcon.jsx";
 
 export default function ReviewCard({ review, currentUser, onDelete }) {
-  const canDelete =
-    currentUser &&
-    review.author &&
-    review.author === currentUser &&
-    !String(review.id).startsWith("seed-");
-
   const handleDelete = () => {
-    if (!canDelete) return;
-    onDelete?.(review.id);
+    if (onDelete) {
+      onDelete(review.id);
+    }
   };
 
-  const imageUrl = getImageForItem(review.item);
+  const canDelete = currentUser && review.username === currentUser;
 
   return (
-    <Card className="review-card h-100">
-      <Card.Body className="d-flex">
-        <div className="item-image-circle" aria-hidden="true">
-          <img
-            src={imageUrl}
-            alt={review.item}
-            className="item-image-photo"
-          />
+    <Card className="mb-3 shadow-sm review-card" aria-label="Dining review">
+      <Card.Body className="d-flex flex-row">
+        <div className="me-3 d-flex align-items-center">
+          <FoodIcon itemName={review.item} />
         </div>
+
         <div className="flex-grow-1">
-          <div className="d-flex justify-content-between align-items-start mb-1">
-            <div>
-              <h2 className="h5 mb-0">{review.item}</h2>
-              <p className="mb-1 text-muted small">{review.hall}</p>
-            </div>
-            <div className="text-end">
-              <RatingStars rating={review.rating} />
-              <div className="small text-muted">
-                {review.rating.toFixed
-                  ? review.rating.toFixed(1)
-                  : review.rating}
-                /5
-              </div>
-            </div>
+          <Card.Title as="h3" className="h5 mb-1">
+            {review.hall} — {review.item}
+          </Card.Title>
+
+          <div className="mb-1">
+            <strong>Rating: </strong>
+            <RatingStars rating={review.rating} />
           </div>
 
-          {review.text && <p className="mb-2">{review.text}</p>}
-
-          <div className="d-flex justify-content-between align-items-center">
-            <div className="small text-muted">
-              <span>
-                By <strong>{review.author || "Anonymous"}</strong>
-              </span>
-              {" • "}
-              <span>
-                Would order again:{" "}
-                {review.wouldAgain ? (
-                  <Badge bg="success">Yes</Badge>
-                ) : (
-                  <Badge bg="secondary">No</Badge>
-                )}
-              </span>
-            </div>
-            {canDelete && (
-              <Button
-                variant="outline-danger"
-                size="sm"
-                onClick={handleDelete}
-              >
-                Delete
-              </Button>
-            )}
+          <div className="mb-1">
+            <strong>Would order again?</strong>{" "}
+            {review.wouldOrderAgain ? "Yes" : "No"}
           </div>
+
+          {review.text && (
+            <Card.Text className="mb-1">{review.text}</Card.Text>
+          )}
+
+          <Card.Text className="text-muted mb-0" as="small">
+            by {review.username}
+          </Card.Text>
         </div>
+
+        {canDelete && (
+          <div className="ms-3 d-flex align-items-start">
+            <Button
+              variant="outline-danger"
+              size="sm"
+              onClick={handleDelete}
+              aria-label="Delete this review"
+            >
+              Delete
+            </Button>
+          </div>
+        )}
       </Card.Body>
     </Card>
   );

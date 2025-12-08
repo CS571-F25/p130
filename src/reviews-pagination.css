@@ -1,0 +1,21 @@
+/* Red-themed pagination for the Reviews page */
+
+.pagination-red .page-link {
+  color: #c5050c;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.pagination-red .page-link:hover {
+  color: #8b0009;
+  border-color: #c5050c;
+}
+
+.pagination-red .page-item.active .page-link {
+  background-color: #c5050c !important;
+  border-color: #c5050c !important;
+  color: #ffffff !important;
+}
+
+.pagination-red .page-link:focus {
+  box-shadow: 0 0 0 0.12rem rgba(197, 5, 12, 0.4);
+}

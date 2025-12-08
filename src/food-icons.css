@@ -1,0 +1,56 @@
+.food-icon {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  min-width: 140px;
+  height: 90px;
+  border-radius: 12px;
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  background: linear-gradient(
+    135deg,
+    rgba(197, 5, 12, 0.08),
+    rgba(255, 255, 255, 0.95)
+  );
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.food-icon-emoji {
+  font-size: 2.1rem;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.food-icon-label {
+  font-size: 0.7rem;
+  text-align: center;
+  color: #212529;
+}
+
+/* Slight variants by category for fun */
+.food-icon-burger {
+  border-color: rgba(197, 5, 12, 0.5);
+}
+
+.food-icon-pizza {
+  border-color: rgba(255, 153, 0, 0.7);
+}
+
+.food-icon-salad,
+.food-icon-bowl {
+  border-color: rgba(0, 128, 0, 0.5);
+}
+
+.food-icon-dessert {
+  border-color: rgba(153, 51, 153, 0.5);
+}
+
+.food-icon-drink {
+  border-color: rgba(0, 102, 204, 0.6);
+}
+
+.food-icon-breakfast {
+  border-color: rgba(255, 204, 0, 0.7);
+}
