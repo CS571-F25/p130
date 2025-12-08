@@ -1,7 +1,11 @@
 // src/data/seedReviews.js
 
+// Seed reviews used across both the Reviews and Menus pages.
+// IDs starting with "seed-" are treated as built-in data;
+// user reviews are stored separately in localStorage.
+
 export const INITIAL_REVIEWS = [
-  // Four Lakes Market
+  // ========== FOUR LAKES MARKET ==========
   {
     id: "seed-1",
     hall: "Four Lakes Market",
@@ -14,6 +18,24 @@ export const INITIAL_REVIEWS = [
   {
     id: "seed-2",
     hall: "Four Lakes Market",
+    item: "Cheeseburger",
+    rating: 2,
+    wouldAgain: false,
+    text: "Mine was lukewarm and the cheese barely melted.",
+    author: "late-to-lunch"
+  },
+  {
+    id: "seed-3",
+    hall: "Four Lakes Market",
+    item: "Cheeseburger",
+    rating: 3,
+    wouldAgain: false,
+    text: "Edible, but the patty is pretty thin. Fries were better than the burger.",
+    author: "burger-critic"
+  },
+  {
+    id: "seed-4",
+    hall: "Four Lakes Market",
     item: "Veggie Burger",
     rating: 3,
     wouldAgain: false,
@@ -21,7 +43,25 @@ export const INITIAL_REVIEWS = [
     author: "plant-powered-badger"
   },
   {
-    id: "seed-3",
+    id: "seed-5",
+    hall: "Four Lakes Market",
+    item: "Veggie Burger",
+    rating: 2,
+    wouldAgain: false,
+    text: "Texture was off and bun was soggy. Sauce helps a little.",
+    author: "texture-enjoyer-not"
+  },
+  {
+    id: "seed-6",
+    hall: "Four Lakes Market",
+    item: "Veggie Burger",
+    rating: 4,
+    wouldAgain: true,
+    text: "Honestly pretty good with extra toppings and hot off the grill.",
+    author: "veg-head"
+  },
+  {
+    id: "seed-7",
     hall: "Four Lakes Market",
     item: "Chicken Tenders",
     rating: 5,
@@ -30,7 +70,25 @@ export const INITIAL_REVIEWS = [
     author: "late-night-lakes"
   },
   {
-    id: "seed-4",
+    id: "seed-8",
+    hall: "Four Lakes Market",
+    item: "Chicken Tenders",
+    rating: 3,
+    wouldAgain: true,
+    text: "Great when fresh, mid when they've been sitting under the lamp.",
+    author: "heat-lamp-hater"
+  },
+  {
+    id: "seed-9",
+    hall: "Four Lakes Market",
+    item: "Chicken Tenders",
+    rating: 2,
+    wouldAgain: false,
+    text: "Mine were dry and overcooked. Sauce saved them a bit.",
+    author: "tender-skeptic"
+  },
+  {
+    id: "seed-10",
     hall: "Four Lakes Market",
     item: "Pasta with Marinara",
     rating: 4,
@@ -39,7 +97,16 @@ export const INITIAL_REVIEWS = [
     author: "pasta-person"
   },
   {
-    id: "seed-5",
+    id: "seed-11",
+    hall: "Four Lakes Market",
+    item: "Pasta with Marinara",
+    rating: 3,
+    wouldAgain: false,
+    text: "Noodles were slightly overcooked, but still fine with parmesan.",
+    author: "al-dente-enjoyer"
+  },
+  {
+    id: "seed-12",
     hall: "Four Lakes Market",
     item: "Pasta with Alfredo",
     rating: 3,
@@ -48,7 +115,16 @@ export const INITIAL_REVIEWS = [
     author: "cream-overload"
   },
   {
-    id: "seed-6",
+    id: "seed-13",
+    hall: "Four Lakes Market",
+    item: "Pasta with Alfredo",
+    rating: 1,
+    wouldAgain: false,
+    text: "Sauce was gluey and weirdly sweet. Hard pass.",
+    author: "alfredo-anti"
+  },
+  {
+    id: "seed-14",
     hall: "Four Lakes Market",
     item: "Caesar Salad",
     rating: 4,
@@ -57,7 +133,16 @@ export const INITIAL_REVIEWS = [
     author: "salad-simp"
   },
   {
-    id: "seed-7",
+    id: "seed-15",
+    hall: "Four Lakes Market",
+    item: "Caesar Salad",
+    rating: 2,
+    wouldAgain: false,
+    text: "Lots of croutons, not much lettuce. Dressing was watered down.",
+    author: "roughage-enjoyer"
+  },
+  {
+    id: "seed-16",
     hall: "Four Lakes Market",
     item: "Fruit Cup",
     rating: 5,
@@ -65,10 +150,19 @@ export const INITIAL_REVIEWS = [
     text: "Surprisingly fresh, good mix of fruit and not all melon.",
     author: "vitamin-c-enjoyer"
   },
-
-  // Gordon's Market
   {
-    id: "seed-8",
+    id: "seed-17",
+    hall: "Four Lakes Market",
+    item: "Fruit Cup",
+    rating: 3,
+    wouldAgain: true,
+    text: "Depends on the day; decent snack between classes.",
+    author: "quick-snack"
+  },
+
+  // ========== GORDON'S MARKET ==========
+  {
+    id: "seed-18",
     hall: "Gordon's Market",
     item: "Chicken Sandwich",
     rating: 4,
@@ -77,7 +171,25 @@ export const INITIAL_REVIEWS = [
     author: "gordons-regular"
   },
   {
-    id: "seed-9",
+    id: "seed-19",
+    hall: "Gordon's Market",
+    item: "Chicken Sandwich",
+    rating: 2,
+    wouldAgain: false,
+    text: "Mine was dry and the lettuce was sad. Wouldn't recommend at rush hour.",
+    author: "sandwich-sadness"
+  },
+  {
+    id: "seed-20",
+    hall: "Gordon's Market",
+    item: "Chicken Sandwich",
+    rating: 3,
+    wouldAgain: true,
+    text: "Pretty average sandwich. Ask for extra sauce and it’s fine.",
+    author: "condiment-maxxer"
+  },
+  {
+    id: "seed-21",
     hall: "Gordon's Market",
     item: "Chicken Tenders",
     rating: 5,
@@ -86,7 +198,25 @@ export const INITIAL_REVIEWS = [
     author: "tender-enjoyer"
   },
   {
-    id: "seed-10",
+    id: "seed-22",
+    hall: "Gordon's Market",
+    item: "Chicken Tenders",
+    rating: 4,
+    wouldAgain: true,
+    text: "Portion size is great, fries can be hit or miss.",
+    author: "fries-optional"
+  },
+  {
+    id: "seed-23",
+    hall: "Gordon's Market",
+    item: "Chicken Tenders",
+    rating: 2,
+    wouldAgain: false,
+    text: "All breading, not much chicken. Kind of disappointing.",
+    author: "breading-overload"
+  },
+  {
+    id: "seed-24",
     hall: "Gordon's Market",
     item: "Mac and Cheese",
     rating: 4,
@@ -95,7 +225,25 @@ export const INITIAL_REVIEWS = [
     author: "mac-maxxer"
   },
   {
-    id: "seed-11",
+    id: "seed-25",
+    hall: "Gordon's Market",
+    item: "Mac and Cheese",
+    rating: 3,
+    wouldAgain: true,
+    text: "Starts out great but congeals if you talk too long.",
+    author: "chatty-eater"
+  },
+  {
+    id: "seed-26",
+    hall: "Gordon's Market",
+    item: "Mac and Cheese",
+    rating: 1,
+    wouldAgain: false,
+    text: "Tasted like plain noodles in yellow sauce. No thanks.",
+    author: "mac-hater"
+  },
+  {
+    id: "seed-27",
     hall: "Gordon's Market",
     item: "Cheese Pizza",
     rating: 3,
@@ -104,7 +252,16 @@ export const INITIAL_REVIEWS = [
     author: "pizza-on-campus"
   },
   {
-    id: "seed-12",
+    id: "seed-28",
+    hall: "Gordon's Market",
+    item: "Cheese Pizza",
+    rating: 2,
+    wouldAgain: false,
+    text: "Very greasy and the crust was floppy when I got it.",
+    author: "flop-dodger"
+  },
+  {
+    id: "seed-29",
     hall: "Gordon's Market",
     item: "Pepperoni Pizza",
     rating: 4,
@@ -113,7 +270,16 @@ export const INITIAL_REVIEWS = [
     author: "midterm-survivor"
   },
   {
-    id: "seed-13",
+    id: "seed-30",
+    hall: "Gordon's Market",
+    item: "Pepperoni Pizza",
+    rating: 3,
+    wouldAgain: true,
+    text: "Sometimes the pepperoni is crispy, sometimes chewy.",
+    author: "pepperoni-purist"
+  },
+  {
+    id: "seed-31",
     hall: "Gordon's Market",
     item: "Garden Salad",
     rating: 3,
@@ -122,7 +288,16 @@ export const INITIAL_REVIEWS = [
     author: "trying-to-be-healthy"
   },
   {
-    id: "seed-14",
+    id: "seed-32",
+    hall: "Gordon's Market",
+    item: "Garden Salad",
+    rating: 2,
+    wouldAgain: false,
+    text: "Lots of iceberg, not many other veggies.",
+    author: "variety-seeker"
+  },
+  {
+    id: "seed-33",
     hall: "Gordon's Market",
     item: "Chili",
     rating: 4,
@@ -131,7 +306,16 @@ export const INITIAL_REVIEWS = [
     author: "chili-chaser"
   },
   {
-    id: "seed-15",
+    id: "seed-34",
+    hall: "Gordon's Market",
+    item: "Chili",
+    rating: 3,
+    wouldAgain: true,
+    text: "More beans than meat, but still comforting.",
+    author: "bean-enjoyer"
+  },
+  {
+    id: "seed-35",
     hall: "Gordon's Market",
     item: "Chocolate Chip Cookies",
     rating: 5,
@@ -139,10 +323,19 @@ export const INITIAL_REVIEWS = [
     text: "Warm, soft, and dangerous. Easy to eat three.",
     author: "cookie-bandit"
   },
-
-  // Rheta's Market
   {
-    id: "seed-16",
+    id: "seed-36",
+    hall: "Gordon's Market",
+    item: "Chocolate Chip Cookies",
+    rating: 4,
+    wouldAgain: true,
+    text: "Sometimes overbaked, but still good with milk.",
+    author: "cookie-critic"
+  },
+
+  // ========== RHETA'S MARKET ==========
+  {
+    id: "seed-37",
     hall: "Rheta's Market",
     item: "Omelet",
     rating: 5,
@@ -151,7 +344,16 @@ export const INITIAL_REVIEWS = [
     author: "eggs-for-days"
   },
   {
-    id: "seed-17",
+    id: "seed-38",
+    hall: "Rheta's Market",
+    item: "Omelet",
+    rating: 3,
+    wouldAgain: true,
+    text: "Depends who’s on the grill. Sometimes a little under-seasoned.",
+    author: "griddle-gambler"
+  },
+  {
+    id: "seed-39",
     hall: "Rheta's Market",
     item: "Scrambled Eggs",
     rating: 3,
@@ -160,7 +362,16 @@ export const INITIAL_REVIEWS = [
     author: "sleepy-bruncher"
   },
   {
-    id: "seed-18",
+    id: "seed-40",
+    hall: "Rheta's Market",
+    item: "Scrambled Eggs",
+    rating: 2,
+    wouldAgain: false,
+    text: "Weird texture, but hot sauce helps.",
+    author: "sauce-fixer"
+  },
+  {
+    id: "seed-41",
     hall: "Rheta's Market",
     item: "Pancakes",
     rating: 4,
@@ -169,7 +380,16 @@ export const INITIAL_REVIEWS = [
     author: "syrup-enjoyer"
   },
   {
-    id: "seed-19",
+    id: "seed-42",
+    hall: "Rheta's Market",
+    item: "Pancakes",
+    rating: 2,
+    wouldAgain: false,
+    text: "Kind of gummy when they sit for a while.",
+    author: "texture-sensitive"
+  },
+  {
+    id: "seed-43",
     hall: "Rheta's Market",
     item: "Waffles",
     rating: 4,
@@ -178,7 +398,16 @@ export const INITIAL_REVIEWS = [
     author: "waffle-warrior"
   },
   {
-    id: "seed-20",
+    id: "seed-44",
+    hall: "Rheta's Market",
+    item: "Waffles",
+    rating: 3,
+    wouldAgain: true,
+    text: "Sometimes undercooked in the middle if you're impatient.",
+    author: "waffle-impatient"
+  },
+  {
+    id: "seed-45",
     hall: "Rheta's Market",
     item: "Yogurt Parfait",
     rating: 5,
@@ -187,7 +416,16 @@ export const INITIAL_REVIEWS = [
     author: "light-breakfast"
   },
   {
-    id: "seed-21",
+    id: "seed-46",
+    hall: "Rheta's Market",
+    item: "Yogurt Parfait",
+    rating: 3,
+    wouldAgain: true,
+    text: "Granola can be a little stale, but still solid.",
+    author: "granola-checker"
+  },
+  {
+    id: "seed-47",
     hall: "Rheta's Market",
     item: "Brownies",
     rating: 4,
@@ -195,10 +433,19 @@ export const INITIAL_REVIEWS = [
     text: "Dense and fudgy, a bit sweet but hits the spot.",
     author: "dessert-devotee"
   },
-
-  // Carson's Market
   {
-    id: "seed-22",
+    id: "seed-48",
+    hall: "Rheta's Market",
+    item: "Brownies",
+    rating: 2,
+    wouldAgain: false,
+    text: "Mine was super dry on the edges.",
+    author: "brownie-purist"
+  },
+
+  // ========== CARSON'S MARKET ==========
+  {
+    id: "seed-49",
     hall: "Carson's Market",
     item: "Turkey Sub",
     rating: 4,
@@ -207,7 +454,16 @@ export const INITIAL_REVIEWS = [
     author: "carsons-commuter"
   },
   {
-    id: "seed-23",
+    id: "seed-50",
+    hall: "Carson's Market",
+    item: "Turkey Sub",
+    rating: 3,
+    wouldAgain: true,
+    text: "Good with extra veggies, but a bit plain otherwise.",
+    author: "sandwich-customizer"
+  },
+  {
+    id: "seed-51",
     hall: "Carson's Market",
     item: "Ham & Cheese Sandwich",
     rating: 3,
@@ -216,7 +472,16 @@ export const INITIAL_REVIEWS = [
     author: "sandwich-neutral"
   },
   {
-    id: "seed-24",
+    id: "seed-52",
+    hall: "Carson's Market",
+    item: "Ham & Cheese Sandwich",
+    rating: 2,
+    wouldAgain: false,
+    text: "Cheese didn’t melt and the ham tasted watery.",
+    author: "ham-hater"
+  },
+  {
+    id: "seed-53",
     hall: "Carson's Market",
     item: "Bagel with Cream Cheese",
     rating: 4,
@@ -225,7 +490,16 @@ export const INITIAL_REVIEWS = [
     author: "morning-walker"
   },
   {
-    id: "seed-25",
+    id: "seed-54",
+    hall: "Carson's Market",
+    item: "Bagel with Cream Cheese",
+    rating: 2,
+    wouldAgain: false,
+    text: "Stale bagel, cream cheese helped but still meh.",
+    author: "bagel-snob"
+  },
+  {
+    id: "seed-55",
     hall: "Carson's Market",
     item: "Garden Salad",
     rating: 3,
@@ -234,7 +508,7 @@ export const INITIAL_REVIEWS = [
     author: "greens-on-the-side"
   },
   {
-    id: "seed-26",
+    id: "seed-56",
     hall: "Carson's Market",
     item: "Soup of the Day",
     rating: 4,
@@ -243,7 +517,16 @@ export const INITIAL_REVIEWS = [
     author: "soup-enjoyer"
   },
   {
-    id: "seed-27",
+    id: "seed-57",
+    hall: "Carson's Market",
+    item: "Soup of the Day",
+    rating: 2,
+    wouldAgain: false,
+    text: "One day it tasted like straight salt. Check before committing.",
+    author: "sodium-aware"
+  },
+  {
+    id: "seed-58",
     hall: "Carson's Market",
     item: "Chocolate Chip Cookies",
     rating: 4,
@@ -252,9 +535,9 @@ export const INITIAL_REVIEWS = [
     author: "cookie-tourist"
   },
 
-  // Liz's Market
+  // ========== LIZ'S MARKET ==========
   {
-    id: "seed-28",
+    id: "seed-59",
     hall: "Liz's Market",
     item: "Fried Rice",
     rating: 4,
@@ -263,7 +546,16 @@ export const INITIAL_REVIEWS = [
     author: "stirfry-lover"
   },
   {
-    id: "seed-29",
+    id: "seed-60",
+    hall: "Liz's Market",
+    item: "Fried Rice",
+    rating: 2,
+    wouldAgain: false,
+    text: "Rice was dry and clumpy the day I tried it.",
+    author: "rice-texture-enjoyer"
+  },
+  {
+    id: "seed-61",
     hall: "Liz's Market",
     item: "Stir Fry Noodles",
     rating: 5,
@@ -272,7 +564,16 @@ export const INITIAL_REVIEWS = [
     author: "noodle-maxxer"
   },
   {
-    id: "seed-30",
+    id: "seed-62",
+    hall: "Liz's Market",
+    item: "Stir Fry Noodles",
+    rating: 3,
+    wouldAgain: true,
+    text: "Sometimes a bit too saucy, but still good.",
+    author: "sauce-okay"
+  },
+  {
+    id: "seed-63",
     hall: "Liz's Market",
     item: "Tofu Stir Fry",
     rating: 4,
@@ -281,7 +582,16 @@ export const INITIAL_REVIEWS = [
     author: "plant-based-badger"
   },
   {
-    id: "seed-31",
+    id: "seed-64",
+    hall: "Liz's Market",
+    item: "Tofu Stir Fry",
+    rating: 2,
+    wouldAgain: false,
+    text: "Tofu was spongy and under-seasoned the day I went.",
+    author: "tofu-picky"
+  },
+  {
+    id: "seed-65",
     hall: "Liz's Market",
     item: "Sushi Roll",
     rating: 3,
@@ -290,7 +600,16 @@ export const INITIAL_REVIEWS = [
     author: "sushi-snob"
   },
   {
-    id: "seed-32",
+    id: "seed-66",
+    hall: "Liz's Market",
+    item: "Sushi Roll",
+    rating: 2,
+    wouldAgain: false,
+    text: "Seaweed was chewy and rice was cold.",
+    author: "roll-regret"
+  },
+  {
+    id: "seed-67",
     hall: "Liz's Market",
     item: "Fruit Cup",
     rating: 4,
@@ -299,7 +618,7 @@ export const INITIAL_REVIEWS = [
     author: "fruit-enjoyer"
   },
   {
-    id: "seed-33",
+    id: "seed-68",
     hall: "Liz's Market",
     item: "Ice Cream Sundae",
     rating: 5,
@@ -307,10 +626,19 @@ export const INITIAL_REVIEWS = [
     text: "Ice cream bar is goated, toppings are fun.",
     author: "sundae-simp"
   },
-
-  // Lowell Market
   {
-    id: "seed-34",
+    id: "seed-69",
+    hall: "Liz's Market",
+    item: "Ice Cream Sundae",
+    rating: 3,
+    wouldAgain: true,
+    text: "Sometimes the soft serve is too melty, but still good.",
+    author: "soft-serve-monitor"
+  },
+
+  // ========== LOWELL MARKET ==========
+  {
+    id: "seed-70",
     hall: "Lowell Market",
     item: "Grilled Cheese",
     rating: 4,
@@ -319,7 +647,16 @@ export const INITIAL_REVIEWS = [
     author: "comfort-food-core"
   },
   {
-    id: "seed-35",
+    id: "seed-71",
+    hall: "Lowell Market",
+    item: "Grilled Cheese",
+    rating: 2,
+    wouldAgain: false,
+    text: "Burnt outside, cold cheese inside. Rough.",
+    author: "grilled-cheese-critic"
+  },
+  {
+    id: "seed-72",
     hall: "Lowell Market",
     item: "Mac and Cheese",
     rating: 3,
@@ -328,7 +665,16 @@ export const INITIAL_REVIEWS = [
     author: "mac-again"
   },
   {
-    id: "seed-36",
+    id: "seed-73",
+    hall: "Lowell Market",
+    item: "Mac and Cheese",
+    rating: 2,
+    wouldAgain: false,
+    text: "Very bland, needed a ton of salt and pepper.",
+    author: "seasoning-advocate"
+  },
+  {
+    id: "seed-74",
     hall: "Lowell Market",
     item: "Chicken Sandwich",
     rating: 4,
@@ -337,7 +683,16 @@ export const INITIAL_REVIEWS = [
     author: "lowell-lunch"
   },
   {
-    id: "seed-37",
+    id: "seed-75",
+    hall: "Lowell Market",
+    item: "Chicken Sandwich",
+    rating: 3,
+    wouldAgain: true,
+    text: "Not amazing but gets the job done.",
+    author: "lunch-rush"
+  },
+  {
+    id: "seed-76",
     hall: "Lowell Market",
     item: "Caesar Salad",
     rating: 3,
@@ -346,7 +701,7 @@ export const INITIAL_REVIEWS = [
     author: "salad-honest"
   },
   {
-    id: "seed-38",
+    id: "seed-77",
     hall: "Lowell Market",
     item: "Brownies",
     rating: 5,
@@ -354,10 +709,19 @@ export const INITIAL_REVIEWS = [
     text: "Warm and gooey when fresh, absolute W.",
     author: "brownie-enjoyer"
   },
-
-  // Shake Smart
   {
-    id: "seed-39",
+    id: "seed-78",
+    hall: "Lowell Market",
+    item: "Brownies",
+    rating: 3,
+    wouldAgain: true,
+    text: "Still good even when cooled down, just less special.",
+    author: "sweet-tooth"
+  },
+
+  // ========== SHAKE SMART ==========
+  {
+    id: "seed-79",
     hall: "Shake Smart",
     item: "Protein Smoothie",
     rating: 5,
@@ -366,7 +730,25 @@ export const INITIAL_REVIEWS = [
     author: "gym-badger"
   },
   {
-    id: "seed-40",
+    id: "seed-80",
+    hall: "Shake Smart",
+    item: "Protein Smoothie",
+    rating: 3,
+    wouldAgain: true,
+    text: "A bit thick to drink fast, but solid overall.",
+    author: "slow-sipper"
+  },
+  {
+    id: "seed-81",
+    hall: "Shake Smart",
+    item: "Protein Smoothie",
+    rating: 2,
+    wouldAgain: false,
+    text: "Powdery aftertaste, maybe they didn’t blend it enough.",
+    author: "texture-sensitive-gymrat"
+  },
+  {
+    id: "seed-82",
     hall: "Shake Smart",
     item: "Acai Bowl",
     rating: 4,
@@ -375,7 +757,16 @@ export const INITIAL_REVIEWS = [
     author: "acai-addict"
   },
   {
-    id: "seed-41",
+    id: "seed-83",
+    hall: "Shake Smart",
+    item: "Acai Bowl",
+    rating: 3,
+    wouldAgain: true,
+    text: "Good flavor, wish there was more granola.",
+    author: "granola-hunter"
+  },
+  {
+    id: "seed-84",
     hall: "Shake Smart",
     item: "Peanut Butter Smoothie",
     rating: 5,
@@ -384,12 +775,239 @@ export const INITIAL_REVIEWS = [
     author: "pb-enjoyer"
   },
   {
-    id: "seed-42",
+    id: "seed-85",
+    hall: "Shake Smart",
+    item: "Peanut Butter Smoothie",
+    rating: 3,
+    wouldAgain: true,
+    text: "Good but super filling. Split it if you’re not hungry.",
+    author: "bulk-accident"
+  },
+  {
+    id: "seed-86",
     hall: "Shake Smart",
     item: "Yogurt Parfait",
     rating: 4,
     wouldAgain: true,
     text: "Good when you want something light but still filling.",
     author: "light-lift"
+  },
+  {
+    id: "seed-87",
+    hall: "Shake Smart",
+    item: "Yogurt Parfait",
+    rating: 2,
+    wouldAgain: false,
+    text: "Granola was stale last time, kind of ruined it.",
+    author: "granola-grim"
+  },
+
+  // Extra distributed low / mid reviews to make stats more varied
+  {
+    id: "seed-88",
+    hall: "Four Lakes Market",
+    item: "Cheeseburger",
+    rating: 1,
+    wouldAgain: false,
+    text: "Completely burnt, not sure what happened in the kitchen.",
+    author: "unlucky-badger"
+  },
+  {
+    id: "seed-89",
+    hall: "Four Lakes Market",
+    item: "Pasta with Marinara",
+    rating: 2,
+    wouldAgain: false,
+    text: "Very watery sauce, tasted like canned tomatoes.",
+    author: "sauce-snob"
+  },
+  {
+    id: "seed-90",
+    hall: "Gordon's Market",
+    item: "Mac and Cheese",
+    rating: 3,
+    wouldAgain: true,
+    text: "Good late-night carb bomb, nothing gourmet.",
+    author: "midnight-snacker"
+  },
+  {
+    id: "seed-91",
+    hall: "Gordon's Market",
+    item: "Chicken Sandwich",
+    rating: 1,
+    wouldAgain: false,
+    text: "Chicken was pink in the middle. Yikes.",
+    author: "never-again"
+  },
+  {
+    id: "seed-92",
+    hall: "Rheta's Market",
+    item: "Pancakes",
+    rating: 3,
+    wouldAgain: true,
+    text: "Fine with fruit on top, plain they’re a little boring.",
+    author: "topping-enjoyer"
+  },
+  {
+    id: "seed-93",
+    hall: "Rheta's Market",
+    item: "Omelet",
+    rating: 2,
+    wouldAgain: false,
+    text: "Undercooked veggies inside, cheese not melted.",
+    author: "omelet-snob"
+  },
+  {
+    id: "seed-94",
+    hall: "Carson's Market",
+    item: "Turkey Sub",
+    rating: 2,
+    wouldAgain: false,
+    text: "Very little turkey and way too much mayo.",
+    author: "mayo-critic"
+  },
+  {
+    id: "seed-95",
+    hall: "Liz's Market",
+    item: "Stir Fry Noodles",
+    rating: 2,
+    wouldAgain: false,
+    text: "Overcooked noodles, sauce tasted mostly like soy.",
+    author: "noodle-purist"
+  },
+  {
+    id: "seed-96",
+    hall: "Lowell Market",
+    item: "Grilled Cheese",
+    rating: 3,
+    wouldAgain: true,
+    text: "Simple but does the job, especially with tomato soup.",
+    author: "simple-comfort"
+  },
+  {
+    id: "seed-97",
+    hall: "Shake Smart",
+    item: "Protein Smoothie",
+    rating: 4,
+    wouldAgain: true,
+    text: "Great macros, taste is decent if you like protein powder.",
+    author: "nutrition-focused"
+  },
+  {
+    id: "seed-98",
+    hall: "Four Lakes Market",
+    item: "Chicken Tenders",
+    rating: 4,
+    wouldAgain: true,
+    text: "Not as crispy as Gordon’s but still a W.",
+    author: "tender-tourist"
+  },
+  {
+    id: "seed-99",
+    hall: "Gordon's Market",
+    item: "Pepperoni Pizza",
+    rating: 1,
+    wouldAgain: false,
+    text: "Cold slice that tasted like cardboard.",
+    author: "slice-regret"
+  },
+  {
+    id: "seed-100",
+    hall: "Liz's Market",
+    item: "Fried Rice",
+    rating: 3,
+    wouldAgain: true,
+    text: "Decent if you mix it with the stir fry veggies.",
+    author: "diy-mixer"
+  },
+  {
+    id: "seed-101",
+    hall: "Carson's Market",
+    item: "Chocolate Chip Cookies",
+    rating: 3,
+    wouldAgain: true,
+    text: "Pretty standard cookie, good with coffee.",
+    author: "coffee-cookie-combo"
+  },
+  {
+    id: "seed-102",
+    hall: "Lowell Market",
+    item: "Mac and Cheese",
+    rating: 1,
+    wouldAgain: false,
+    text: "Tasted like plain pasta water. Needed serious help.",
+    author: "mac-fumble"
+  },
+  {
+    id: "seed-103",
+    hall: "Rheta's Market",
+    item: "Yogurt Parfait",
+    rating: 2,
+    wouldAgain: false,
+    text: "Mostly yogurt, barely any fruit.",
+    author: "fruit-seeker"
+  },
+  {
+    id: "seed-104",
+    hall: "Shake Smart",
+    item: "Acai Bowl",
+    rating: 2,
+    wouldAgain: false,
+    text: "Lots of ice chunks in mine, not blended well.",
+    author: "blender-critic"
+  },
+  {
+    id: "seed-105",
+    hall: "Four Lakes Market",
+    item: "Caesar Salad",
+    rating: 3,
+    wouldAgain: true,
+    text: "Good if you grab it right when they restock.",
+    author: "timing-is-everything"
+  },
+  {
+    id: "seed-106",
+    hall: "Gordon's Market",
+    item: "Chili",
+    rating: 2,
+    wouldAgain: false,
+    text: "Too salty and weird texture.",
+    author: "chili-skeptic"
+  },
+  {
+    id: "seed-107",
+    hall: "Liz's Market",
+    item: "Ice Cream Sundae",
+    rating: 4,
+    wouldAgain: true,
+    text: "Best dessert if you want to treat yourself.",
+    author: "treat-yourself"
+  },
+  {
+    id: "seed-108",
+    hall: "Carson's Market",
+    item: "Bagel with Cream Cheese",
+    rating: 3,
+    wouldAgain: true,
+    text: "Average bagel, but nice grab-and-go breakfast.",
+    author: "commuter-breakfast"
+  },
+  {
+    id: "seed-109",
+    hall: "Lowell Market",
+    item: "Chicken Sandwich",
+    rating: 2,
+    wouldAgain: false,
+    text: "Breading was soggy and bun fell apart.",
+    author: "sandwich-sad"
+  },
+  {
+    id: "seed-110",
+    hall: "Shake Smart",
+    item: "Yogurt Parfait",
+    rating: 3,
+    wouldAgain: true,
+    text: "Pretty good, but I wish the portion was bigger.",
+    author: "portion-critic"
   }
 ];
