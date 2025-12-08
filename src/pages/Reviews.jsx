@@ -1,157 +1,177 @@
+// src/pages/Reviews.jsx
 import { useEffect, useMemo, useState } from "react";
-import { Container, Button, Alert } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
+import { Alert, Button, Container } from "react-bootstrap";
 import SearchBar from "../components/SearchBar.jsx";
-import ReviewForm from "../components/ReviewForm.jsx";
 import ReviewList from "../components/ReviewList.jsx";
-import { getImageForItem } from "../data/menu.js";
+import ReviewForm from "../components/ReviewForm.jsx";
+import { DINING_HALLS } from "../data/menu.js";
 import { INITIAL_REVIEWS } from "../data/seedReviews.js";
 
 const STORAGE_KEY = "uwDiningReviews";
 
+function loadUserReviews() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveUserReviews(reviews) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
+  } catch {
+    // ignore
+  }
+}
+
 export default function Reviews({ currentUser }) {
-  const location = useLocation();
-
-  // We will load seeds + any stored user reviews on mount
-  const [reviews, setReviews] = useState([]);
-  const [hall, setHall] = useState("");
-  const [item, setItem] = useState("");
+  const [userReviews, setUserReviews] = useState([]);
+  const [hallFilter, setHallFilter] = useState("");
+  const [itemFilter, setItemFilter] = useState("");
+  const [userFilter, setUserFilter] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [page, setPage] = useState(1);
 
-  // Load INITIAL_REVIEWS + user reviews from localStorage
   useEffect(() => {
-    let userReviews = [];
-
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          userReviews = parsed;
-        }
-      }
-    } catch {
-      // ignore parse errors, just use seeds
-    }
-
-    setReviews([...INITIAL_REVIEWS, ...userReviews]);
+    setUserReviews(loadUserReviews());
   }, []);
 
-  // Apply navigation state (e.g., when coming from Menus page)
-  useEffect(() => {
-    const state = location.state || {};
-    if (state.hall) {
-      setHall(state.hall);
-    }
-    if (state.item) {
-      setItem(state.item);
-    }
-    if (state.hall || state.item) {
-      setPage(1);
-    }
-  }, [location.state]);
-
-  // Attach images for display
-  const normalizedReviews = useMemo(
-    () =>
-      reviews.map((r) => ({
-        ...r,
-        imageUrl: getImageForItem(r.item)
-      })),
-    [reviews]
+  const allReviews = useMemo(
+    () => [...INITIAL_REVIEWS, ...userReviews],
+    [userReviews]
   );
 
-  // Persist only non-seed (user-created) reviews to localStorage
-  useEffect(() => {
-    try {
-      const userOnly = reviews.filter(
-        (r) => !String(r.id).startsWith("seed-")
-      );
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(userOnly));
-    } catch {
-      // ignore storage errors
-    }
-  }, [reviews]);
-
-  // Filtering by hall + item
-  const filtered = useMemo(() => {
-    const h = hall.trim().toLowerCase();
-    const i = item.trim().toLowerCase();
-    return normalizedReviews.filter((r) => {
-      const hallOk = !h || r.hall.toLowerCase() === h;
-      const itemOk = !i || r.item.toLowerCase().includes(i);
-      return hallOk && itemOk;
+  // Build item list dynamically from all reviews
+  const itemOptions = useMemo(() => {
+    const set = new Set();
+    allReviews.forEach((r) => {
+      if (r.item) {
+        set.add(r.item);
+      }
     });
-  }, [normalizedReviews, hall, item]);
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [allReviews]);
 
-  const addReview = (r) => {
-    const makeId =
-      typeof crypto !== "undefined" && crypto.randomUUID
-        ? crypto.randomUUID()
-        : String(Date.now() + Math.random());
+  // Build user list dynamically from all reviews
+  const userOptions = useMemo(() => {
+    const set = new Set();
+    allReviews.forEach((r) => {
+      if (r.author) {
+        set.add(r.author);
+      }
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [allReviews]);
 
-    const withMeta = {
-      ...r,
-      id: makeId,
-      author: currentUser || "anon"
+  const filteredReviews = useMemo(() => {
+    return allReviews.filter((r) => {
+      if (hallFilter && r.hall !== hallFilter) return false;
+      if (itemFilter && r.item !== itemFilter) return false;
+      if (userFilter && r.author !== userFilter) return false;
+
+      if (searchText.trim()) {
+        const needle = searchText.trim().toLowerCase();
+        const haystack =
+          `${r.hall} ${r.item} ${r.text || ""} ${r.author || ""}`.toLowerCase();
+        if (!haystack.includes(needle)) return false;
+      }
+
+      return true;
+    });
+  }, [allReviews, hallFilter, itemFilter, userFilter, searchText]);
+
+  const handleAddReview = (reviewData) => {
+    if (!currentUser) return;
+
+    const newReview = {
+      id: `user-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      hall: reviewData.hall,
+      item: reviewData.item,
+      rating: Number(reviewData.rating),
+      wouldAgain: Boolean(reviewData.wouldAgain),
+      text: reviewData.text?.trim() || "",
+      author: currentUser,
     };
-    setReviews((prev) => [withMeta, ...prev]);
-    setPage(1);
+
+    setUserReviews((prev) => {
+      const updated = [...prev, newReview];
+      saveUserReviews(updated);
+      return updated;
+    });
+    setShowForm(false);
   };
 
   const handleDeleteReview = (id) => {
-    setReviews((prev) => prev.filter((r) => r.id !== id));
+    // Only delete from userReviews; seeded reviews remain
+    setUserReviews((prev) => {
+      const updated = prev.filter((r) => r.id !== id);
+      saveUserReviews(updated);
+      return updated;
+    });
   };
 
   const canPost = Boolean(currentUser);
 
   return (
     <Container className="page">
-      <div className="d-flex align-items-center justify-content-between mb-2">
-        <h1 className="h2 mb-0">Reviews</h1>
-        <Button
-          onClick={() => canPost && setShowForm(true)}
-          disabled={!canPost}
-        >
-          Add Review
-        </Button>
-      </div>
+      <h1 className="h2">Reviews</h1>
+      <p className="text-muted">
+        Browse dining hall reviews from UW students, filter by hall, item, or
+        reviewer, and share your own experience once you&apos;re signed in.
+      </p>
 
       {!canPost && (
-        <Alert variant="warning" className="py-2" role="status">
-          You must be signed in to add a review. Use the{" "}
-          <strong>Sign up / Login</strong> tab first.
+        <Alert variant="warning">
+          You must be signed in to post reviews. Use the{" "}
+          <strong>Sign up / Login</strong> page to create an account or sign in.
         </Alert>
       )}
 
       <SearchBar
-        hall={hall}
-        setHall={(hVal) => {
-          setHall(hVal);
-          setPage(1);
-        }}
-        item={item}
-        setItem={(iVal) => {
-          setItem(iVal);
-          setPage(1);
-        }}
-        onClear={() => setPage(1)}
+        diningHalls={DINING_HALLS}
+        items={itemOptions}
+        users={userOptions}
+        selectedHall={hallFilter}
+        onHallChange={setHallFilter}
+        selectedItem={itemFilter}
+        onItemChange={setItemFilter}
+        selectedUser={userFilter}
+        onUserChange={setUserFilter}
+        searchText={searchText}
+        onSearchTextChange={setSearchText}
       />
 
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <p className="mb-0 text-muted">
+          Showing <strong>{filteredReviews.length}</strong> review
+          {filteredReviews.length === 1 ? "" : "s"}.
+        </p>
+        {canPost && (
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => setShowForm(true)}
+          >
+            Add Review
+          </Button>
+        )}
+      </div>
+
       <ReviewList
-        reviews={filtered}
-        page={page}
-        setPage={setPage}
-        pageSize={5}
+        reviews={filteredReviews}
         currentUser={currentUser}
         onDeleteReview={handleDeleteReview}
       />
 
       <ReviewForm
         show={showForm}
-        onClose={() => setShowForm(false)}
-        onSave={addReview}
+        onHide={() => setShowForm(false)}
+        onSave={handleAddReview}
+        currentUser={currentUser}
       />
     </Container>
   );

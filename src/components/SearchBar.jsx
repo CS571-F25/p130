@@ -1,79 +1,85 @@
-import { Row, Col, Button, Form, Badge } from "react-bootstrap";
-import { DINING_HALLS } from "../data/menu.js";
+// src/components/SearchBar.jsx
+import { Row, Col, Form } from "react-bootstrap";
 
 export default function SearchBar({
-  hall,
-  setHall,
-  item,
-  setItem,
-  onClear
+  diningHalls,
+  items,
+  users,
+  selectedHall,
+  onHallChange,
+  selectedItem,
+  onItemChange,
+  selectedUser,
+  onUserChange,
+  searchText,
+  onSearchTextChange,
 }) {
-  const isAll = !hall;
-
   return (
-    <div className="mb-3">
-      <Row className="align-items-center g-2">
-        <Col md={8}>
-          {/* Not a true label -> use styled paragraph to avoid orphan label error */}
-          <p className="mb-1 fw-semibold">Filter by dining hall</p>
-          <div className="d-flex flex-wrap gap-2">
-            <Button
-              size="sm"
-              variant={isAll ? "primary" : "outline-primary"}
-              onClick={() => setHall("")}
+    <Form className="mb-3" aria-label="Filter reviews">
+      <Row className="g-2">
+        <Col xs={12} md={3}>
+          <Form.Group controlId="filterHall">
+            <Form.Label>Dining hall</Form.Label>
+            <Form.Select
+              value={selectedHall}
+              onChange={(e) => onHallChange(e.target.value)}
             >
-              All halls
-            </Button>
-            {DINING_HALLS.map((h) => (
-              <Button
-                key={h}
-                size="sm"
-                variant={hall === h ? "primary" : "outline-primary"}
-                onClick={() => setHall(h)}
-              >
-                {h}
-              </Button>
-            ))}
-          </div>
+              <option value="">All halls</option>
+              {diningHalls.map((hall) => (
+                <option key={hall} value={hall}>
+                  {hall}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
         </Col>
 
-        <Col md={4}>
-          <Form.Group controlId="item-filter">
-            <Form.Label className="mb-1">Filter by item name</Form.Label>
+        <Col xs={12} md={3}>
+          <Form.Group controlId="filterItem">
+            <Form.Label>Item</Form.Label>
+            <Form.Select
+              value={selectedItem}
+              onChange={(e) => onItemChange(e.target.value)}
+            >
+              <option value="">All items</option>
+              {items.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+
+        <Col xs={12} md={3}>
+          <Form.Group controlId="filterUser">
+            <Form.Label>Reviewer</Form.Label>
+            <Form.Select
+              value={selectedUser}
+              onChange={(e) => onUserChange(e.target.value)}
+            >
+              <option value="">All users</option>
+              {users.map((user) => (
+                <option key={user} value={user}>
+                  {user}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+
+        <Col xs={12} md={3}>
+          <Form.Group controlId="filterSearch">
+            <Form.Label>Search text</Form.Label>
             <Form.Control
-              value={item}
-              placeholder="e.g., pizza, burger, salad…"
-              onChange={(e) => setItem(e.target.value)}
+              type="text"
+              placeholder="Search reviews…"
+              value={searchText}
+              onChange={(e) => onSearchTextChange(e.target.value)}
             />
           </Form.Group>
         </Col>
       </Row>
-
-      <Row className="align-items-center mt-2">
-        <Col>
-          {hall || item ? (
-            <div className="d-flex flex-wrap gap-2">
-              {hall && <Badge bg="secondary">Hall: {hall}</Badge>}
-              {item && <Badge bg="secondary">Item: {item}</Badge>}
-            </div>
-          ) : (
-            <span className="text-muted small">Showing all reviews.</span>
-          )}
-        </Col>
-        <Col className="text-end">
-          <Button
-            size="sm"
-            variant="outline-secondary"
-            onClick={() => {
-              setHall("");
-              setItem("");
-              onClear?.();
-            }}
-          >
-            Clear filters
-          </Button>
-        </Col>
-      </Row>
-    </div>
+    </Form>
   );
 }

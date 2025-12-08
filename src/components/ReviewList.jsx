@@ -1,70 +1,72 @@
-import { Pagination } from "react-bootstrap";
+// src/components/ReviewList.jsx
+import { useState } from "react";
+import { Col, Row, Pagination } from "react-bootstrap";
 import ReviewCard from "./ReviewCard.jsx";
+
+const REVIEWS_PER_PAGE = 6;
 
 export default function ReviewList({
   reviews,
-  page,
-  setPage,
-  pageSize,
   currentUser,
-  onDeleteReview
+  onDeleteReview,
 }) {
-  const total = reviews.length;
-  const pageSizeSafe = pageSize || 5;
-  const totalPages = Math.max(1, Math.ceil(total / pageSizeSafe));
-  const currentPage = Math.min(page, totalPages);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const startIndex = (currentPage - 1) * pageSizeSafe;
-  const visible = reviews.slice(startIndex, startIndex + pageSizeSafe);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(reviews.length / REVIEWS_PER_PAGE)
+  );
 
-  const handlePageChange = (p) => {
-    if (p < 1 || p > totalPages) return;
-    setPage?.(p);
-  };
+  const safePage = Math.min(currentPage, totalPages);
+  if (safePage !== currentPage) {
+    setCurrentPage(safePage);
+  }
 
-  const headingText =
-    total === 0
-      ? "No reviews match these filters yet."
-      : `Showing ${startIndex + 1}-${startIndex + visible.length} of ${total} review${
-          total !== 1 ? "s" : ""
-        }`;
+  const startIdx = (safePage - 1) * REVIEWS_PER_PAGE;
+  const pageReviews = reviews.slice(
+    startIdx,
+    startIdx + REVIEWS_PER_PAGE
+  );
 
   return (
-    <section aria-label="Dining hall reviews list">
-      <h2 className="h4">{headingText}</h2>
-
-      <div className="mt-3 mb-3">
-        {visible.map((review) => (
-          <ReviewCard
-            key={review.id}
-            review={review}
-            currentUser={currentUser}
-            onDeleteReview={onDeleteReview}
-          />
+    <>
+      <Row className="g-3">
+        {pageReviews.map((review) => (
+          <Col xs={12} md={6} key={review.id}>
+            <ReviewCard
+              review={review}
+              currentUser={currentUser}
+              onDelete={onDeleteReview}
+            />
+          </Col>
         ))}
-      </div>
+        {pageReviews.length === 0 && (
+          <Col xs={12}>
+            <p className="text-muted mb-0">
+              No reviews match your filters yet.
+            </p>
+          </Col>
+        )}
+      </Row>
 
       {totalPages > 1 && (
-        <Pagination aria-label="Review pages">
-          <Pagination.Prev
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          />
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <Pagination.Item
-              key={p}
-              active={p === currentPage}
-              onClick={() => handlePageChange(p)}
-            >
-              {p}
-            </Pagination.Item>
-          ))}
-          <Pagination.Next
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          />
-        </Pagination>
+        <div className="d-flex justify-content-center mt-3">
+          <Pagination>
+            {Array.from({ length: totalPages }, (_, idx) => {
+              const page = idx + 1;
+              return (
+                <Pagination.Item
+                  key={page}
+                  active={page === safePage}
+                  onClick={() => setCurrentPage(page)}
+                >
+                  {page}
+                </Pagination.Item>
+              );
+            })}
+          </Pagination>
+        </div>
       )}
-    </section>
+    </>
   );
 }
