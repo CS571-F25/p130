@@ -12,26 +12,33 @@ const STORAGE_KEY = "uwDiningReviews";
 export default function Reviews({ currentUser }) {
   const location = useLocation();
 
-  const [reviews, setReviews] = useState(INITIAL_REVIEWS);
+  // We will load seeds + any stored user reviews on mount
+  const [reviews, setReviews] = useState([]);
   const [hall, setHall] = useState("");
   const [item, setItem] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [page, setPage] = useState(1);
 
+  // Load INITIAL_REVIEWS + user reviews from localStorage
   useEffect(() => {
+    let userReviews = [];
+
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setReviews(parsed);
+        if (Array.isArray(parsed)) {
+          userReviews = parsed;
         }
       }
     } catch {
-      // ignore
+      // ignore parse errors, just use seeds
     }
+
+    setReviews([...INITIAL_REVIEWS, ...userReviews]);
   }, []);
 
+  // Apply navigation state (e.g., when coming from Menus page)
   useEffect(() => {
     const state = location.state || {};
     if (state.hall) {
@@ -45,6 +52,7 @@ export default function Reviews({ currentUser }) {
     }
   }, [location.state]);
 
+  // Attach images for display
   const normalizedReviews = useMemo(
     () =>
       reviews.map((r) => ({
@@ -54,17 +62,19 @@ export default function Reviews({ currentUser }) {
     [reviews]
   );
 
+  // Persist only non-seed (user-created) reviews to localStorage
   useEffect(() => {
     try {
-      window.localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(normalizedReviews)
+      const userOnly = reviews.filter(
+        (r) => !String(r.id).startsWith("seed-")
       );
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(userOnly));
     } catch {
-      // ignore
+      // ignore storage errors
     }
-  }, [normalizedReviews]);
+  }, [reviews]);
 
+  // Filtering by hall + item
   const filtered = useMemo(() => {
     const h = hall.trim().toLowerCase();
     const i = item.trim().toLowerCase();

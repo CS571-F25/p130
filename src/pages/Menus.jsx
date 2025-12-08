@@ -7,20 +7,25 @@ import { INITIAL_REVIEWS } from "../data/seedReviews.js";
 const STORAGE_KEY = "uwDiningReviews";
 
 export default function Menus() {
-  const [reviews, setReviews] = useState(INITIAL_REVIEWS);
+  const [reviews, setReviews] = useState([]);
 
+  // Load INITIAL_REVIEWS + user reviews from localStorage
   useEffect(() => {
+    let userReviews = [];
+
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setReviews(parsed);
+        if (Array.isArray(parsed)) {
+          userReviews = parsed;
         }
       }
     } catch {
-      // ignore
+      // ignore and keep seeds
     }
+
+    setReviews([...INITIAL_REVIEWS, ...userReviews]);
   }, []);
 
   const normalizedReviews = useMemo(
@@ -34,7 +39,7 @@ export default function Menus() {
 
   return (
     <Container className="page">
-      <h1 className="h2">Menus & Ratings</h1>
+      <h1 className="h2">Menus &amp; Ratings</h1>
       <p className="text-muted">
         Browse the core menu items for each dining hall, see their average
         ratings and how many students say they would order them again, and
