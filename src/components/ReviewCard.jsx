@@ -1,22 +1,42 @@
+// src/components/ReviewCard.jsx
 import React from "react";
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, Badge } from "react-bootstrap";
 import RatingStars from "./RatingStars.jsx";
-import FoodIcon from "./FoodIcon.jsx";
+import { getImageForItem } from "../data/menu.js";
 
 export default function ReviewCard({ review, currentUser, onDelete }) {
-  const handleDelete = () => {
-    if (onDelete) {
-      onDelete(review.id);
-    }
-  };
+  const authorName =
+    review.username ||
+    review.author ||
+    review.user ||
+    review.reviewer ||
+    "Anonymous";
 
-  const canDelete = currentUser && review.username === currentUser;
+  const imageUrl = getImageForItem(review.item);
+
+  const isUserReview =
+    typeof review.id === "string" && review.id.startsWith("user-");
+
+  const canDelete = Boolean(
+    currentUser && isUserReview && authorName === currentUser,
+  );
+
+  const handleDelete = () => {
+    if (!canDelete || !onDelete) return;
+    onDelete(review.id);
+  };
 
   return (
     <Card className="mb-3 shadow-sm review-card" aria-label="Dining review">
       <Card.Body className="d-flex flex-row">
         <div className="me-3 d-flex align-items-center">
-          <FoodIcon itemName={review.item} />
+          <div className="item-image-circle">
+            <img
+              src={imageUrl}
+              alt={review.item}
+              className="item-image-photo"
+            />
+          </div>
         </div>
 
         <div className="flex-grow-1">
@@ -31,7 +51,11 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
 
           <div className="mb-1">
             <strong>Would order again?</strong>{" "}
-            {review.wouldOrderAgain ? "Yes" : "No"}
+            {review.wouldOrderAgain ? (
+              <Badge bg="success">Yes</Badge>
+            ) : (
+              <Badge bg="secondary">No</Badge>
+            )}
           </div>
 
           {review.text && (
@@ -39,7 +63,7 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
           )}
 
           <Card.Text className="text-muted mb-0" as="small">
-            by {review.username}
+            by {authorName}
           </Card.Text>
         </div>
 

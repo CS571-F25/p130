@@ -1,137 +1,187 @@
 // src/components/ReviewForm.jsx
-import { useEffect, useState } from "react";
-import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import SearchableSelect from "./SearchableSelect.jsx";
+import React, { useMemo, useState } from "react";
+import { Form, Button, Row, Col } from "react-bootstrap";
 import {
   DINING_HALLS,
   getItemsForHall,
-  ITEM_NAMES
+  ITEM_NAMES,
 } from "../data/menu.js";
 
-export default function ReviewForm({ show, onClose, onSave }) {
+export default function ReviewForm({ currentUser, onAddReview }) {
   const [hall, setHall] = useState("");
   const [item, setItem] = useState("");
-  const [rating, setRating] = useState(5);
-  const [wouldAgain, setWouldAgain] = useState(true);
+  const [rating, setRating] = useState("5");
+  const [wouldAgain, setWouldAgain] = useState("yes");
   const [text, setText] = useState("");
+  const [error, setError] = useState("");
 
-  const [availableItems, setAvailableItems] = useState(ITEM_NAMES);
+  const availableItems = useMemo(
+    () => getItemsForHall(hall),
+    [hall],
+  );
 
-  useEffect(() => {
-    const itemsForHall = getItemsForHall(hall);
-    setAvailableItems(itemsForHall);
-    if (item && !itemsForHall.includes(item)) {
-      setItem("");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!currentUser) {
+      setError("You must be signed in to post a review.");
+      return;
     }
-  }, [hall, item]);
 
-  const reset = () => {
+    if (!hall || !item) {
+      setError("Please choose a dining hall and an item to review.");
+      return;
+    }
+
+    const numericRating = Number(rating);
+    if (!numericRating || numericRating < 1 || numericRating > 5) {
+      setError("Rating must be between 1 and 5 stars.");
+      return;
+    }
+
+    const newReview = {
+      id: `user-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      hall,
+      item,
+      rating: numericRating,
+      wouldOrderAgain: wouldAgain === "yes",
+      text: text.trim(),
+      username: currentUser,
+    };
+
+    onAddReview?.(newReview);
+
+    // reset form
     setHall("");
     setItem("");
-    setRating(5);
-    setWouldAgain(true);
+    setRating("5");
+    setWouldAgain("yes");
     setText("");
   };
 
-  const submit = () => {
-    const trimmed = (s) => (s || "").trim();
-    const hallVal = trimmed(hall);
-    const itemVal = trimmed(item);
-    if (!hallVal || !itemVal) {
-      return;
-    }
-    const review = {
-      hall: hallVal,
-      item: itemVal,
-      rating: Number(rating),
-      wouldAgain: Boolean(wouldAgain),
-      text: trimmed(text)
-    };
-    onSave?.(review);
-    reset();
-    onClose?.();
-  };
+  const allItems =
+    hall && availableItems.length > 0 ? availableItems : ITEM_NAMES;
 
   return (
-    <Modal show={show} onHide={onClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>New Review</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          <Row className="mb-2">
-            <Col md={6}>
-              <SearchableSelect
-                id="hall-select"
-                label="Dining hall"
-                options={DINING_HALLS}
-                value={hall}
-                onChange={setHall}
-                placeholder="Type hall name…"
-              />
-            </Col>
-            <Col md={6}>
-              <SearchableSelect
-                id="item-select"
-                label="Item (filtered by hall)"
-                options={availableItems}
-                value={item}
-                onChange={setItem}
-                placeholder={
-                  hall ? `Items at ${hall}…` : "Choose a hall or type to search…"
+    <Form onSubmit={handleSubmit} aria-label="Add a dining hall review">
+      <Row className="g-3">
+        <Col md={6}>
+          <Form.Group controlId="reviewHall">
+            <Form.Label>Dining hall</Form.Label>
+            <Form.Select
+              value={hall}
+              onChange={(e) => {
+                const newHall = e.target.value;
+                setHall(newHall);
+                // clear item if no longer valid
+                if (
+                  newHall &&
+                  !getItemsForHall(newHall).includes(item)
+                ) {
+                  setItem("");
                 }
-              />
-            </Col>
-          </Row>
-
-          <Row className="mb-2">
-            <Col md={6}>
-              <Form.Group controlId="rating-select">
-                <Form.Label>Rating (1–5)</Form.Label>
-                <Form.Select
-                  value={rating}
-                  onChange={(e) => setRating(e.target.value)}
-                >
-                  {[5, 4, 3, 2, 1].map((n) => (
-                    <option key={n} value={n}>
-                      {n}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group controlId="would-again-select">
-                <Form.Label>Would order again?</Form.Label>
-                <Form.Select
-                  value={wouldAgain ? "yes" : "no"}
-                  onChange={(e) => setWouldAgain(e.target.value === "yes")}
-                >
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Form.Group controlId="review-text">
-            <Form.Label>Short description</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="What did you think of this item?"
-            />
+              }}
+            >
+              <option value="">Select a dining hall…</option>
+              {DINING_HALLS.map((h) => (
+                <option key={h} value={h}>
+                  {h}
+                </option>
+              ))}
+            </Form.Select>
           </Form.Group>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="outline-secondary" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button onClick={submit}>Save Review</Button>
-      </Modal.Footer>
-    </Modal>
+        </Col>
+
+        <Col md={6}>
+          <Form.Group controlId="reviewItem">
+            <Form.Label>Item</Form.Label>
+            <Form.Select
+              value={item}
+              onChange={(e) => setItem(e.target.value)}
+            >
+              <option value="">Select an item…</option>
+              {allItems.map((it) => (
+                <option key={it} value={it}>
+                  {it}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      <Row className="g-3 mt-1">
+        <Col md={4}>
+          <Form.Group controlId="reviewRating">
+            <Form.Label>Rating (1–5)</Form.Label>
+            <Form.Select
+              value={rating}
+              onChange={(e) => setRating(e.target.value)}
+            >
+              {[1, 2, 3, 4, 5].map((n) => (
+                <option key={n} value={n}>
+                  {n} star{n === 1 ? "" : "s"}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+
+        <Col md={4}>
+          <Form.Group controlId="reviewWouldAgain">
+            <Form.Label>Would order again?</Form.Label>
+            <div>
+              <Form.Check
+                inline
+                type="radio"
+                id="wouldAgainYes"
+                name="wouldAgain"
+                label="Yes"
+                value="yes"
+                checked={wouldAgain === "yes"}
+                onChange={(e) => setWouldAgain(e.target.value)}
+              />
+              <Form.Check
+                inline
+                type="radio"
+                id="wouldAgainNo"
+                name="wouldAgain"
+                label="No"
+                value="no"
+                checked={wouldAgain === "no"}
+                onChange={(e) => setWouldAgain(e.target.value)}
+              />
+            </div>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      <Form.Group className="mt-3" controlId="reviewText">
+        <Form.Label>Short description</Form.Label>
+        <Form.Control
+          as="textarea"
+          rows={3}
+          placeholder="What did you like or dislike?"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+      </Form.Group>
+
+      {error && (
+        <div className="text-danger small mt-2" aria-live="polite">
+          {error}
+        </div>
+      )}
+
+      <Button
+        type="submit"
+        className="mt-3"
+        variant="primary"
+        disabled={!currentUser}
+      >
+        Post review
+      </Button>
+    </Form>
   );
 }

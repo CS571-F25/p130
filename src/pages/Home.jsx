@@ -1,60 +1,50 @@
-import { Container, Row, Col, Card, Badge, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+// src/pages/Home.jsx
+import React from "react";
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { DINING_HALLS, HALL_ITEMS } from "../data/menu.js";
 
 export default function Home() {
-  return (
-    <Container className="page">
-      <Row className="mb-4">
-        <Col md={8}>
-          <h1 className="h2">UW Dining Hall Reviewer</h1>
-          <p>
-            Use this site to see what other students think about different
-            dining halls and menu items on campus. Browse reviews, filter by
-            hall or item, and share your own experiences to help other students
-            find the clutch meals and dodge the L ones.
-          </p>
-        </Col>
-        <Col md={4}>
-          <Card className="page-intro-card">
-            <Card.Body>
-              <Card.Title className="h5">How it works</Card.Title>
-              <ul className="mb-0">
-                <li>Sign up with a display name and 4–6 digit PIN.</li>
-                <li>Pick a dining hall and item to review.</li>
-                <li>Rate it, describe it, and say if you&rsquo;d order again.</li>
-              </ul>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+  const navigate = useNavigate();
 
-      <h2 className="h4 mb-3">Dining halls</h2>
-      <Row className="g-3">
+  const handleViewReviews = (hall) => {
+    navigate("/reviews", { state: { hall } });
+  };
+
+  return (
+    <Container className="py-4">
+      <h1 className="mb-3">UW Dining Reviews</h1>
+      <p className="text-muted mb-4">
+        Quickly see what other Badgers think about food across campus dining
+        halls and decide what&apos;s worth the walk.
+      </p>
+
+      <h2 className="h4 mb-3">Explore dining halls</h2>
+
+      <Row className="g-4">
         {DINING_HALLS.map((hall) => {
           const items = HALL_ITEMS[hall] || [];
-          const sample = items.slice(0, 3);
           return (
-            <Col key={hall} md={4} sm={6}>
-              <Card className="h-100">
+            <Col md={6} lg={4} key={hall}>
+              <Card className="shadow-sm h-100">
                 <Card.Body>
-                  <Card.Title className="h5">{hall}</Card.Title>
-                  {sample.length > 0 && (
-                    <div className="mb-2 d-flex flex-wrap gap-1">
-                      {sample.map((it) => (
-                        <Badge key={it} bg="secondary">
-                          {it}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
+                  <Card.Title as="h3" className="h5">
+                    {hall}
+                  </Card.Title>
+                  <Card.Text className="text-muted small">
+                    Sample items:
+                  </Card.Text>
+                  <ul className="small mb-3">
+                    {items.slice(0, 4).map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
                   <Button
-                    as={Link}
-                    to="/reviews"
-                    state={{ hall }}
+                    variant="primary"
                     size="sm"
+                    onClick={() => handleViewReviews(hall)}
                   >
-                    View reviews for {hall}
+                    View reviews
                   </Button>
                 </Card.Body>
               </Card>

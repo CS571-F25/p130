@@ -1,4 +1,5 @@
-import React, { useMemo, useState, useEffect } from "react";
+// src/pages/Reviews.jsx
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Container,
   Row,
@@ -7,31 +8,69 @@ import {
   Form,
   Pagination,
   Badge,
+  Alert,
 } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import ReviewList from "../components/ReviewList.jsx";
 import ReviewForm from "../components/ReviewForm.jsx";
 import {
   DINING_HALLS,
   getItemsForHall,
-  ITEM_NAMES,
 } from "../data/menu.js";
 import { INITIAL_REVIEWS } from "../data/seedReviews.js";
 import "../reviews-pagination.css";
 
+const STORAGE_KEY = "uwDiningUserReviews";
 const REVIEWS_PER_PAGE = 5;
 
+function loadUserReviews() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveUserReviews(list) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  } catch {
+    // ignore
+  }
+}
+
 export default function Reviews({ currentUser }) {
-  const [reviews, setReviews] = useState([]);
+  const location = useLocation();
+
+  const [userReviews, setUserReviews] = useState([]);
   const [selectedHall, setSelectedHall] = useState("");
   const [selectedItem, setSelectedItem] = useState("");
   const [reviewerSearch, setReviewerSearch] = useState("");
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    setReviews(INITIAL_REVIEWS);
+    setUserReviews(loadUserReviews());
   }, []);
 
-  // When hall changes, optionally constrain the item list
+  // Apply state coming from Menus/Home links (hall + item)
+  useEffect(() => {
+    const state = location.state || {};
+    if (state.hall) {
+      setSelectedHall(state.hall);
+    }
+    if (state.item) {
+      setSelectedItem(state.item);
+    }
+  }, [location.state]);
+
+  const allReviews = useMemo(
+    () => [...INITIAL_REVIEWS, ...userReviews],
+    [userReviews],
+  );
+
   const availableItems = useMemo(
     () => getItemsForHall(selectedHall),
     [selectedHall],
@@ -40,7 +79,6 @@ export default function Reviews({ currentUser }) {
   const handleHallChange = (e) => {
     const hall = e.target.value;
     setSelectedHall(hall);
-    // If current item is not served at this hall, clear it
     if (hall && !getItemsForHall(hall).includes(selectedItem)) {
       setSelectedItem("");
     }
@@ -58,27 +96,39 @@ export default function Reviews({ currentUser }) {
   };
 
   const handleAddReview = (newReview) => {
-    setReviews((prev) => [newReview, ...prev]);
+    setUserReviews((prev) => {
+      const updated = [newReview, ...prev];
+      saveUserReviews(updated);
+      return updated;
+    });
     setPage(1);
   };
 
   const handleDeleteReview = (id) => {
-    setReviews((prev) => prev.filter((r) => r.id !== id));
+    setUserReviews((prev) => {
+      const updated = prev.filter((r) => r.id !== id);
+      saveUserReviews(updated);
+      return updated;
+    });
   };
 
   const filteredReviews = useMemo(() => {
-    return reviews.filter((r) => {
+    return allReviews.filter((r) => {
       if (selectedHall && r.hall !== selectedHall) return false;
       if (selectedItem && r.item !== selectedItem) return false;
       if (
         reviewerSearch.trim() &&
-        !r.username.toLowerCase().includes(reviewerSearch.toLowerCase())
+        !(
+          (r.username || r.author || "")
+            .toLowerCase()
+            .includes(reviewerSearch.toLowerCase())
+        )
       ) {
         return false;
       }
       return true;
     });
-  }, [reviews, selectedHall, selectedItem, reviewerSearch]);
+  }, [allReviews, selectedHall, selectedItem, reviewerSearch]);
 
   const pageCount = Math.max(
     1,
@@ -91,15 +141,12 @@ export default function Reviews({ currentUser }) {
     startIndex + REVIEWS_PER_PAGE,
   );
 
-  const uwRed = "#c5050c";
-
   return (
     <Container className="py-4">
       <h1 className="mb-3">Reviews</h1>
       <p className="text-muted mb-4">
         Browse reviews from other students and share your own experiences.
-        Filter by dining hall, item, or reviewer to find exactly what you
-        care about.
+        Use the filters to focus on a specific dining hall, item, or reviewer.
       </p>
 
       <Row className="mb-4" aria-label="Filters for reviews">
@@ -163,15 +210,14 @@ export default function Reviews({ currentUser }) {
                 <ReviewForm
                   currentUser={currentUser}
                   onAddReview={handleAddReview}
-                  existingReviews={reviews}
                 />
               ) : (
-                <p className="mb-0">
-                  <Badge bg="warning" text="dark">
+                <Alert variant="warning" className="mb-0">
+                  <Badge bg="warning" text="dark" className="me-2">
                     Sign in required
-                  </Badge>{" "}
+                  </Badge>
                   You must be signed in to leave a review.
-                </p>
+                </Alert>
               )}
             </Card.Body>
           </Card>
