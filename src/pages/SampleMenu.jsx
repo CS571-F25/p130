@@ -1,155 +1,219 @@
-// src/pages/SampleMenu.jsx
-import { useEffect, useMemo, useState } from "react";
-import { Card, Col, Container, Row, Button } from "react-bootstrap";
-import CurrentMenuSection from "../components/CurrentMenuSection.jsx";
-import { getImageForItem } from "../data/menu.js";
-import { INITIAL_REVIEWS } from "../data/seedReviews.js";
+import React, { useMemo, useState } from "react";
+import { Container, Row, Col, Card, Form, Button, ListGroup } from "react-bootstrap";
+import { DINING_HALLS, HALL_ITEMS } from "../data/menu.js";
 
-const STORAGE_KEY = "uwDiningReviews";
+const MEALS = ["Breakfast", "Lunch", "Dinner"];
 
-// Nutrislice links for each hall
-const HALL_LINKS = [
-  {
-    label: "Carson's Market",
-    value: "Carson's Market",
-    nutrisliceUrl:
-      "https://wisc-housingdining.nutrislice.com/menu/carsons-market",
-  },
-  {
-    label: "Four Lakes Market",
-    value: "Four Lakes Market",
-    nutrisliceUrl:
-      "https://wisc-housingdining.nutrislice.com/menu/four-lakes-market",
-  },
-  {
-    label: "Gordon's Market",
-    value: "Gordon's Market",
-    nutrisliceUrl:
-      "https://wisc-housingdining.nutrislice.com/menu/gordon-avenue-market",
-  },
-  {
-    label: "Liz's Market",
-    value: "Liz's Market",
-    nutrisliceUrl:
-      "https://wisc-housingdining.nutrislice.com/menu/cronyn-lizs-market",
-  },
-  {
-    label: "Lowell Market",
-    value: "Lowell Market",
-    nutrisliceUrl:
-      "https://wisc-housingdining.nutrislice.com/menu/lowell-market",
-  },
-  {
-    label: "Rheta's Market",
-    value: "Rheta's Market",
-    nutrisliceUrl:
-      "https://wisc-housingdining.nutrislice.com/menu/rhetas-market",
-  },
-  {
-    label: "Shake Smart",
-    value: "Shake Smart",
-    nutrisliceUrl:
-      "https://wisc-housingdining.nutrislice.com/menu/shake-smart",
-  },
-];
+// Map hall names to Nutrislice slugs
+const HALL_SLUGS = {
+  "Carson's Market": "carsons-market",
+  "Four Lakes Market": "four-lakes-market",
+  "Gordon's Market": "gordons-market",
+  "Liz's Market": "lizs-market",
+  "Lowell Market": "lowell-market",
+  "Rheta's Market": "rhetas-market",
+  // Shake Smart handled separately
+};
+
+const MEAL_KEYS = {
+  Breakfast: "breakfast",
+  Lunch: "lunch",
+  Dinner: "dinner",
+};
+
+function getExternalMenuLink(hall, meal) {
+  if (hall === "Shake Smart") {
+    // Shake Smart has its own menu site
+    return "https://shakesmart.com/menu/";
+  }
+
+  const slug = HALL_SLUGS[hall];
+  if (!slug) {
+    return "https://wisc-housingdining.nutrislice.com/";
+  }
+
+  const mealKey = MEAL_KEYS[meal];
+  if (mealKey) {
+    // Hall + meal – using a query param to represent the meal choice
+    return `https://wisc-housingdining.nutrislice.com/menu/${slug}?meal=${encodeURIComponent(
+      mealKey,
+    )}`;
+  }
+
+  return `https://wisc-housingdining.nutrislice.com/menu/${slug}`;
+}
+
+function getExternalButtonLabel(hall) {
+  if (hall === "Shake Smart") {
+    return "Open in Shake Smart";
+  }
+  return "View on Nutrislice";
+}
+
+// Very simple sample menu builder: reuse hall items, vary slice by meal
+function buildSampleMenu(hall, meal) {
+  const hallItems = HALL_ITEMS[hall] || [];
+  if (hallItems.length === 0) return [];
+
+  let offset = 0;
+  if (meal === "Lunch") {
+    offset = 2;
+  } else if (meal === "Dinner") {
+    offset = 4;
+  }
+
+  const slice = hallItems.slice(offset, offset + 5);
+  return slice.length > 0 ? slice : hallItems.slice(0, 5);
+}
 
 export default function SampleMenu() {
-  const [reviews, setReviews] = useState([]);
+  const [hall, setHall] = useState("Four Lakes Market");
+  const [meal, setMeal] = useState("Lunch");
 
-  // Load INITIAL_REVIEWS + user reviews from localStorage
-  useEffect(() => {
-    let userReviews = [];
-
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          userReviews = parsed;
-        }
-      }
-    } catch {
-      // ignore and keep seeds
-    }
-
-    setReviews([...INITIAL_REVIEWS, ...userReviews]);
+  const todayText = useMemo(() => {
+    const now = new Date();
+    return now.toLocaleDateString(undefined, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    });
   }, []);
 
-  const normalizedReviews = useMemo(
-    () =>
-      reviews.map((r) => ({
-        ...r,
-        imageUrl: getImageForItem(r.item),
-      })),
-    [reviews]
+  const sampleItems = useMemo(
+    () => buildSampleMenu(hall, meal),
+    [hall, meal],
   );
 
+  const externalUrl = getExternalMenuLink(hall, meal);
+  const externalLabel = getExternalButtonLabel(hall);
+
   return (
-    <Container className="page">
-      <h1 className="h2">Sample Daily Menu</h1>
-      <p className="text-muted">
-        This page shows a Nutrislice-inspired{" "}
-        <strong>example</strong> menu using items and ratings from this
-        site. Select a dining hall and meal to see what a typical lineup
-        might look like, and how UW students rate each item.
+    <Container className="py-4">
+      <h1 className="mb-3">Sample Daily Menu</h1>
+      <p className="text-muted mb-4">
+        This page shows a Nutrislice-inspired <strong>example</strong> menu
+        using dining-hall items from this site. Select a dining hall and a meal
+        to see what a typical lineup might look like.
       </p>
 
-      {/* Nutrislice-like sample menu driven by app data */}
-      <CurrentMenuSection reviews={normalizedReviews} />
+      <h2 className="h4 mb-3">Today&apos;s Sample Menu</h2>
+      <p className="text-muted mb-4">
+        This page mimics the style of the official Nutrislice menus using data
+        from this app. It focuses only on the menu items, not ratings. Use the
+        button on the right to jump to the real menu for the selected hall and
+        meal.
+      </p>
 
-      {/* Clear section for official Nutrislice links */}
-      <section
-        aria-labelledby="official-menus-heading"
-        className="mt-4 mb-3"
-      >
-        <h2 id="official-menus-heading" className="h3 mb-3">
-          Official Menus on Nutrislice
-        </h2>
-        <Card className="mb-3">
-          <Card.Body>
-            <p className="mb-2">
-              For <strong>live, official menus</strong>, nutrition
-              information, and allergen details, always refer to the UW
-              Housing Nutrislice site.
-            </p>
-            <p className="mb-0 small text-muted">
-              <strong>Important:</strong> The sample menu above is{" "}
-              <em>not</em> guaranteed to match the actual food served on a
-              given day. Use the buttons below to open the real Nutrislice
-              pages in a new tab.
-            </p>
-          </Card.Body>
-        </Card>
-
-        <Row className="g-3">
-          {HALL_LINKS.map((hall) => (
-            <Col xs={12} md={6} lg={4} key={hall.value}>
-              <Card className="h-100 shadow-sm">
-                <Card.Body className="d-flex flex-column justify-content-between">
-                  <div>
-                    <Card.Title>{hall.label}</Card.Title>
-                    <Card.Text className="small text-muted">
-                      See today&apos;s breakfast, lunch, and dinner menus,
-                      plus nutrition info, straight from UW Housing.
-                    </Card.Text>
-                  </div>
-                  <div className="mt-2">
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      href={hall.nutrisliceUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Open in Nutrislice
-                    </Button>
-                  </div>
-                </Card.Body>
-              </Card>
+      <Card className="shadow-sm mb-4">
+        <Card.Body>
+          <Row className="align-items-center g-3">
+            <Col md={4}>
+              <Form.Group controlId="sampleHall">
+                <Form.Label>Dining hall</Form.Label>
+                <Form.Select
+                  value={hall}
+                  onChange={(e) => setHall(e.target.value)}
+                  aria-label="Select dining hall for sample menu"
+                >
+                  {DINING_HALLS.map((h) => (
+                    <option key={h} value={h}>
+                      {h}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
             </Col>
-          ))}
-        </Row>
-      </section>
+
+            <Col md={4}>
+              <Form.Group controlId="sampleMeal">
+                <Form.Label>Meal</Form.Label>
+                <Form.Select
+                  value={meal}
+                  onChange={(e) => setMeal(e.target.value)}
+                  aria-label="Select meal for sample menu"
+                >
+                  {MEALS.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+
+            <Col
+              md={4}
+              className="d-flex justify-content-md-end justify-content-start"
+            >
+              <Button
+                as="a"
+                href={externalUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-3 mt-md-0"
+                variant="danger"
+              >
+                {externalLabel}
+              </Button>
+            </Col>
+          </Row>
+
+          <div className="mt-3 small text-muted">
+            <p className="mb-1">
+              {todayText} · Sample menu for <strong>{hall}</strong> (
+              {meal.toLowerCase()}).
+            </p>
+            <p className="mb-0">
+              <strong>Disclaimer:</strong> This menu is an{" "}
+              <em>example</em> based on items in this app. It is{" "}
+              <strong>not</strong> the official menu for this date. For real-time
+              menus and nutrition details, please use{" "}
+              <a
+                href="https://wisc-housingdining.nutrislice.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Nutrislice
+              </a>{" "}
+              {hall === "Shake Smart" && (
+                <>
+                  {" "}
+                  or{" "}
+                  <a
+                    href="https://shakesmart.com/menu/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Shake Smart
+                  </a>
+                  .
+                </>
+              )}
+            </p>
+          </div>
+        </Card.Body>
+      </Card>
+
+      <Card className="shadow-sm">
+        <Card.Body>
+          <h3 className="h5 mb-3">
+            Example {meal.toLowerCase()} menu for {hall}
+          </h3>
+          {sampleItems.length === 0 ? (
+            <p className="text-muted mb-0">
+              No sample items are configured for this hall yet.
+            </p>
+          ) : (
+            <ListGroup as="ul">
+              {sampleItems.map((item) => (
+                <ListGroup.Item key={item} as="li">
+                  {item}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          )}
+        </Card.Body>
+      </Card>
     </Container>
   );
 }
