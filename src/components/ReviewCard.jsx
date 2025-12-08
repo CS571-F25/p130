@@ -1,4 +1,3 @@
-// src/components/ReviewCard.jsx
 import { Card, Button } from "react-bootstrap";
 import RatingStars from "./RatingStars.jsx";
 
@@ -8,7 +7,6 @@ export default function ReviewCard({
   onDeleteReview
 }) {
   const { hall, item, rating, wouldAgain, text, author, imageUrl } = review;
-
   const canDelete = currentUser && currentUser === author;
 
   return (
@@ -29,9 +27,10 @@ export default function ReviewCard({
           </div>
         )}
         <div className="flex-grow-1">
-          <Card.Title as="h3" className="h5">
+          <Card.Title as="h2" className="h5 mb-2">
             {hall} — {item}
           </Card.Title>
+
           <div className="mb-1">
             <strong>Rating:</strong>{" "}
             <RatingStars rating={rating} /> ({rating}/5)
@@ -40,7 +39,8 @@ export default function ReviewCard({
             <strong>Would order again?</strong> {wouldAgain ? "Yes" : "No"}
           </div>
           {text && <Card.Text className="mb-1">{text}</Card.Text>}
-          <div className="d-flex justify-content-between align-items-center">
+
+          <div className="d-flex justify-content-between align-items-center mt-1">
             <small className="text-muted">by {author}</small>
             {canDelete && (
               <Button

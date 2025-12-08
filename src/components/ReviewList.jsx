@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { Pagination } from "react-bootstrap";
 import ReviewCard from "./ReviewCard.jsx";
 
@@ -6,53 +5,66 @@ export default function ReviewList({
   reviews,
   page,
   setPage,
-  pageSize = 5,
+  pageSize,
   currentUser,
   onDeleteReview
 }) {
-  const totalPages = Math.max(1, Math.ceil(reviews.length / pageSize));
+  const total = reviews.length;
+  const pageSizeSafe = pageSize || 5;
+  const totalPages = Math.max(1, Math.ceil(total / pageSizeSafe));
+  const currentPage = Math.min(page, totalPages);
 
-  const pageData = useMemo(() => {
-    const start = (page - 1) * pageSize;
-    return reviews.slice(start, start + pageSize);
-  }, [reviews, page, pageSize]);
+  const startIndex = (currentPage - 1) * pageSizeSafe;
+  const visible = reviews.slice(startIndex, startIndex + pageSizeSafe);
 
-  const handleChange = (next) => {
-    if (next >= 1 && next <= totalPages) setPage(next);
+  const handlePageChange = (p) => {
+    if (p < 1 || p > totalPages) return;
+    setPage?.(p);
   };
 
-  return (
-    <>
-      {pageData.map((r) => (
-        <ReviewCard
-          key={r.id ?? `${r.hall}-${r.item}-${r.author}`}
-          review={r}
-          currentUser={currentUser}
-          onDelete={() => onDeleteReview?.(r.id)}
-        />
-      ))}
+  const headingText =
+    total === 0
+      ? "No reviews match these filters yet."
+      : `Showing ${startIndex + 1}-${startIndex + visible.length} of ${total} review${
+          total !== 1 ? "s" : ""
+        }`;
 
-      <div className="d-flex justify-content-center">
-        <Pagination className="mt-2">
-          <Pagination.Prev
-            onClick={() => handleChange(page - 1)}
-            disabled={page === 1}
+  return (
+    <section aria-label="Dining hall reviews list">
+      <h2 className="h4">{headingText}</h2>
+
+      <div className="mt-3 mb-3">
+        {visible.map((review) => (
+          <ReviewCard
+            key={review.id}
+            review={review}
+            currentUser={currentUser}
+            onDeleteReview={onDeleteReview}
           />
-          {[...Array(totalPages)].map((_, idx) => (
+        ))}
+      </div>
+
+      {totalPages > 1 && (
+        <Pagination aria-label="Review pages">
+          <Pagination.Prev
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          />
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <Pagination.Item
-              key={idx}
-              active={page === idx + 1}
-              onClick={() => handleChange(idx + 1)}
+              key={p}
+              active={p === currentPage}
+              onClick={() => handlePageChange(p)}
             >
-              {idx + 1}
+              {p}
             </Pagination.Item>
           ))}
           <Pagination.Next
-            onClick={() => handleChange(page + 1)}
-            disabled={page === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
           />
         </Pagination>
-      </div>
-    </>
+      )}
+    </section>
   );
 }

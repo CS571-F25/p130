@@ -5,12 +5,11 @@
   font-weight: 400;
 
   /* UW-ish theme colors */
-  --uw-primary: #c5050c;        /* UW red */
+  --uw-primary: #c5050c;       /* UW red */
   --uw-primary-dark: #8e0509;
-  --uw-bg: #f4f4f8;
-  --uw-surface: #ffffff;
-  --uw-text: #212529;
-  --uw-muted: #6c757d;
+  --uw-bg-dark: #0f172a;       /* deep navy overlay */
+  --uw-text: #111827;          /* main text on light */
+  --uw-text-on-dark: #f9fafb;  /* text on background image */
 
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -26,38 +25,55 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at top, #ffffff 0, var(--uw-bg) 55%);
-  color: var(--uw-text);
+
+  /* UW-themed background: gradient + photo you add as /public/uw-campus.jpg */
+  background:
+    linear-gradient(
+      135deg,
+      rgba(15, 23, 42, 0.9),
+      rgba(15, 23, 42, 0.7)
+    ),
+    url("/uw-campus.jpg") center / cover fixed no-repeat;
+
+  color: var(--uw-text-on-dark);
 }
 
-/* Basic link styling, keeping contrast high */
-a {
-  color: var(--uw-primary);
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
-}
-
-/* Wrapper for each page (set in pages via className="page") */
+/* Page shell that sits on top of the background */
 .page {
-  max-width: 960px;
-  margin: 0 auto;
+  max-width: 1024px;
+  margin: 1.5rem auto 3rem;
   padding: 2rem 1.5rem 3rem;
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--uw-text);
+  border-radius: 1.25rem;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(6px);
 }
 
 /* Headings */
 h1,
 .h1,
 .h2,
-.h3 {
+.h3,
+.h4 {
   color: var(--uw-text);
+}
+
+/* Links */
+a {
+  color: var(--uw-primary);
+  text-decoration: none;
+}
+a:hover,
+a:focus {
+  text-decoration: underline;
 }
 
 /* Navbar theming */
 .navbar {
-  background-color: var(--uw-surface) !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
 }
 
 .navbar-brand,
@@ -70,7 +86,7 @@ h1,
   color: var(--uw-primary) !important;
 }
 
-/* Primary buttons in UW red */
+/* Buttons */
 .btn-primary {
   background-color: var(--uw-primary);
   border-color: var(--uw-primary);
@@ -81,25 +97,58 @@ h1,
   border-color: var(--uw-primary-dark);
 }
 
-/* Outline buttons tuned to theme */
-.btn-outline-secondary {
-  color: var(--uw-muted);
-  border-color: #ced4da;
+.btn-outline-primary {
+  color: var(--uw-primary);
+  border-color: var(--uw-primary);
+}
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  color: #fff;
+  background-color: var(--uw-primary);
+  border-color: var(--uw-primary);
 }
 
-/* Cards: subtle elevation */
+.btn-link {
+  color: var(--uw-primary);
+}
+.btn-link:hover,
+.btn-link:focus {
+  color: var(--uw-primary-dark);
+}
+
+/* Cards */
 .card {
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   border: 1px solid #e5e7eb;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
 }
 
 /* Tables */
 .table thead th {
-  background-color: #f8f9fb;
+  background-color: #f3f4f6;
 }
 
-/* Small helper for muted text */
+/* Badges + text-primary + pagination in UW red instead of light blue */
+.badge.bg-primary {
+  background-color: var(--uw-primary) !important;
+}
+.text-primary {
+  color: var(--uw-primary) !important;
+}
+.page-link {
+  color: var(--uw-primary);
+}
+.page-link:hover,
+.page-link:focus {
+  color: var(--uw-primary-dark);
+}
+
+/* Muted text tuned to theme */
 .text-muted {
-  color: var(--uw-muted) !important;
+  color: #6b7280 !important;
+}
+
+/* Small helper for intro card on home */
+.page-intro-card {
+  margin-bottom: 1.5rem;
 }
