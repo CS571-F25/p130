@@ -3,157 +3,52 @@
     sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  /* UW theme palette */
-  --uw-primary: #c5050c;       /* UW red */
-  --uw-primary-dark: #8e0509;
-  --uw-bg-overlay: #0b1120;    /* deep navy overlay */
-  --uw-text: #111827;          /* main text on light */
-  --uw-text-on-dark: #f9fafb;  /* text on image bg */
-
+  color: #212529;
+  background-color: #ffffff;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
+  min-width: 320px;
   min-height: 100vh;
-
-  /* UW hero background: dark red/navy gradient over your campus image */
-  background:
-    radial-gradient(circle at top, rgba(197, 5, 12, 0.65), transparent 55%),
-    linear-gradient(
-      135deg,
-      rgba(11, 17, 32, 0.9),
-      rgba(11, 17, 32, 0.75)
-    ),
-    url("/uw-hero.jpg") center / cover fixed no-repeat;
-
-  color: var(--uw-text-on-dark);
+  /* Light UW-themed background, but not too dark for contrast */
+  background: radial-gradient(
+    circle at top,
+    #ffffff 0,
+    #f7d7dd 35%,
+    #c5050c 100%
+  );
+  color: #212529;
 }
 
-/* Page shell that sits on top of the background */
-.page {
-  max-width: 1024px;
-  margin: 1.5rem auto 3rem;
-  padding: 2rem 1.5rem 3rem;
-  background: rgba(255, 255, 255, 0.96);
-  color: var(--uw-text);
-  border-radius: 1.25rem;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(6px);
+#root {
+  min-height: 100vh;
 }
 
-/* Headings */
-h1,
-.h1,
-h2,
-.h2,
-h3,
-.h3,
-h4,
-.h4 {
-  color: var(--uw-text);
+/* Make major UI blocks high-contrast white with dark text */
+.card,
+.navbar,
+.form-control,
+.table,
+.list-group-item {
+  background-color: #ffffff;
+  color: #212529;
 }
 
-/* Links */
+/* Buttons keep Bootstrap palette but we ensure text stays dark where needed */
+.btn-outline-light {
+  color: #212529;
+}
+
+/* Links in UW red with good contrast */
 a {
-  color: var(--uw-primary);
+  color: #c5050c;
   text-decoration: none;
 }
-a:hover,
-a:focus {
+a:hover {
+  color: #8b0009;
   text-decoration: underline;
-}
-
-/* Navbar */
-.navbar {
-  background-color: rgba(255, 255, 255, 0.96) !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
-}
-
-.navbar-brand,
-.navbar .nav-link {
-  color: var(--uw-text) !important;
-}
-
-.navbar .nav-link:hover,
-.navbar .nav-link:focus {
-  color: var(--uw-primary) !important;
-}
-
-/* Buttons */
-.btn-primary {
-  background-color: var(--uw-primary);
-  border-color: var(--uw-primary);
-}
-.btn-primary:hover,
-.btn-primary:focus {
-  background-color: var(--uw-primary-dark);
-  border-color: var(--uw-primary-dark);
-}
-
-.btn-outline-primary {
-  color: var(--uw-primary);
-  border-color: var(--uw-primary);
-}
-.btn-outline-primary:hover,
-.btn-outline-primary:focus {
-  color: #fff;
-  background-color: var(--uw-primary);
-  border-color: var(--uw-primary);
-}
-
-.btn-link {
-  color: var(--uw-primary);
-}
-.btn-link:hover,
-.btn-link:focus {
-  color: var(--uw-primary-dark);
-}
-
-/* Cards */
-.card {
-  border-radius: 0.75rem;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
-}
-
-/* Tables */
-.table thead th {
-  background-color: #f3f4f6;
-}
-
-/* Badges / primary text / pagination tuned to UW red instead of bootstrap blue */
-.badge.bg-primary,
-.badge.text-bg-primary {
-  background-color: var(--uw-primary) !important;
-}
-.text-primary {
-  color: var(--uw-primary) !important;
-}
-.page-link {
-  color: var(--uw-primary);
-}
-.page-link:hover,
-.page-link:focus {
-  color: var(--uw-primary-dark);
-}
-
-/* Muted text */
-.text-muted {
-  color: #6b7280 !important;
-}
-
-/* Helper for intro card on home */
-.page-intro-card {
-  margin-bottom: 1.5rem;
 }

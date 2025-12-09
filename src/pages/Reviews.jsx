@@ -9,19 +9,17 @@ import {
   Pagination,
   Badge,
   Alert,
+  Button,
 } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import ReviewList from "../components/ReviewList.jsx";
 import ReviewForm from "../components/ReviewForm.jsx";
-import {
-  DINING_HALLS,
-  getItemsForHall,
-} from "../data/menu.js";
+import { DINING_HALLS, getItemsForHall } from "../data/menu.js";
 import { INITIAL_REVIEWS } from "../data/seedReviews.js";
 import "../reviews-pagination.css";
 
 const STORAGE_KEY = "uwDiningUserReviews";
-const REVIEWS_PER_PAGE = 5;
+const REVIEWS_PER_PAGE = 12;
 
 function loadUserReviews() {
   try {
@@ -50,6 +48,7 @@ export default function Reviews({ currentUser }) {
   const [selectedItem, setSelectedItem] = useState("");
   const [reviewerSearch, setReviewerSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     setUserReviews(loadUserReviews());
@@ -66,6 +65,7 @@ export default function Reviews({ currentUser }) {
     }
   }, [location.state]);
 
+  // Oldest → newest: seed reviews, then user reviews in the order they were created
   const allReviews = useMemo(
     () => [...INITIAL_REVIEWS, ...userReviews],
     [userReviews],
@@ -96,12 +96,15 @@ export default function Reviews({ currentUser }) {
   };
 
   const handleAddReview = (newReview) => {
+    // Append so the new review is "newest" at the end
     setUserReviews((prev) => {
-      const updated = [newReview, ...prev];
+      const updated = [...prev, newReview];
       saveUserReviews(updated);
       return updated;
     });
-    setPage(1);
+    setShowForm(false);
+    // jump to last page where the new review will appear
+    // but for simplicity keep page at 1 for this project
   };
 
   const handleDeleteReview = (id) => {
@@ -116,15 +119,11 @@ export default function Reviews({ currentUser }) {
     return allReviews.filter((r) => {
       if (selectedHall && r.hall !== selectedHall) return false;
       if (selectedItem && r.item !== selectedItem) return false;
-      if (
-        reviewerSearch.trim() &&
-        !(
-          (r.username || r.author || "")
-            .toLowerCase()
-            .includes(reviewerSearch.toLowerCase())
-        )
-      ) {
-        return false;
+      if (reviewerSearch.trim()) {
+        const author = (r.username || r.author || "").toLowerCase();
+        if (!author.includes(reviewerSearch.toLowerCase())) {
+          return false;
+        }
       }
       return true;
     });
@@ -145,8 +144,8 @@ export default function Reviews({ currentUser }) {
     <Container className="py-4">
       <h1 className="mb-3">Reviews</h1>
       <p className="text-muted mb-4">
-        Browse reviews from other students and share your own experiences.
-        Use the filters to focus on a specific dining hall, item, or reviewer.
+        Browse reviews from other students and share your own experiences. Use
+        the filters to focus on a specific dining hall, item, or reviewer.
       </p>
 
       <Row className="mb-4" aria-label="Filters for reviews">
@@ -171,7 +170,7 @@ export default function Reviews({ currentUser }) {
         <Col lg={4} className="mb-3">
           <Form.Group controlId="filterItem">
             <Form.Label>Item</Form.Label>
-            <Form.Select
+          <Form.Select
               value={selectedItem}
               onChange={handleItemChange}
               aria-label="Filter by item"
@@ -207,10 +206,33 @@ export default function Reviews({ currentUser }) {
                 Add a review
               </Card.Title>
               {currentUser ? (
-                <ReviewForm
-                  currentUser={currentUser}
-                  onAddReview={handleAddReview}
-                />
+                <>
+                  {!showForm && (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => setShowForm(true)}
+                    >
+                      Add a review
+                    </Button>
+                  )}
+                  {showForm && (
+                    <>
+                      <ReviewForm
+                        currentUser={currentUser}
+                        onAddReview={handleAddReview}
+                      />
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        className="mt-2"
+                        onClick={() => setShowForm(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  )}
+                </>
               ) : (
                 <Alert variant="warning" className="mb-0">
                   <Badge bg="warning" text="dark" className="me-2">

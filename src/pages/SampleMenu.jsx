@@ -1,10 +1,10 @@
+// src/pages/SampleMenu.jsx
 import React, { useMemo, useState } from "react";
 import { Container, Row, Col, Card, Form, Button, ListGroup } from "react-bootstrap";
 import { DINING_HALLS, HALL_ITEMS } from "../data/menu.js";
 
 const MEALS = ["Breakfast", "Lunch", "Dinner"];
 
-// Map hall names to Nutrislice slugs
 const HALL_SLUGS = {
   "Carson's Market": "carsons-market",
   "Four Lakes Market": "four-lakes-market",
@@ -15,32 +15,29 @@ const HALL_SLUGS = {
   // Shake Smart handled separately
 };
 
-const MEAL_KEYS = {
+const MEAL_SLUGS = {
   Breakfast: "breakfast",
   Lunch: "lunch",
   Dinner: "dinner",
 };
 
-function getExternalMenuLink(hall, meal) {
+function getExternalMenuLink(hall, meal, dateSlug) {
   if (hall === "Shake Smart") {
-    // Shake Smart has its own menu site
     return "https://shakesmart.com/menu/";
   }
 
-  const slug = HALL_SLUGS[hall];
-  if (!slug) {
+  const hallSlug = HALL_SLUGS[hall];
+  const mealSlug = MEAL_SLUGS[meal];
+
+  if (!hallSlug) {
     return "https://wisc-housingdining.nutrislice.com/";
   }
 
-  const mealKey = MEAL_KEYS[meal];
-  if (mealKey) {
-    // Hall + meal – using a query param to represent the meal choice
-    return `https://wisc-housingdining.nutrislice.com/menu/${slug}?meal=${encodeURIComponent(
-      mealKey,
-    )}`;
+  if (mealSlug && dateSlug) {
+    return `https://wisc-housingdining.nutrislice.com/menu/${hallSlug}/${mealSlug}/${dateSlug}`;
   }
 
-  return `https://wisc-housingdining.nutrislice.com/menu/${slug}`;
+  return `https://wisc-housingdining.nutrislice.com/menu/${hallSlug}`;
 }
 
 function getExternalButtonLabel(hall) {
@@ -50,17 +47,13 @@ function getExternalButtonLabel(hall) {
   return "View on Nutrislice";
 }
 
-// Very simple sample menu builder: reuse hall items, vary slice by meal
 function buildSampleMenu(hall, meal) {
   const hallItems = HALL_ITEMS[hall] || [];
   if (hallItems.length === 0) return [];
 
   let offset = 0;
-  if (meal === "Lunch") {
-    offset = 2;
-  } else if (meal === "Dinner") {
-    offset = 4;
-  }
+  if (meal === "Lunch") offset = 2;
+  else if (meal === "Dinner") offset = 4;
 
   const slice = hallItems.slice(offset, offset + 5);
   return slice.length > 0 ? slice : hallItems.slice(0, 5);
@@ -79,12 +72,17 @@ export default function SampleMenu() {
     });
   }, []);
 
+  const todaySlug = useMemo(() => {
+    const now = new Date();
+    return now.toISOString().slice(0, 10); // YYYY-MM-DD
+  }, []);
+
   const sampleItems = useMemo(
     () => buildSampleMenu(hall, meal),
     [hall, meal],
   );
 
-  const externalUrl = getExternalMenuLink(hall, meal);
+  const externalUrl = getExternalMenuLink(hall, meal, todaySlug);
   const externalLabel = getExternalButtonLabel(hall);
 
   return (
@@ -92,16 +90,15 @@ export default function SampleMenu() {
       <h1 className="mb-3">Sample Daily Menu</h1>
       <p className="text-muted mb-4">
         This page shows a Nutrislice-inspired <strong>example</strong> menu
-        using dining-hall items from this site. Select a dining hall and a meal
+        using dining hall items from this app. Select a dining hall and a meal
         to see what a typical lineup might look like.
       </p>
 
       <h2 className="h4 mb-3">Today&apos;s Sample Menu</h2>
       <p className="text-muted mb-4">
-        This page mimics the style of the official Nutrislice menus using data
-        from this app. It focuses only on the menu items, not ratings. Use the
-        button on the right to jump to the real menu for the selected hall and
-        meal.
+        This page mimics the style of the official Nutrislice menus using only
+        menu items (no ratings). Use the button on the right to jump to the
+        real menu for the selected hall and meal.
       </p>
 
       <Card className="shadow-sm mb-4">
@@ -166,8 +163,8 @@ export default function SampleMenu() {
             <p className="mb-0">
               <strong>Disclaimer:</strong> This menu is an{" "}
               <em>example</em> based on items in this app. It is{" "}
-              <strong>not</strong> the official menu for this date. For real-time
-              menus and nutrition details, please use{" "}
+              <strong>not</strong> the official menu for this date. For
+              real-time menus and nutrition details, please use{" "}
               <a
                 href="https://wisc-housingdining.nutrislice.com/"
                 target="_blank"
