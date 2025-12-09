@@ -1,3 +1,4 @@
+// src/components/ReviewForm.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import SearchableSelect from "./SearchableSelect.jsx";
@@ -7,7 +8,7 @@ export default function ReviewForm(props) {
   const {
     currentUser,
     onSubmitReview,
-    onAddReview, // support either prop name
+    onAddReview, // older prop name, still supported
     onCancel,
     initialHall,
     initialItem,
@@ -19,7 +20,6 @@ export default function ReviewForm(props) {
   const [wouldAgain, setWouldAgain] = useState(true);
   const [text, setText] = useState("");
 
-  // Keep hall/item in sync with any initial filters coming from Reviews page
   useEffect(() => {
     if (initialHall) {
       setHall(initialHall);
@@ -44,12 +44,8 @@ export default function ReviewForm(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const handler = onSubmitReview || onAddReview;
-    if (!handler || !currentUser) {
-      return;
-    }
-    if (!hall || !item) {
-      return;
-    }
+    if (!handler || !currentUser) return;
+    if (!hall || !item) return;
 
     const newReview = {
       id: crypto.randomUUID(),
@@ -64,10 +60,16 @@ export default function ReviewForm(props) {
 
     handler(newReview);
 
-    // reset form but preserve hall/item so user can add more quickly
+    // Reset for another review, but keep hall/item for convenience.
     setRating(5);
     setWouldAgain(true);
     setText("");
+  };
+
+  const handleCancelClick = () => {
+    if (onCancel) {
+      onCancel();
+    }
   };
 
   return (
@@ -155,7 +157,7 @@ export default function ReviewForm(props) {
         />
       </Form.Group>
 
-      {/* Buttons: opposite sides, Cancel is white with red outline via .btn-secondary */}
+      {/* Buttons: opposite sides, Cancel white with red outline (btn-secondary) */}
       <div className="d-flex justify-content-between mt-3">
         <Button type="submit" disabled={!currentUser}>
           Post review
@@ -163,7 +165,7 @@ export default function ReviewForm(props) {
         <Button
           type="button"
           variant="secondary"
-          onClick={onCancel}
+          onClick={handleCancelClick}
         >
           Cancel
         </Button>
