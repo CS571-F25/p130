@@ -1,176 +1,156 @@
 // src/components/ReviewForm.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
-import SearchableSelect from "./SearchableSelect.jsx";
 import { DINING_HALLS, getItemsForHall } from "../data/menu.js";
 
-function createReviewId() {
-  if (typeof crypto !== "undefined" && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-  return `rev-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
-
-export default function ReviewForm(props) {
-  const {
-    currentUser,
-    onSubmitReview,
-    onAddReview, // legacy name support
-    onCancel,
-    initialHall,
-    initialItem,
-  } = props;
-
-  const [hall, setHall] = useState(initialHall || "");
-  const [item, setItem] = useState(initialItem || "");
+export default function ReviewForm({ currentUser, onSubmit, onCancel }) {
+  const [hall, setHall] = useState("");
+  const [item, setItem] = useState("");
   const [rating, setRating] = useState(5);
-  const [wouldAgain, setWouldAgain] = useState(true);
   const [text, setText] = useState("");
+  const [orderAgain, setOrderAgain] = useState(null);
 
-  useEffect(() => {
-    if (initialHall) {
-      setHall(initialHall);
-    }
-    if (initialItem) {
-      setItem(initialItem);
-    }
-  }, [initialHall, initialItem]);
-
-  const availableItems = useMemo(
-    () => (hall ? getItemsForHall(hall) : []),
+  const itemsForHall = useMemo(
+    () => (hall ? getItemsForHall(hall) ?? [] : []),
     [hall],
   );
 
-  const handleHallChange = (value) => {
-    setHall(value);
-    if (!getItemsForHall(value).includes(item)) {
-      setItem("");
-    }
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    const handler = onSubmitReview || onAddReview;
-    if (!handler || !currentUser) return;
-    if (!hall || !item) return;
+
+    // Simple validation to avoid empty posts
+    if (!hall || !item || !rating || orderAgain === null) {
+      return;
+    }
 
     const newReview = {
-      id: createReviewId(),
       hall,
       item,
       rating: Number(rating),
-      wouldOrderAgain: Boolean(wouldAgain),
       text: text.trim(),
+      wouldOrderAgain: orderAgain === "yes",
       user: currentUser,
       createdAt: new Date().toISOString(),
     };
 
-    handler(newReview);
+    onSubmit(newReview);
 
-    // Reset rating/again/text but keep hall/item for convenience
+    // Reset form
+    setHall("");
+    setItem("");
     setRating(5);
-    setWouldAgain(true);
     setText("");
-  };
-
-  const handleCancelClick = () => {
-    if (onCancel) onCancel();
+    setOrderAgain(null);
   };
 
   return (
-    <Form onSubmit={handleSubmit} aria-label="Add a dining hall review">
-      <Row className="mb-3">
-        <Col md={6}>
-          <SearchableSelect
-            label="Dining hall"
-            placeholder="Select a dining hall..."
-            value={hall}
-            onChange={handleHallChange}
-            options={DINING_HALLS}
-            disabled={!currentUser}
-          />
-        </Col>
-        <Col md={6}>
-          <SearchableSelect
-            label="Item"
-            placeholder="Select an item..."
-            value={item}
-            onChange={setItem}
-            options={availableItems}
-            disabled={!currentUser || !hall}
-          />
-        </Col>
-      </Row>
-
-      <Row className="mb-3">
-        <Col md={6}>
-          <Form.Group controlId="ratingSelect">
-            <Form.Label>Rating (1–5)</Form.Label>
+    <Form onSubmit={handleSubmit} aria-label="Add a new dining review">
+      <Row className="gy-3">
+        <Col xs={12} md={6}>
+          <Form.Group controlId="reviewHall">
+            <Form.Label>Dining hall</Form.Label>
             <Form.Select
-              value={rating}
-              onChange={(e) => setRating(e.target.value)}
-              disabled={!currentUser}
+              value={hall}
+              onChange={(e) => {
+                setHall(e.target.value);
+                setItem("");
+              }}
             >
-              <option value={5}>5 stars</option>
-              <option value={4}>4 stars</option>
-              <option value={3}>3 stars</option>
-              <option value={2}>2 stars</option>
-              <option value={1}>1 star</option>
+              <option value="">Select a hall…</option>
+              {DINING_HALLS.map((h) => (
+                <option key={h} value={h}>
+                  {h}
+                </option>
+              ))}
             </Form.Select>
           </Form.Group>
         </Col>
-        <Col md={6}>
-          <Form.Group as={Row} controlId="wouldOrderAgain">
-            <Form.Label column sm={6}>
-              Would order again?
-            </Form.Label>
-            <Col sm={6}>
+
+        <Col xs={12} md={6}>
+          <Form.Group controlId="reviewItem">
+            <Form.Label>Item</Form.Label>
+            <Form.Select
+              value={item}
+              onChange={(e) => setItem(e.target.value)}
+              disabled={!hall}
+            >
+              <option value="">
+                {hall ? "Select an item…" : "Select a hall first"}
+              </option>
+              {itemsForHall.map((it) => (
+                <option key={it} value={it}>
+                  {it}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+
+        <Col xs={12} md={4}>
+          <Form.Group controlId="reviewRating">
+            <Form.Label>Rating</Form.Label>
+            <Form.Select
+              value={rating}
+              onChange={(e) => setRating(e.target.value)}
+            >
+              {[1, 2, 3, 4, 5].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+
+        <Col xs={12} md={8}>
+          <Form.Group controlId="reviewOrderAgain">
+            <Form.Label>Would you order again?</Form.Label>
+            <div>
               <Form.Check
                 inline
                 type="radio"
-                name="wouldAgain"
-                id="wouldAgainYes"
+                id="orderAgainYes"
                 label="Yes"
-                checked={wouldAgain === true}
-                onChange={() => setWouldAgain(true)}
-                disabled={!currentUser}
+                name="order-again"
+                value="yes"
+                checked={orderAgain === "yes"}
+                onChange={(e) => setOrderAgain(e.target.value)}
               />
               <Form.Check
                 inline
                 type="radio"
-                name="wouldAgain"
-                id="wouldAgainNo"
+                id="orderAgainNo"
                 label="No"
-                checked={wouldAgain === false}
-                onChange={() => setWouldAgain(false)}
-                disabled={!currentUser}
+                name="order-again"
+                value="no"
+                checked={orderAgain === "no"}
+                onChange={(e) => setOrderAgain(e.target.value)}
               />
-            </Col>
+            </div>
+          </Form.Group>
+        </Col>
+
+        <Col xs={12}>
+          <Form.Group controlId="reviewText">
+            <Form.Label>Comments</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
           </Form.Group>
         </Col>
       </Row>
 
-      <Form.Group controlId="reviewText" className="mb-2">
-        <Form.Label>Short description</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={3}
-          placeholder="What did you like or dislike?"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          disabled={!currentUser}
-        />
-      </Form.Group>
-
-      {/* Buttons on opposite sides; Cancel styled via .btn-secondary (white with red outline) */}
-      <div className="d-flex justify-content-between mt-3">
-        <Button type="submit" disabled={!currentUser}>
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        <Button variant="danger" type="submit">
           Post review
         </Button>
         <Button
+          variant="outline-danger"
           type="button"
-          variant="secondary"
-          onClick={handleCancelClick}
+          onClick={onCancel}
         >
           Cancel
         </Button>

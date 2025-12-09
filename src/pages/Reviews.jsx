@@ -20,7 +20,7 @@ const STORAGE_KEY = "uw-dining-reviews-v2";
 const PAGE_SIZE = 10;
 
 function hydrateInitialReviews() {
-  // Make sure every seeded review has a stable id and timestamps
+  // Normalize seed reviews
   return INITIAL_REVIEWS.map((r, index) => ({
     id: r.id ?? `seed-${index}`,
     hall: r.hall,
@@ -59,16 +59,14 @@ function saveStoredReviews(reviews) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
   } catch {
-    // fail silently
+    // ignore storage errors
   }
 }
 
 export default function Reviews() {
   const [allReviews, setAllReviews] = useState(() => {
-    // First try to load existing combined list from localStorage
     const stored = loadStoredReviews();
     if (stored) return stored;
-    // Otherwise seed from INITIAL_REVIEWS
     const seeded = hydrateInitialReviews();
     saveStoredReviews(seeded);
     return seeded;
@@ -82,17 +80,18 @@ export default function Reviews() {
   const [showForm, setShowForm] = useState(false);
   const [page, setPage] = useState(1);
 
-  // When hall changes, reset item filter so it stays consistent
+  // When hall changes, reset item filter
   useEffect(() => {
     setItemFilter("");
   }, [hallFilter]);
 
-  // --- Derived lists for filters ---
+  // Items available for the selected hall
   const availableItems = useMemo(() => {
     if (!hallFilter) return [];
     return getItemsForHall(hallFilter) ?? [];
   }, [hallFilter]);
 
+  // List of distinct reviewer names, used for hinting (not in placeholder anymore)
   const reviewerOptions = useMemo(() => {
     const names = new Set();
     allReviews.forEach((r) => {
@@ -104,10 +103,9 @@ export default function Reviews() {
     );
   }, [allReviews]);
 
-  // --- Filtered + sorted reviews ---
+  // Filter + sort reviews
   const filteredReviews = useMemo(() => {
     const q = reviewerQuery.trim().toLowerCase();
-
     let list = [...allReviews];
 
     // Newest first
@@ -120,14 +118,11 @@ export default function Reviews() {
     if (hallFilter) {
       list = list.filter((r) => r.hall === hallFilter);
     }
-
     if (itemFilter) {
       list = list.filter((r) => r.item === itemFilter);
     }
-
     if (q) {
       list = list.filter((r) => {
-        // Safely support both user and author
         const reviewerName = (r.user || r.author || "").toLowerCase();
         return reviewerName.includes(q);
       });
@@ -136,7 +131,7 @@ export default function Reviews() {
     return list;
   }, [allReviews, hallFilter, itemFilter, reviewerQuery]);
 
-  // --- Pagination ---
+  // Pagination
   const totalPages = Math.max(1, Math.ceil(filteredReviews.length / PAGE_SIZE));
 
   useEffect(() => {
@@ -151,6 +146,8 @@ export default function Reviews() {
   }, [filteredReviews, page]);
 
   const handleAddReview = (newReview) => {
+    // newReview comes from ReviewForm and already has:
+    // hall, item, rating, text, wouldOrderAgain, user, createdAt
     const reviewWithMeta = {
       ...newReview,
       id: `user-${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -244,11 +241,7 @@ export default function Reviews() {
                 <Form.Label>Reviewer</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder={
-                    reviewerOptions.length
-                      ? `Search (${reviewerOptions.slice(0, 3).join(", ")}...)`
-                      : "Search by reviewer name"
-                  }
+                  placeholder="Search"
                   value={reviewerQuery}
                   onChange={(e) => {
                     setReviewerQuery(e.target.value);
@@ -277,7 +270,11 @@ export default function Reviews() {
                 {showForm ? "Hide review form" : "Add a review"}
               </Button>
             ) : (
-              <Button type="button" disabled className="btn-outline-danger">
+              <Button
+                type="button"
+                disabled
+                className="btn-outline-danger"
+              >
                 Sign in to add a review
               </Button>
             )}
@@ -322,7 +319,9 @@ export default function Reviews() {
                 />
                 <Pagination.Prev
                   disabled={page === 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  onClick={() =>
+                    setPage((p) => Math.max(1, p - 1))
+                  }
                 />
                 {Array.from({ length: totalPages }, (_, idx) => {
                   const pageNum = idx + 1;
