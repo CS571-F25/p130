@@ -28,7 +28,7 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
 
   return (
     <Card className="mb-3 shadow-sm review-card" aria-label="Dining review">
-      <Card.Body className="d-flex flex-row">
+      <Card.Body>
         <div className="me-3 d-flex align-items-center">
           <div className="item-image-circle">
             <img
@@ -70,7 +70,7 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
         {canDelete && (
           <div className="ms-3 d-flex align-items-start">
             <Button
-              variant="outline-danger"
+              variant="danger"
               size="sm"
               onClick={handleDelete}
               aria-label="Delete this review"

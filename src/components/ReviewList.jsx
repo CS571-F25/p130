@@ -16,7 +16,7 @@ export default function ReviewList({ reviews, currentUser, onDeleteReview }) {
   return (
     <Row className="g-3">
       {reviews.map((review) => (
-        <Col key={review.id} md={6} lg={4}>
+        <Col key={review.id} md={12} lg={6}>
           <ReviewCard
             review={review}
             currentUser={currentUser}

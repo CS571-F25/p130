@@ -14,13 +14,15 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  /* Light UW-themed background, but not too dark for contrast */
-  background: radial-gradient(
-    circle at top,
-    #ffffff 0,
-    #f7d7dd 35%,
-    #c5050c 100%
-  );
+  /* Bascom-style hero with soft red overlay for contrast */
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.95)
+    ),
+    url("/uw-hero.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   color: #212529;
 }
 
@@ -28,7 +30,7 @@ body {
   min-height: 100vh;
 }
 
-/* Make major UI blocks high-contrast white with dark text */
+/* High-contrast main elements */
 .card,
 .navbar,
 .form-control,
@@ -38,12 +40,7 @@ body {
   color: #212529;
 }
 
-/* Buttons keep Bootstrap palette but we ensure text stays dark where needed */
-.btn-outline-light {
-  color: #212529;
-}
-
-/* Links in UW red with good contrast */
+/* Links in UW red */
 a {
   color: #c5050c;
   text-decoration: none;

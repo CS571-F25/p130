@@ -21,6 +21,21 @@ const MEAL_SLUGS = {
   Dinner: "dinner",
 };
 
+// Get today's date in America/Chicago as YYYY-MM-DD
+function getTodaySlugCentral() {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const parts = formatter.formatToParts(new Date());
+  const year = parts.find((p) => p.type === "year")?.value;
+  const month = parts.find((p) => p.type === "month")?.value;
+  const day = parts.find((p) => p.type === "day")?.value;
+  return `${year}-${month}-${day}`;
+}
+
 function getExternalMenuLink(hall, meal, dateSlug) {
   if (hall === "Shake Smart") {
     return "https://shakesmart.com/menu/";
@@ -34,6 +49,7 @@ function getExternalMenuLink(hall, meal, dateSlug) {
   }
 
   if (mealSlug && dateSlug) {
+    // /menu/four-lakes-market/lunch/2025-12-08
     return `https://wisc-housingdining.nutrislice.com/menu/${hallSlug}/${mealSlug}/${dateSlug}`;
   }
 
@@ -64,18 +80,16 @@ export default function SampleMenu() {
   const [meal, setMeal] = useState("Lunch");
 
   const todayText = useMemo(() => {
-    const now = new Date();
-    return now.toLocaleDateString(undefined, {
+    const formatter = new Intl.DateTimeFormat(undefined, {
+      timeZone: "America/Chicago",
       weekday: "long",
       month: "long",
       day: "numeric",
     });
+    return formatter.format(new Date());
   }, []);
 
-  const todaySlug = useMemo(() => {
-    const now = new Date();
-    return now.toISOString().slice(0, 10); // YYYY-MM-DD
-  }, []);
+  const todaySlug = useMemo(() => getTodaySlugCentral(), []);
 
   const sampleItems = useMemo(
     () => buildSampleMenu(hall, meal),
@@ -87,18 +101,18 @@ export default function SampleMenu() {
 
   return (
     <Container className="py-4">
-      <h1 className="mb-3">Sample Daily Menu</h1>
+      <h1 className="mb-3">Menu Today</h1>
       <p className="text-muted mb-4">
         This page shows a Nutrislice-inspired <strong>example</strong> menu
         using dining hall items from this app. Select a dining hall and a meal
-        to see what a typical lineup might look like.
+        to see what a typical lineup might look like, then jump to the official
+        Nutrislice or Shake Smart page for the real menu.
       </p>
 
       <h2 className="h4 mb-3">Today&apos;s Sample Menu</h2>
       <p className="text-muted mb-4">
-        This page mimics the style of the official Nutrislice menus using only
-        menu items (no ratings). Use the button on the right to jump to the
-        real menu for the selected hall and meal.
+        This page focuses only on what&apos;s being served—no ratings. Use the
+        red button to open the official menu for the selected hall and meal.
       </p>
 
       <Card className="shadow-sm mb-4">
@@ -158,7 +172,7 @@ export default function SampleMenu() {
           <div className="mt-3 small text-muted">
             <p className="mb-1">
               {todayText} · Sample menu for <strong>{hall}</strong> (
-              {meal.toLowerCase()}).
+              {meal.toLowerCase()}) in Central Time.
             </p>
             <p className="mb-0">
               <strong>Disclaimer:</strong> This menu is an{" "}

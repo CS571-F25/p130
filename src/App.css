@@ -1,132 +1,81 @@
-:root {
-  --uw-primary: #c5050c;
-  --uw-dark: #282828;
-  --uw-light: #f7f7f7;
+/* General layout tweaks */
+main {
+  padding-top: 4rem;
 }
 
-/* Page background */
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  background-image: url("https://images.unsplash.com/photo-1542145177-1e21c049b654?auto=format&fit=crop&w=1600&q=80");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
-
-/* Main page card */
-.page {
-  background-color: rgba(255, 255, 255, 0.96);
-  margin-top: 1.5rem;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
-}
-
-/* Navbar theming */
-.navbar {
-  background-color: rgba(255, 255, 255, 0.98);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(6px);
-}
-
-.navbar-brand {
-  color: var(--uw-primary) !important;
-  font-weight: 700;
-}
-
-.nav-link {
-  color: var(--uw-dark) !important;
-}
-
-.nav-link.active {
-  color: var(--uw-primary) !important;
-}
-
-/* Buttons */
-.btn-primary {
-  background-color: var(--uw-primary);
-  border-color: var(--uw-primary);
+/* UW-red buttons everywhere */
+.btn-primary,
+.btn-danger {
+  background-color: #c5050c;
+  border-color: #c5050c;
 }
 
 .btn-primary:hover,
-.btn-primary:focus {
-  background-color: #990000;
-  border-color: #990000;
+.btn-danger:hover {
+  background-color: #8b0009;
+  border-color: #8b0009;
 }
 
 .btn-outline-primary {
-  color: var(--uw-primary);
-  border-color: var(--uw-primary);
+  color: #c5050c;
+  border-color: #c5050c;
 }
 
-.btn-outline-primary:hover,
-.btn-outline-primary:focus {
-  background-color: var(--uw-primary);
-  color: #fff;
+.btn-outline-primary:hover {
+  color: #ffffff;
+  background-color: #c5050c;
+  border-color: #c5050c;
 }
 
-/* Review card + item image */
+/* Pagination red */
+.pagination-red .page-link {
+  color: #c5050c;
+}
+
+.pagination-red .page-item.active .page-link {
+  background-color: #c5050c;
+  border-color: #c5050c;
+  color: #ffffff;
+}
+
+/* Review cards: horizontal, same-sized images */
 .review-card {
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 0.75rem;
+  height: 230px;
+}
+
+.review-card .card-body {
+  display: flex;
+  flex-direction: row;
 }
 
 .item-image-circle {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #ffffff, #f2f2f2);
-  border: 2px solid var(--uw-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 0.75rem;
-  flex-shrink: 0;
+  width: 180px;
+  height: 160px;
+  border-radius: 0.75rem;
   overflow: hidden;
+  flex-shrink: 0;
+  background-color: #f5f5f5;
 }
 
 .item-image-photo {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   object-fit: cover;
 }
 
-/* Rating stars (color is set via inline style using var(--uw-primary)) */
-.rating-stars {
-  display: inline-block;
-}
+/* Let card text scroll if it ever overflows badly on tiny screens */
+@media (max-width: 575.98px) {
+  .review-card {
+    height: auto;
+  }
 
-/* Pagination: active page is UW red with a red outline, not blue */
-.pagination .page-link {
-  color: var(--uw-primary);
-  border-color: #dee2e6;
-}
+  .review-card .card-body {
+    flex-direction: column;
+  }
 
-.pagination .page-link:hover {
-  color: #990000;
-}
-
-.pagination .page-link:focus {
-  box-shadow: 0 0 0 0.2rem rgba(197, 5, 12, 0.25);
-  outline: none;
-}
-
-.pagination .page-item.active .page-link {
-  background-color: var(--uw-primary);
-  border-color: var(--uw-primary);
-  color: #ffffff;
-  box-shadow: 0 0 0 0.2rem rgba(197, 5, 12, 0.4);
-}
-
-/* Small tweaks */
-.card-title {
-  font-weight: 600;
-}
-
-.text-muted {
-  color: #6b7280 !important;
+  .item-image-circle {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 0.75rem;
+  }
 }

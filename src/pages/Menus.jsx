@@ -1,40 +1,9 @@
 // src/pages/Menus.jsx
 import React, { useMemo } from "react";
-import { Container, Row, Col, Card, Table, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { DINING_HALLS, HALL_ITEMS } from "../data/menu.js";
 import { INITIAL_REVIEWS } from "../data/seedReviews.js";
-
-const HALL_MENU_LINKS = {
-  "Carson's Market": {
-    label: "Open in Nutrislice",
-    url: "https://wisc-housingdining.nutrislice.com/menu/carsons-market",
-  },
-  "Four Lakes Market": {
-    label: "Open in Nutrislice",
-    url: "https://wisc-housingdining.nutrislice.com/menu/four-lakes-market",
-  },
-  "Gordon's Market": {
-    label: "Open in Nutrislice",
-    url: "https://wisc-housingdining.nutrislice.com/menu/gordons-market",
-  },
-  "Liz's Market": {
-    label: "Open in Nutrislice",
-    url: "https://wisc-housingdining.nutrislice.com/menu/lizs-market",
-  },
-  "Lowell Market": {
-    label: "Open in Nutrislice",
-    url: "https://wisc-housingdining.nutrislice.com/menu/lowell-market",
-  },
-  "Rheta's Market": {
-    label: "Open in Nutrislice",
-    url: "https://wisc-housingdining.nutrislice.com/menu/rhetas-market",
-  },
-  "Shake Smart": {
-    label: "Open in Shake Smart site",
-    url: "https://shakesmart.com/menu/",
-  },
-};
 
 function computeStatsForHall(hallName) {
   const items = HALL_ITEMS[hallName] || [];
@@ -87,19 +56,18 @@ export default function Menus() {
 
   return (
     <Container className="py-4">
-      <h1 className="mb-3">Menus &amp; Ratings</h1>
+      <h1 className="mb-3">Hall Stats Overview</h1>
       <p className="text-muted mb-4">
-        Browse the core menu items for each dining hall, see their average
-        ratings, and how many students say they would order them again. Click an
-        item to jump directly to its reviews.
+        See a quick snapshot of how popular core items are at each dining hall
+        based on reviews from this site. Click an item name to jump directly to
+        reviews filtered for that hall and item.
       </p>
 
-      <h2 className="h4 mb-3">Menus and Ratings by Dining Hall</h2>
+      <h2 className="h4 mb-3">Items by Dining Hall</h2>
 
       <Row className="g-4">
         {DINING_HALLS.map((hall) => {
           const stats = hallStats[hall] || [];
-          const linkInfo = HALL_MENU_LINKS[hall];
 
           return (
             <Col md={6} key={hall}>
@@ -112,7 +80,7 @@ export default function Menus() {
                     bordered
                     responsive
                     size="sm"
-                    className="align-middle mb-3"
+                    className="align-middle mb-0"
                   >
                     <thead>
                       <tr>
@@ -151,21 +119,6 @@ export default function Menus() {
                       ))}
                     </tbody>
                   </Table>
-
-                  {linkInfo && (
-                    <div className="d-flex justify-content-end">
-                      <Button
-                        as="a"
-                        href={linkInfo.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        size="sm"
-                        variant="outline-primary"
-                      >
-                        {linkInfo.label}
-                      </Button>
-                    </div>
-                  )}
                 </Card.Body>
               </Card>
             </Col>

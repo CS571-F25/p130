@@ -1,15 +1,11 @@
 // src/components/SiteNav.jsx
+import React from "react";
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 
-export default function SiteNav({ currentUser, onLogout }) {
-  const handleLogoutClick = (e) => {
-    e.preventDefault();
-    onLogout?.();
-  };
-
+export default function SiteNav({ currentUser, onSignOut }) {
   return (
-    <Navbar expand="md" className="mb-3" sticky="top">
+    <Navbar bg="light" expand="md" fixed="top" className="shadow-sm">
       <Container>
         <Navbar.Brand as={NavLink} to="/">
           UW Dining Reviews
@@ -24,36 +20,32 @@ export default function SiteNav({ currentUser, onLogout }) {
               Reviews
             </Nav.Link>
             <Nav.Link as={NavLink} to="/menus">
-              Menus &amp; Ratings
+              Hall Stats
             </Nav.Link>
             <Nav.Link as={NavLink} to="/sample-menu">
-              Sample Menu
+              Menu Today
             </Nav.Link>
-            <Nav.Link as={NavLink} to="/stats">
+            <Nav.Link as={NavLink} to="/my-stats">
               My Stats
             </Nav.Link>
             <Nav.Link as={NavLink} to="/about">
               About
             </Nav.Link>
           </Nav>
-          <Nav className="ms-auto align-items-center">
+          <Nav>
             {currentUser ? (
-              <>
-                <span className="me-2 small text-muted">
-                  Signed in as <strong>{currentUser}</strong>
-                </span>
-                <Button
-                  variant="outline-primary"
-                  size="sm"
-                  onClick={handleLogoutClick}
-                >
-                  Sign Out
-                </Button>
-              </>
+              <Button variant="danger" size="sm" onClick={onSignOut}>
+                Sign Out ({currentUser})
+              </Button>
             ) : (
-              <Nav.Link as={NavLink} to="/auth">
+              <Button
+                as={NavLink}
+                to="/auth"
+                variant="danger"
+                size="sm"
+              >
                 Sign up / Login
-              </Nav.Link>
+              </Button>
             )}
           </Nav>
         </Navbar.Collapse>
