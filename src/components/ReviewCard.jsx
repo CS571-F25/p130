@@ -3,12 +3,6 @@ import React, { useMemo, useState } from "react";
 import { Card, Button, Badge } from "react-bootstrap";
 
 // Map from normalized item slug → actual filename in public/items
-// Filenames available (from user):
-// acai_bowl.jpegbagel_cream_cheese.jpegbrownies.jpegcaesar_salad.jpegcheese_pizza.jpeg
-// cheeseburger.jpegchicken_sandwich.jpegchicken_tenders.jpegchili.jpegchocolate_chip_cookies.jpeg
-// fried_rice.jpegfruit_cup.jpeggarden_salad.jpeggrilled_cheese.jpegham_cheese.jpegice_cream_sundae.jpeg
-// mac_and_cheese.jpegomelet.jpegscrambled_eggs.jpegsoup_day.jpegstir_fry_noodles.jpegsushi_roll.jpeg
-// tofu_stir_fry.jpegturkey_sub.jpegveggie_burger.jpegwaffles.jpegyogurt_partfait.jpeg
 const IMAGE_OVERRIDE_MAP = {
   acai_bowl: "acai_bowl.jpeg",
 
@@ -175,8 +169,13 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
     setImgSrc("items/placeholder.jpeg");
   };
 
-  // Always show Order again: Yes/No (treat missing as No)
-  const wouldAgain = !!review.wouldOrderAgain;
+  // IMPORTANT: support both `wouldOrderAgain` (new) and `wouldAgain` (old seed/localStorage)
+  const wouldAgain =
+    typeof review.wouldOrderAgain === "boolean"
+      ? review.wouldOrderAgain
+      : typeof review.wouldAgain === "boolean"
+        ? review.wouldAgain
+        : false;
 
   return (
     <Card className="shadow-sm review-card">
