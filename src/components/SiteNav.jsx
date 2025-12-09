@@ -37,14 +37,13 @@ export default function SiteNav() {
             <Nav.Link as={NavLink} to="/reviews">
               Reviews
             </Nav.Link>
-            <Nav.Link as={NavLink} to="/hall-stats">
-              Hall Stats Overview
+            {/* Menus & Ratings overview (existing Menus.jsx page) */}
+            <Nav.Link as={NavLink} to="/menus">
+              Hall Ratings
             </Nav.Link>
-            <Nav.Link as={NavLink} to="/menu-today">
-              Menu Today
-            </Nav.Link>
+            {/* Nutrislice-style example daily menu (SampleMenu.jsx) */}
             <Nav.Link as={NavLink} to="/sample-menu">
-              Sample Menu
+              Menu Today
             </Nav.Link>
             <Nav.Link as={NavLink} to="/mystats">
               My Stats
