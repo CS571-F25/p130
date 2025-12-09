@@ -1,6 +1,15 @@
 // src/pages/Auth.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { Container, Card, Form, Button, Row, Col, Alert } from "react-bootstrap";
+import {
+  Container,
+  Card,
+  Form,
+  Button,
+  Row,
+  Col,
+  Alert,
+} from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import {
   getCurrentUserFromCookie,
   setCurrentUserCookie,
@@ -31,6 +40,8 @@ function safeSaveUsers(users) {
 }
 
 export default function Auth() {
+  const navigate = useNavigate();
+
   const [authMode, setAuthMode] = useState("login"); // "login" | "signup"
   const [users, setUsers] = useState(() => safeLoadUsers());
 
@@ -97,21 +108,19 @@ export default function Auth() {
     setUsername(trimmedUser);
     setPin("");
     setPinConfirm("");
+
+    // Go straight to home after signup
+    navigate("/");
   };
 
   const handleLogin = (e) => {
     e.preventDefault();
     resetMessages();
 
-    if (isLoggedIn) {
-      setError("You are already signed in.");
-      return;
-    }
-
     const trimmedUser = username.trim();
     const storedPin = users[trimmedUser];
 
-    // 1) Account existence check first (per your earlier requirement)
+    // 1) Account existence check first
     if (!storedPin) {
       setError("This account does not exist.");
       return;
@@ -134,6 +143,9 @@ export default function Auth() {
 
     setSuccess("Successfully signed in.");
     setPin("");
+
+    // Go straight to home after login
+    navigate("/");
   };
 
   const handleSignOut = () => {
@@ -150,8 +162,9 @@ export default function Auth() {
     <Container className="py-4">
       <h1 className="mb-3">Sign up / Login</h1>
       <p className="text-muted mb-4">
-        Create an account or sign in to leave reviews and manage your dining hall
-        experience. Your login state is remembered using cookies on this device.
+        Create an account or sign in to leave reviews and manage your dining
+        hall experience. Your login state is remembered using cookies on this
+        device.
       </p>
 
       <Card className="shadow-sm">
@@ -189,8 +202,8 @@ export default function Auth() {
 
           {isLoggedIn && (
             <Alert variant="info" className="mb-3">
-              You are currently signed in as{" "}
-              <strong>{cookieUser}</strong>. You can sign out below.
+              You are currently signed in as <strong>{cookieUser}</strong>. You
+              can sign out below.
             </Alert>
           )}
 
@@ -254,43 +267,41 @@ export default function Auth() {
               </div>
             </Form>
           ) : (
-            <Form onSubmit={handleLogin} aria-label="Login form">
-              <Form.Group className="mb-3" controlId="loginUsername">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  autoComplete="username"
-                  required
-                />
-              </Form.Group>
+            <>
+              {!isLoggedIn ? (
+                <Form onSubmit={handleLogin} aria-label="Login form">
+                  <Form.Group className="mb-3" controlId="loginUsername">
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      autoComplete="username"
+                      required
+                    />
+                  </Form.Group>
 
-              <Form.Group className="mb-3" controlId="loginPin">
-                <Form.Label>PIN (4–6 characters)</Form.Label>
-                <Form.Control
-                  type="password"
-                  value={pin}
-                  onChange={(e) => setPin(e.target.value)}
-                  autoComplete="current-password"
-                  required
-                />
-              </Form.Group>
+                  <Form.Group className="mb-3" controlId="loginPin">
+                    <Form.Label>PIN (4–6 characters)</Form.Label>
+                    <Form.Control
+                      type="password"
+                      value={pin}
+                      onChange={(e) => setPin(e.target.value)}
+                      autoComplete="current-password"
+                      required
+                    />
+                  </Form.Group>
 
-              <div className="d-flex justify-content-between align-items-center">
-                <Button
-                  type="submit"
-                  disabled={isLoggedIn}
-                  style={{
-                    backgroundColor: isLoggedIn ? "#ffffff" : "#c5050c",
-                    border: "2px solid #c5050c",
-                    color: isLoggedIn ? "#c5050c" : "#ffffff",
-                    opacity: isLoggedIn ? 0.8 : 1,
-                  }}
-                >
-                  Login
-                </Button>
-                {isLoggedIn && (
+                  <div className="d-flex justify-content-between align-items-center">
+                    <Button type="submit">Login</Button>
+                  </div>
+                </Form>
+              ) : (
+                <div className="d-flex justify-content-between align-items-center">
+                  <p className="mb-0">
+                    You&apos;re already signed in as{" "}
+                    <strong>{cookieUser}</strong>.
+                  </p>
                   <Button
                     type="button"
                     variant="secondary"
@@ -298,9 +309,9 @@ export default function Auth() {
                   >
                     Sign out
                   </Button>
-                )}
-              </div>
-            </Form>
+                </div>
+              )}
+            </>
           )}
         </Card.Body>
       </Card>

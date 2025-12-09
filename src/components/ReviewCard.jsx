@@ -9,7 +9,7 @@ const IMAGE_OVERRIDE_MAP = {
   bagel_with_cream_cheese: "bagel_cream_cheese.jpeg",
   bagel_cream_cheese: "bagel_cream_cheese.jpeg",
   brownies: "brownies.jpeg",
-  caesar_salad: "caesar_salard.jpeg",
+  caesar_salad: "caesar_salad.jpeg",
   cheese_pizza: "cheese_pizza.jpeg",
   cheeseburger: "cheeseburger.jpeg",
   chicken_sandwich: "chicken_sandwich.jpeg",
@@ -65,6 +65,7 @@ function toImagePathFromItemName(itemName) {
     return `items/${override}`;
   }
 
+  // Default: try <slug>.jpeg
   return `items/${slug}.jpeg`;
 }
 
@@ -124,7 +125,7 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
     setImgSrc("items/placeholder.jpeg");
   };
 
-  // Always show Order again: Yes/No (undefined treated as No)
+  // Always show Order again: Yes/No (treat missing as No)
   const wouldAgain = !!review.wouldOrderAgain;
 
   return (
@@ -167,7 +168,10 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
               <span>Posted by </span>
               <strong>{review.user || "Anonymous"}</strong> ·{" "}
               <span>Order again: </span>
-              <Badge bg={wouldAgain ? "success" : "danger"} as="span">
+              <Badge
+                bg={wouldAgain ? "danger" : "secondary"}
+                as="span"
+              >
                 {wouldAgain ? "Yes" : "No"}
               </Badge>
             </div>
