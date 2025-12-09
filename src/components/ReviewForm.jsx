@@ -67,7 +67,7 @@ export default function ReviewForm(props) {
 
     handler(newReview);
 
-    // Reset for another review (but keep hall/item so adding multiple is easier)
+    // Reset rating/again/text but keep hall/item for convenience
     setRating(5);
     setWouldAgain(true);
     setText("");
@@ -162,7 +162,7 @@ export default function ReviewForm(props) {
         />
       </Form.Group>
 
-      {/* Buttons: opposite sides; Cancel styled via .btn-secondary (white w/ red outline) */}
+      {/* Buttons on opposite sides; Cancel styled via .btn-secondary (white with red outline) */}
       <div className="d-flex justify-content-between mt-3">
         <Button type="submit" disabled={!currentUser}>
           Post review

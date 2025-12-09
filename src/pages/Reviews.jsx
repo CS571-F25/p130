@@ -12,7 +12,6 @@ import {
 import { useLocation } from "react-router-dom";
 import ReviewList from "../components/ReviewList.jsx";
 import ReviewForm from "../components/ReviewForm.jsx";
-import SearchBar from "../components/SearchBar.jsx";
 import { DINING_HALLS, getItemsForHall } from "../data/menu.js";
 import { INITIAL_REVIEWS } from "../data/seedReviews.js";
 import { getCurrentUserFromCookie } from "../utils/cookies.js";
@@ -45,10 +44,10 @@ function safeSaveReviews(reviews) {
 export default function Reviews({ currentUser: currentUserProp }) {
   const location = useLocation();
 
-  // current user
+  // current user (from prop or cookie)
   const [currentUser, setCurrentUser] = useState(currentUserProp || null);
 
-  // all reviews (seed + user)
+  // all reviews (seed + user reviews)
   const [allReviews, setAllReviews] = useState(() => safeLoadReviews());
 
   // filters
@@ -71,12 +70,12 @@ export default function Reviews({ currentUser: currentUserProp }) {
     }
   }, [currentUserProp]);
 
-  // if navigated here with hall/item passed in state, use as filters
+  // if navigated here with hall/item passed in state, use as starting filters
   useEffect(() => {
-    if (location.state?.hall) {
+    if (location.state && location.state.hall) {
       setHallFilter(location.state.hall);
     }
-    if (location.state?.item) {
+    if (location.state && location.state.item) {
       setItemFilter(location.state.item);
     }
   }, [location.state]);
@@ -179,10 +178,11 @@ export default function Reviews({ currentUser: currentUserProp }) {
             <Col md={4}>
               <Form.Group controlId="filterReviewer">
                 <Form.Label>Reviewer</Form.Label>
-                <SearchBar
+                <Form.Control
+                  type="text"
                   placeholder="Filter by username..."
                   value={reviewerFilter}
-                  onChange={setReviewerFilter}
+                  onChange={(e) => setReviewerFilter(e.target.value)}
                 />
               </Form.Group>
             </Col>
@@ -224,8 +224,8 @@ export default function Reviews({ currentUser: currentUserProp }) {
               currentUser={currentUser}
               onAddReview={handleAddReview}
               onCancel={handleCancelAdd}
-              initialHall={hallFilter || location.state?.hall || ""}
-              initialItem={itemFilter || location.state?.item || ""}
+              initialHall={hallFilter || (location.state && location.state.hall) || ""}
+              initialItem={itemFilter || (location.state && location.state.item) || ""}
             />
           )}
 
