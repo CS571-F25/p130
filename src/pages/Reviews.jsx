@@ -85,6 +85,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
     [hallFilter],
   );
 
+  // Apply filters and sort NEWEST → OLDEST so latest reviews get priority at the front
   const filteredReviews = useMemo(() => {
     return allReviews
       .filter((r) => {
@@ -98,7 +99,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
         }
         return true;
       })
-      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // oldest → newest
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // newest first
   }, [allReviews, hallFilter, itemFilter, reviewerFilter]);
 
   const totalMatching = filteredReviews.length;
@@ -224,8 +225,12 @@ export default function Reviews({ currentUser: currentUserProp }) {
               currentUser={currentUser}
               onAddReview={handleAddReview}
               onCancel={handleCancelAdd}
-              initialHall={hallFilter || (location.state && location.state.hall) || ""}
-              initialItem={itemFilter || (location.state && location.state.item) || ""}
+              initialHall={
+                hallFilter || (location.state && location.state.hall) || ""
+              }
+              initialItem={
+                itemFilter || (location.state && location.state.item) || ""
+              }
             />
           )}
 
@@ -239,7 +244,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
         </Card.Body>
       </Card>
 
-      {/* Reviews list (with pagination inside ReviewList) */}
+      {/* Reviews list (pagination handled inside ReviewList) */}
       <ReviewList
         reviews={filteredReviews}
         currentUser={currentUser}
