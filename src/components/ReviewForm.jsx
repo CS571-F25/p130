@@ -4,11 +4,18 @@ import { Form, Button, Row, Col } from "react-bootstrap";
 import SearchableSelect from "./SearchableSelect.jsx";
 import { DINING_HALLS, getItemsForHall } from "../data/menu.js";
 
+function createReviewId() {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return `rev-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
 export default function ReviewForm(props) {
   const {
     currentUser,
     onSubmitReview,
-    onAddReview, // older prop name, still supported
+    onAddReview, // legacy name support
     onCancel,
     initialHall,
     initialItem,
@@ -48,7 +55,7 @@ export default function ReviewForm(props) {
     if (!hall || !item) return;
 
     const newReview = {
-      id: crypto.randomUUID(),
+      id: createReviewId(),
       hall,
       item,
       rating: Number(rating),
@@ -60,16 +67,14 @@ export default function ReviewForm(props) {
 
     handler(newReview);
 
-    // Reset for another review, but keep hall/item for convenience.
+    // Reset for another review (but keep hall/item so adding multiple is easier)
     setRating(5);
     setWouldAgain(true);
     setText("");
   };
 
   const handleCancelClick = () => {
-    if (onCancel) {
-      onCancel();
-    }
+    if (onCancel) onCancel();
   };
 
   return (
@@ -157,7 +162,7 @@ export default function ReviewForm(props) {
         />
       </Form.Group>
 
-      {/* Buttons: opposite sides, Cancel white with red outline (btn-secondary) */}
+      {/* Buttons: opposite sides; Cancel styled via .btn-secondary (white w/ red outline) */}
       <div className="d-flex justify-content-between mt-3">
         <Button type="submit" disabled={!currentUser}>
           Post review

@@ -17,20 +17,24 @@ import { DINING_HALLS, getItemsForHall } from "../data/menu.js";
 import { INITIAL_REVIEWS } from "../data/seedReviews.js";
 import { getCurrentUserFromCookie } from "../utils/cookies.js";
 
-const STORAGE_KEY = "uwDiningReviews";
+const STORAGE_KEY = "uwDiningAllReviews";
 
-function loadStoredReviews() {
+function safeLoadReviews() {
+  if (typeof window === "undefined") return INITIAL_REVIEWS;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
+    if (!raw) return INITIAL_REVIEWS;
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) && parsed.length > 0
+      ? parsed
+      : INITIAL_REVIEWS;
   } catch {
-    return [];
+    return INITIAL_REVIEWS;
   }
 }
 
-function saveStoredReviews(reviews) {
+function safeSaveReviews(reviews) {
+  if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
   } catch {
@@ -41,19 +45,21 @@ function saveStoredReviews(reviews) {
 export default function Reviews({ currentUser: currentUserProp }) {
   const location = useLocation();
 
+  // current user
   const [currentUser, setCurrentUser] = useState(currentUserProp || null);
-  const [allReviews, setAllReviews] = useState(() => {
-    const stored = loadStoredReviews();
-    // prepend initial reviews so they look older
-    return [...INITIAL_REVIEWS, ...stored];
-  });
 
+  // all reviews (seed + user)
+  const [allReviews, setAllReviews] = useState(() => safeLoadReviews());
+
+  // filters
   const [hallFilter, setHallFilter] = useState("");
   const [itemFilter, setItemFilter] = useState("");
   const [reviewerFilter, setReviewerFilter] = useState("");
+
+  // add-review form visibility
   const [showForm, setShowForm] = useState(false);
 
-  // Sync from cookie if App hasn't provided a user yet
+  // sync user from prop / cookie
   useEffect(() => {
     if (currentUserProp) {
       setCurrentUser(currentUserProp);
@@ -65,7 +71,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
     }
   }, [currentUserProp]);
 
-  // If navigated from Home/Menus with a selected hall/item
+  // if navigated here with hall/item passed in state, use as filters
   useEffect(() => {
     if (location.state?.hall) {
       setHallFilter(location.state.hall);
@@ -75,13 +81,11 @@ export default function Reviews({ currentUser: currentUserProp }) {
     }
   }, [location.state]);
 
-  // Items available for the current hall filter
   const availableItemsForFilter = useMemo(
     () => (hallFilter ? getItemsForHall(hallFilter) : []),
     [hallFilter],
   );
 
-  // Filter + sort (oldest to newest as requested)
   const filteredReviews = useMemo(() => {
     return allReviews
       .filter((r) => {
@@ -95,27 +99,25 @@ export default function Reviews({ currentUser: currentUserProp }) {
         }
         return true;
       })
-      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // oldest → newest
   }, [allReviews, hallFilter, itemFilter, reviewerFilter]);
 
   const totalMatching = filteredReviews.length;
 
   const handleAddReview = (newReview) => {
-    const storedOnly = allReviews.slice(INITIAL_REVIEWS.length);
-    const updatedStored = [...storedOnly, newReview];
-    const updatedAll = [...INITIAL_REVIEWS, ...updatedStored];
-    setAllReviews(updatedAll);
-    saveStoredReviews(updatedStored);
+    setAllReviews((prev) => {
+      const updated = [...prev, newReview];
+      safeSaveReviews(updated);
+      return updated;
+    });
+    setShowForm(false);
   };
 
   const handleDeleteReview = (idToDelete) => {
     setAllReviews((prev) => {
-      const storedOnly = prev
-        .slice(INITIAL_REVIEWS.length)
-        .filter((r) => r.id !== idToDelete);
-      const updatedAll = [...INITIAL_REVIEWS, ...storedOnly];
-      saveStoredReviews(storedOnly);
-      return updatedAll;
+      const updated = prev.filter((r) => r.id !== idToDelete);
+      safeSaveReviews(updated);
+      return updated;
     });
   };
 
@@ -124,7 +126,6 @@ export default function Reviews({ currentUser: currentUserProp }) {
 
   const handleHallFilterChange = (value) => {
     setHallFilter(value);
-    // Reset item filter if it's not in this hall
     if (value && !getItemsForHall(value).includes(itemFilter)) {
       setItemFilter("");
     }
@@ -238,7 +239,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
         </Card.Body>
       </Card>
 
-      {/* Reviews list (with its own pagination) */}
+      {/* Reviews list (with pagination inside ReviewList) */}
       <ReviewList
         reviews={filteredReviews}
         currentUser={currentUser}
