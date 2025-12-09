@@ -19,18 +19,15 @@ function safeLoadReviews() {
 
 export default function MyStats() {
   const [allReviews, setAllReviews] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     setAllReviews(safeLoadReviews());
+    setCurrentUser(getCurrentUserFromCookie() || null);
   }, []);
 
-  const currentUser = useMemo(
-    () => getCurrentUserFromCookie() || null,
-    [],
-  );
-
   const myReviews = useMemo(
-    () => allReviews.filter((r) => r.user === currentUser),
+    () => (currentUser ? allReviews.filter((r) => r.user === currentUser) : []),
     [allReviews, currentUser],
   );
 
@@ -51,8 +48,9 @@ export default function MyStats() {
   const hallsBreakdown = useMemo(() => {
     const map = new Map();
     for (const r of myReviews) {
+      if (!r.hall) continue;
       if (!map.has(r.hall)) {
-        map.set(r.hall, { count: 0, sumRating: 0 });
+        map.set(r.hall, { hall: r.hall, count: 0, sumRating: 0 });
       }
       const entry = map.get(r.hall);
       entry.count += 1;
@@ -122,7 +120,7 @@ export default function MyStats() {
                   </p>
                   <p className="mb-0 text-muted small">
                     {totalReviews > 0
-                      ? `${orderAgainYesPct}% of your reviews are &quot;Yes&quot;.`
+                      ? `${orderAgainYesPct}% of your reviews are "Yes".`
                       : "No reviews yet."}
                   </p>
                 </Card.Body>
@@ -137,8 +135,8 @@ export default function MyStats() {
               </Card.Title>
               {hallsBreakdown.length === 0 ? (
                 <p className="mb-0 text-muted">
-                  You haven&apos;t written any reviews yet. Once you do, you&apos;ll see
-                  how each hall scores for you here.
+                  You haven&apos;t written any reviews yet. Once you do,
+                  you&apos;ll see how each hall scores for you here.
                 </p>
               ) : (
                 <div className="table-responsive mt-2">
