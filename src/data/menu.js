@@ -48,7 +48,7 @@ export const MENU_ITEMS = [
   "Acai Bowl",
 ];
 
-// Items actually shown on the Home page per hall (and other places)
+// Items shown on the Home page and menus per hall
 export const HALL_ITEMS = {
   "Carson's Market": [
     "Turkey Sub",
@@ -108,7 +108,6 @@ export const HALL_ITEMS = {
   ],
 };
 
-// Alias used by some components
 export const ITEM_NAMES = MENU_ITEMS;
 
 // Helper used by ReviewForm and other components to get items for a hall
@@ -125,48 +124,51 @@ export function getItemsForHall(hall) {
 }
 
 /**
- * Map each menu item to a file in public/items.
- * Filenames are EXACTLY the ones you listed:
- *   acai_bowl.jpeg, bagel_cream_cheese.jpeg, brownies.jpeg, ...
+ * Image mapping
+ * NOTE: We must respect Vite's base path so GitHub Pages works.
+ * public/items/* is served at `${import.meta.env.BASE_URL}items/...`
  */
+const BASE = (import.meta.env.BASE_URL || "/").replace(/\/+$/, "/");
+const itemPath = (file) => `${BASE}items/${file}`;
+
 const ITEM_FILE_MAP = {
-  "Acai Bowl": "/items/acai_bowl.jpeg",
-  "Bagel with Cream Cheese": "/items/bagel_cream_cheese.jpeg",
-  Brownies: "/items/brownies.jpeg",
-  "Caesar Salad": "/items/caesar_salad.jpeg",
-  "Cheese Pizza": "/items/cheese_pizza.jpeg",
-  Cheeseburger: "/items/cheeseburger.jpeg",
-  "Chicken Sandwich": "/items/chicken_sandwich.jpeg",
-  "Chicken Tenders": "/items/chicken_tenders.jpeg",
-  Chili: "/items/chili.jpeg",
-  "Chocolate Chip Cookies": "/items/chocolate_chip_cookies.jpeg",
-  "Fried Rice": "/items/fried_rice.jpeg",
-  "Fruit Cup": "/items/fruit_cup.jpeg",
-  "Garden Salad": "/items/garden_salad.jpeg",
-  "Grilled Cheese": "/items/grilled_cheese.jpeg",
-  "Ham & Cheese Sandwich": "/items/ham_cheese.jpeg",
-  "Ice Cream Sundae": "/items/ice_cream_sundae.jpeg",
-  "Mac and Cheese": "/items/mac_and_cheese.jpeg",
-  Omelet: "/items/omelet.jpeg",
-  Pancakes: "/items/pancakes.jpeg",
-  "Pasta with Alfredo": "/items/pasta_alfredo.jpeg",
-  "Pasta with Marinara": "/items/pasta_marinara.jpeg",
-  "Peanut Butter Smoothie": "/items/pb_smoothie.jpeg",
-  "Pepperoni Pizza": "/items/pepperoni_pizza.jpeg",
-  "Protein Smoothie": "/items/protein_smoothie.jpeg",
-  "Scrambled Eggs": "/items/scrambled_eggs.jpeg",
-  "Soup of the Day": "/items/soup_day.jpeg",
-  "Stir Fry Noodles": "/items/stir_fry_noodles.jpeg",
-  "Sushi Roll": "/items/sushi_roll.jpeg",
-  "Tofu Stir Fry": "/items/tofu_stir_fry.jpeg",
-  "Turkey Sub": "/items/turkey_sub.jpeg",
-  "Veggie Burger": "/items/veggie_burger.jpeg",
-  Waffles: "/items/waffles.jpeg",
-  "Yogurt Parfait": "/items/yogurt_partfait.jpeg",
+  "Acai Bowl": itemPath("acai_bowl.jpeg"),
+  "Bagel with Cream Cheese": itemPath("bagel_cream_cheese.jpeg"),
+  Brownies: itemPath("brownies.jpeg"),
+  "Caesar Salad": itemPath("caesar_salad.jpeg"),
+  "Cheese Pizza": itemPath("cheese_pizza.jpeg"),
+  Cheeseburger: itemPath("cheeseburger.jpeg"),
+  "Chicken Sandwich": itemPath("chicken_sandwich.jpeg"),
+  "Chicken Tenders": itemPath("chicken_tenders.jpeg"),
+  Chili: itemPath("chili.jpeg"),
+  "Chocolate Chip Cookies": itemPath("chocolate_chip_cookies.jpeg"),
+  "Fried Rice": itemPath("fried_rice.jpeg"),
+  "Fruit Cup": itemPath("fruit_cup.jpeg"),
+  "Garden Salad": itemPath("garden_salad.jpeg"),
+  "Grilled Cheese": itemPath("grilled_cheese.jpeg"),
+  "Ham & Cheese Sandwich": itemPath("ham_cheese.jpeg"),
+  "Ice Cream Sundae": itemPath("ice_cream_sundae.jpeg"),
+  "Mac and Cheese": itemPath("mac_and_cheese.jpeg"),
+  Omelet: itemPath("omelet.jpeg"),
+  Pancakes: itemPath("pancakes.jpeg"),
+  "Pasta with Alfredo": itemPath("pasta_alfredo.jpeg"),
+  "Pasta with Marinara": itemPath("pasta_marinara.jpeg"),
+  "Peanut Butter Smoothie": itemPath("pb_smoothie.jpeg"),
+  "Pepperoni Pizza": itemPath("pepperoni_pizza.jpeg"),
+  "Protein Smoothie": itemPath("protein_smoothie.jpeg"),
+  "Scrambled Eggs": itemPath("scrambled_eggs.jpeg"),
+  "Soup of the Day": itemPath("soup_day.jpeg"),
+  "Stir Fry Noodles": itemPath("stir_fry_noodles.jpeg"),
+  "Sushi Roll": itemPath("sushi_roll.jpeg"),
+  "Tofu Stir Fry": itemPath("tofu_stir_fry.jpeg"),
+  "Turkey Sub": itemPath("turkey_sub.jpeg"),
+  "Veggie Burger": itemPath("veggie_burger.jpeg"),
+  Waffles: itemPath("waffles.jpeg"),
+  "Yogurt Parfait": itemPath("yogurt_partfait.jpeg"),
 };
 
 // Use a safe default in case we ever reference an item with no image yet
-const DEFAULT_IMAGE = "/items/cheese_pizza.jpeg";
+const DEFAULT_IMAGE = itemPath("cheese_pizza.jpeg");
 
 export function getImageForItem(item) {
   return ITEM_FILE_MAP[item] || DEFAULT_IMAGE;
