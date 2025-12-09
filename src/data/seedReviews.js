@@ -1011,3 +1011,37 @@ export const INITIAL_REVIEWS = [
     author: "portion-critic"
   }
 ];
+
+// --- Rating-based tuning for wouldOrderAgain on seed reviews ---
+// Goal: higher ratings -> more likely "Yes", lower ratings -> more likely "No",
+// with an overall "Yes" rate of roughly ~60% across the seed data.
+
+(function retuneSeedOrderAgain() {
+  if (!Array.isArray(INITIAL_REVIEWS)) return;
+
+  let idx = 0;
+
+  for (const review of INITIAL_REVIEWS) {
+    const rating = Number(review.rating || 0);
+
+    // Probabilities:
+    // 4–5 stars → ~80% yes
+    // 3 stars   → ~60% yes
+    // 1–2 stars → ~30% yes
+    let yesProb;
+    if (rating >= 4) {
+      yesProb = 0.8;
+    } else if (rating === 3) {
+      yesProb = 0.6;
+    } else {
+      yesProb = 0.3;
+    }
+
+    // Deterministic pseudo-random based on index, so it’s stable across reloads
+    const bucket = ((idx * 37 + 17) % 100) / 100;
+
+    review.wouldOrderAgain = bucket < yesProb;
+
+    idx += 1;
+  }
+})();
