@@ -128,18 +128,26 @@ button.btn:focus {
 }
 
 /* === YES/NO RADIOS ("Would order again?") === */
-/* Use red accent color for radios/checkboxes everywhere */
-input[type="radio"],
-input[type="checkbox"] {
-  accent-color: #c5050c;
+/* Force Bootstrap radios to use UW red instead of blue */
+.form-check-input[type="radio"]:checked {
+  background-color: #c5050c;
+  border-color: #c5050c;
+}
+
+/* Also for focus outline */
+.form-check-input[type="radio"]:focus {
+  border-color: #c5050c;
+  box-shadow: 0 0 0 0.2rem rgba(197, 5, 12, 0.25);
 }
 
 /* === CANCEL BUTTON (variant="secondary") LOOK + SPACING === */
+/* White with red outline, separated vertically from Post review */
 .btn-secondary {
   background-color: #ffffff !important;
   color: #c5050c !important;
   border-color: #c5050c !important;
-  margin-left: 1.5rem;
+  margin-top: 0.75rem;
+  margin-left: 0;
 }
 
 /* === BADGES (review counts etc.) in My Stats === */
@@ -151,8 +159,9 @@ input[type="checkbox"] {
 }
 
 /* === HALL STATS CARDS === */
+/* Make card borders clearly red so halls have a red accent */
 .hall-stats-card {
-  border: 1px solid #c5050c;
+  border: 2px solid #c5050c !important;
 }
 
 .hall-stats-card .table thead th {

@@ -148,6 +148,7 @@ export default function SampleMenu() {
 
       <h2 className="h4 mb-3">Today&apos;s Sample Menu</h2>
 
+      {/* Controls + official link */}
       <Card className="shadow-sm mb-4">
         <Card.Body>
           <Row className="align-items-center g-3">
@@ -210,48 +211,44 @@ export default function SampleMenu() {
               </Button>
             </Col>
           </Row>
-
-          <div className="mt-3 small text-muted">
-            <p className="mb-1">
-              {todayText} · Sample menu for <strong>{hall}</strong>{" "}
-              ({displayMealText}) in Central Time.
-            </p>
-            <p className="mb-0">
-              <strong>Disclaimer:</strong> This menu is an <em>example</em>{" "}
-              based on items in this app. It is <strong>not</strong> the
-              official menu for this date. For real-time menus and nutrition
-              details, please use{" "}
-              <a
-                href="https://wisc-housingdining.nutrislice.com/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Nutrislice
-              </a>{" "}
-              {hall === "Shake Smart" && (
-                <>
-                  {" "}
-                  or{" "}
-                  <a
-                    href="https://shakesmart.com/menu/"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Shake Smart
-                  </a>
-                  .
-                </>
-              )}
-            </p>
-          </div>
         </Card.Body>
       </Card>
 
+      {/* Example menu + disclaimer directly underneath heading */}
       <Card className="shadow-sm">
         <Card.Body>
-          <h3 className="h5 mb-3">
+          <h3 className="h5 mb-2">
             Example {displayMealText} for {hall}
           </h3>
+
+          <p className="small text-muted mb-3">
+            <strong>{todayText}</strong> in Central Time. This menu is an{" "}
+            <em>example</em> based on items from this app; it is{" "}
+            <strong>not</strong> the official menu for this date. For real-time
+            menus and nutrition details, please use{" "}
+            <a
+              href="https://wisc-housingdining.nutrislice.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Nutrislice
+            </a>{" "}
+            {hall === "Shake Smart" && (
+              <>
+                {" "}
+                or{" "}
+                <a
+                  href="https://shakesmart.com/menu/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Shake Smart
+                </a>
+                .
+              </>
+            )}
+          </p>
+
           {sampleItems.length === 0 ? (
             <p className="text-muted mb-0">
               No sample items are configured for this hall yet.
