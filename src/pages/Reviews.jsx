@@ -9,6 +9,7 @@ import {
   Pagination,
   Card,
 } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 
 import ReviewCard from "../components/ReviewCard.jsx";
 import ReviewForm from "../components/ReviewForm.jsx";
@@ -64,6 +65,8 @@ function saveStoredReviews(reviews) {
 }
 
 export default function Reviews() {
+  const location = useLocation();
+
   const [allReviews, setAllReviews] = useState(() => {
     const stored = loadStoredReviews();
     if (stored) return stored;
@@ -80,6 +83,20 @@ export default function Reviews() {
   const [showForm, setShowForm] = useState(false);
   const [page, setPage] = useState(1);
 
+  // Apply initial hall filter from navigation state (Home "View Reviews" links)
+  useEffect(() => {
+    const state = location?.state;
+    if (!state) return;
+
+    const fromHall =
+      state.hallFilter || state.hall || state.initialHall || "";
+
+    if (fromHall && fromHall !== hallFilter) {
+      setHallFilter(fromHall);
+      setPage(1);
+    }
+  }, [location, hallFilter]);
+
   // When hall changes, reset item filter
   useEffect(() => {
     setItemFilter("");
@@ -91,7 +108,7 @@ export default function Reviews() {
     return getItemsForHall(hallFilter) ?? [];
   }, [hallFilter]);
 
-  // List of distinct reviewer names, used for hinting (not in placeholder anymore)
+  // List of distinct reviewer names (not used in placeholder anymore, but kept for logic if needed)
   const reviewerOptions = useMemo(() => {
     const names = new Set();
     allReviews.forEach((r) => {
@@ -146,8 +163,6 @@ export default function Reviews() {
   }, [filteredReviews, page]);
 
   const handleAddReview = (newReview) => {
-    // newReview comes from ReviewForm and already has:
-    // hall, item, rating, text, wouldOrderAgain, user, createdAt
     const reviewWithMeta = {
       ...newReview,
       id: `user-${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -270,11 +285,7 @@ export default function Reviews() {
                 {showForm ? "Hide review form" : "Add a review"}
               </Button>
             ) : (
-              <Button
-                type="button"
-                disabled
-                className="btn-outline-danger"
-              >
+              <Button type="button" disabled className="btn-outline-danger">
                 Sign in to add a review
               </Button>
             )}
