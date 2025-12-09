@@ -29,14 +29,12 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
   return (
     <Card className="mb-3 shadow-sm review-card" aria-label="Dining review">
       <Card.Body>
-        <div className="me-3 d-flex align-items-center">
-          <div className="item-image-circle">
-            <img
-              src={imageUrl}
-              alt={review.item}
-              className="item-image-photo"
-            />
-          </div>
+        <div className="item-image-circle">
+          <img
+            src={imageUrl}
+            alt={review.item}
+            className="item-image-photo"
+          />
         </div>
 
         <div className="flex-grow-1">

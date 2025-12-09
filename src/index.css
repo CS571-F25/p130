@@ -14,10 +14,10 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  /* Bascom-style hero with soft red overlay for contrast */
+  /* Bascom-style image with lighter overlay (more visible) */
   background-image: linear-gradient(
-      rgba(255, 255, 255, 0.9),
-      rgba(255, 255, 255, 0.95)
+      rgba(255, 255, 255, 0.7),
+      rgba(255, 255, 255, 0.8)
     ),
     url("/uw-hero.jpg");
   background-size: cover;
@@ -30,7 +30,7 @@ body {
   min-height: 100vh;
 }
 
-/* High-contrast main elements */
+/* High-contrast containers */
 .card,
 .navbar,
 .form-control,
@@ -40,7 +40,7 @@ body {
   color: #212529;
 }
 
-/* Links in UW red */
+/* UW-red links */
 a {
   color: #c5050c;
   text-decoration: none;

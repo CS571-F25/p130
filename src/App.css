@@ -1,30 +1,49 @@
-/* General layout tweaks */
 main {
   padding-top: 4rem;
 }
 
-/* UW-red buttons everywhere */
-.btn-primary,
-.btn-danger {
+/* === BUTTONS: ALL RED === */
+.btn {
   background-color: #c5050c;
   border-color: #c5050c;
+  color: #ffffff;
 }
 
-.btn-primary:hover,
-.btn-danger:hover {
+.btn:hover,
+.btn:focus {
   background-color: #8b0009;
   border-color: #8b0009;
+  color: #ffffff;
 }
 
-.btn-outline-primary {
+.btn:disabled,
+.btn.disabled {
+  background-color: #c5050c;
+  border-color: #c5050c;
+  color: #ffffff;
+  opacity: 0.65;
+}
+
+/* Outline buttons should still read as red */
+.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-success,
+.btn-outline-info,
+.btn-outline-dark,
+.btn-outline-light {
+  background-color: transparent;
   color: #c5050c;
   border-color: #c5050c;
 }
 
-.btn-outline-primary:hover {
-  color: #ffffff;
+.btn-outline-primary:hover,
+.btn-outline-secondary:hover,
+.btn-outline-success:hover,
+.btn-outline-info:hover,
+.btn-outline-dark:hover,
+.btn-outline-light:hover {
   background-color: #c5050c;
-  border-color: #c5050c;
+  color: #ffffff;
 }
 
 /* Pagination red */
@@ -38,18 +57,21 @@ main {
   color: #ffffff;
 }
 
-/* Review cards: horizontal, same-sized images */
+/* === REVIEW CARDS === */
+/* Wide, horizontal cards, consistent image size, red outline */
 .review-card {
-  height: 230px;
+  border: 1px solid #c5050c;
+  width: 100%;
 }
 
 .review-card .card-body {
   display: flex;
   flex-direction: row;
+  gap: 1rem;
 }
 
 .item-image-circle {
-  width: 180px;
+  width: 220px;
   height: 160px;
   border-radius: 0.75rem;
   overflow: hidden;
@@ -63,12 +85,7 @@ main {
   object-fit: cover;
 }
 
-/* Let card text scroll if it ever overflows badly on tiny screens */
-@media (max-width: 575.98px) {
-  .review-card {
-    height: auto;
-  }
-
+@media (max-width: 767.98px) {
   .review-card .card-body {
     flex-direction: column;
   }
@@ -76,6 +93,5 @@ main {
   .item-image-circle {
     width: 100%;
     height: 200px;
-    margin-bottom: 0.75rem;
   }
 }

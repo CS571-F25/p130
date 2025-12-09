@@ -34,15 +34,20 @@ export default function SiteNav({ currentUser, onSignOut }) {
           </Nav>
           <Nav>
             {currentUser ? (
-              <Button variant="danger" size="sm" onClick={onSignOut}>
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={onSignOut}
+                aria-label="Sign out"
+              >
                 Sign Out ({currentUser})
               </Button>
             ) : (
               <Button
                 as={NavLink}
                 to="/auth"
-                variant="danger"
                 size="sm"
+                aria-label="Sign up or log in"
               >
                 Sign up / Login
               </Button>

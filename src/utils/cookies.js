@@ -1,26 +1,38 @@
 // src/utils/cookies.js
 
-export function setCookie(name, value, days = 30) {
-  const d = new Date();
-  d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-  const expires = "expires=" + d.toUTCString();
-  document.cookie = `${name}=${encodeURIComponent(
-    value
-  )};${expires};path=/`;
-}
+const USER_COOKIE_KEY = "uwDiningUser";
 
-export function getCookie(name) {
-  const nameEQ = name + "=";
-  const parts = document.cookie.split(";");
-  for (let c of parts) {
-    c = c.trim();
-    if (c.indexOf(nameEQ) === 0) {
-      return decodeURIComponent(c.substring(nameEQ.length));
-    }
+/**
+ * Read the current username from the cookie, or null if none.
+ */
+export function getCurrentUserFromCookie() {
+  if (typeof document === "undefined") return null;
+  const entry = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(USER_COOKIE_KEY + "="));
+  if (!entry) return null;
+  const value = entry.split("=")[1];
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
   }
-  return null;
 }
 
-export function eraseCookie(name) {
-  document.cookie = name + "=; Max-Age=-99999999; path=/";
+/**
+ * Set the current user cookie (30 day lifetime).
+ */
+export function setCurrentUserCookie(username) {
+  if (typeof document === "undefined") return;
+  const encoded = encodeURIComponent(username);
+  const maxAgeSeconds = 60 * 60 * 24 * 30; // 30 days
+  document.cookie = `${USER_COOKIE_KEY}=${encoded}; path=/; max-age=${maxAgeSeconds}`;
+}
+
+/**
+ * Clear the current user cookie.
+ */
+export function clearCurrentUserCookie() {
+  if (typeof document === "undefined") return;
+  document.cookie = `${USER_COOKIE_KEY}=; path=/; max-age=0`;
 }
