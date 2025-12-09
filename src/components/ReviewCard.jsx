@@ -136,7 +136,9 @@ function StarRow({ rating }) {
         key={i}
         aria-hidden="true"
         style={{
-          color: filled ? "#c5050c" : "#ffffff",
+          // Filled stars: red
+          // Empty stars: medium gray for good contrast
+          color: filled ? "#c5050c" : "#6c757d",
           WebkitTextStrokeWidth: "1px",
           WebkitTextStrokeColor: "black",
           marginRight: 2,
@@ -169,7 +171,7 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
     setImgSrc("items/placeholder.jpeg");
   };
 
-  // IMPORTANT: support both `wouldOrderAgain` (new) and `wouldAgain` (old seed/localStorage)
+  // Support both `wouldOrderAgain` (new) and `wouldAgain` (old)
   const wouldAgain =
     typeof review.wouldOrderAgain === "boolean"
       ? review.wouldOrderAgain
@@ -197,7 +199,10 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
               <Card.Title as="h3" className="h5 mb-1">
                 {review.item}
               </Card.Title>
-              <div className="small text-muted">
+              <div
+                className="small text-muted"
+                style={{ whiteSpace: "nowrap" }} // keep hall + time on one line
+              >
                 {review.hall} ·{" "}
                 <span>{formatDate(review.createdAt) || "Unknown time"}</span>
               </div>
