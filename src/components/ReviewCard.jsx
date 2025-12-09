@@ -179,6 +179,9 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
         ? review.wouldAgain
         : false;
 
+  // Support both `user` and `author` (seed reviews use `author`)
+  const displayName = review.user || review.author || "Anonymous";
+
   return (
     <Card className="shadow-sm review-card">
       <Card.Body>
@@ -220,11 +223,18 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
           <div className="d-flex justify-content-between align-items-center">
             <div className="small text-muted">
               <span>Posted by </span>
-              <strong>{review.user || "Anonymous"}</strong> ·{" "}
-              <span>Order again: </span>
-              <Badge bg={wouldAgain ? "danger" : "secondary"} as="span">
-                {wouldAgain ? "Yes" : "No"}
-              </Badge>
+              <strong>{displayName}</strong> ·{" "}
+              <span
+                style={{
+                  fontSize: "0.95rem",
+                  fontWeight: 500,
+                }}
+              >
+                Order again:{" "}
+                <Badge bg={wouldAgain ? "danger" : "secondary"} as="span">
+                  {wouldAgain ? "Yes" : "No"}
+                </Badge>
+              </span>
             </div>
 
             {canDelete && (
