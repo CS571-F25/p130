@@ -1012,7 +1012,7 @@ export const INITIAL_REVIEWS = [
   }
 ];
 
-// --- Rating-based tuning for wouldOrderAgain on seed reviews ---
+// --- Rating-based tuning for wouldAgain on seed reviews ---
 // Goal: higher ratings -> more likely "Yes", lower ratings -> more likely "No",
 // with an overall "Yes" rate of roughly ~60% across the seed data.
 
@@ -1040,7 +1040,8 @@ export const INITIAL_REVIEWS = [
     // Deterministic pseudo-random based on index, so it’s stable across reloads
     const bucket = ((idx * 37 + 17) % 100) / 100;
 
-    review.wouldOrderAgain = bucket < yesProb;
+    // IMPORTANT: your seed data uses `wouldAgain`, not `wouldOrderAgain`
+    review.wouldAgain = bucket < yesProb;
 
     idx += 1;
   }
