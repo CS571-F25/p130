@@ -51,7 +51,6 @@ export default function Reviews({ currentUser: currentUserProp }) {
   const [reviewerFilter, setReviewerFilter] = useState("");
   const [showForm, setShowForm] = useState(false);
 
-  // read nav state for hall/item
   useEffect(() => {
     if (location.state && location.state.hall) {
       setHallFilter(location.state.hall);
@@ -61,9 +60,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
     }
   }, [location.state]);
 
-  // Compute effective user each render rather than keeping it in local state.
-  // This way, when you sign out (prop goes null and/or cookie is cleared),
-  // the reviews page re-renders with no current user and delete buttons vanish.
+  // Compute effective user each render so sign-out immediately updates delete/add availability
   const effectiveUser = useMemo(
     () => currentUserProp || getCurrentUserFromCookie() || null,
     [currentUserProp],
@@ -74,7 +71,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
     [hallFilter],
   );
 
-  // FILTER + SORT NEWEST → OLDEST
+  // Filter + sort NEWEST → OLDEST
   const filteredReviews = useMemo(() => {
     return allReviews
       .filter((r) => {
@@ -95,7 +92,6 @@ export default function Reviews({ currentUser: currentUserProp }) {
 
   const handleAddReview = (newReview) => {
     setAllReviews((prev) => {
-      // PREPEND so new reviews are guaranteed at the front before sorting
       const updated = [newReview, ...prev];
       safeSaveReviews(updated);
       return updated;
@@ -204,6 +200,12 @@ export default function Reviews({ currentUser: currentUserProp }) {
                 type="button"
                 onClick={handleStartAdd}
                 disabled={!effectiveUser}
+                style={{
+                  backgroundColor: effectiveUser ? "#c5050c" : "#ffffff",
+                  border: "2px solid #c5050c",
+                  color: effectiveUser ? "#ffffff" : "#c5050c",
+                  opacity: effectiveUser ? 1 : 0.8,
+                }}
               >
                 Add review
               </Button>

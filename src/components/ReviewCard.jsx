@@ -9,7 +9,7 @@ const IMAGE_OVERRIDE_MAP = {
   bagel_with_cream_cheese: "bagel_cream_cheese.jpeg",
   bagel_cream_cheese: "bagel_cream_cheese.jpeg",
   brownies: "brownies.jpeg",
-  caesar_salad: "caesar_salad.jpeg",
+  caesar_salad: "caesar_salard.jpeg",
   cheese_pizza: "cheese_pizza.jpeg",
   cheeseburger: "cheeseburger.jpeg",
   chicken_sandwich: "chicken_sandwich.jpeg",
@@ -65,7 +65,6 @@ function toImagePathFromItemName(itemName) {
     return `items/${override}`;
   }
 
-  // Default: try <slug>.jpeg
   return `items/${slug}.jpeg`;
 }
 
@@ -86,11 +85,18 @@ function StarRow({ rating }) {
   const full = Number(rating) || 0;
   const stars = [];
   for (let i = 1; i <= 5; i += 1) {
+    const filled = i <= full;
     stars.push(
       <span
         key={i}
         aria-hidden="true"
-        style={{ color: i <= full ? "#c5050c" : "#dee2e6", marginRight: 2 }}
+        style={{
+          color: filled ? "#c5050c" : "#ffffff",
+          WebkitTextStrokeWidth: "1px",
+          WebkitTextStrokeColor: "black",
+          marginRight: 2,
+          fontSize: "20px",
+        }}
       >
         ★
       </span>,
@@ -118,7 +124,8 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
     setImgSrc("items/placeholder.jpeg");
   };
 
-  const hasOrderAgain = typeof review.wouldOrderAgain === "boolean";
+  // Always show Order again: Yes/No (undefined treated as No)
+  const wouldAgain = !!review.wouldOrderAgain;
 
   return (
     <Card className="shadow-sm review-card">
@@ -158,19 +165,11 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
           <div className="d-flex justify-content-between align-items-center">
             <div className="small text-muted">
               <span>Posted by </span>
-              <strong>{review.user || "Anonymous"}</strong>
-              {hasOrderAgain && (
-                <>
-                  {" "}
-                  · <span>Order again: </span>
-                  <Badge
-                    bg={review.wouldOrderAgain ? "success" : "danger"}
-                    as="span"
-                  >
-                    {review.wouldOrderAgain ? "Yes" : "No"}
-                  </Badge>
-                </>
-              )}
+              <strong>{review.user || "Anonymous"}</strong> ·{" "}
+              <span>Order again: </span>
+              <Badge bg={wouldAgain ? "success" : "danger"} as="span">
+                {wouldAgain ? "Yes" : "No"}
+              </Badge>
             </div>
 
             {canDelete && (
