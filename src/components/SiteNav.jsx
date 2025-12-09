@@ -2,16 +2,34 @@
 import React from "react";
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
+import {
+  getCurrentUserFromCookie,
+  clearCurrentUserCookie,
+} from "../utils/cookies.js";
 
-export default function SiteNav({ currentUser, onSignOut }) {
+export default function SiteNav() {
+  const currentUser = getCurrentUserFromCookie();
+
+  const handleSignOut = () => {
+    clearCurrentUserCookie();
+    // Force a full refresh so all pages re-check auth from cookies
+    window.location.reload();
+  };
+
   return (
-    <Navbar bg="light" expand="md" fixed="top" className="shadow-sm">
+    <Navbar
+      bg="light"
+      expand="lg"
+      fixed="top"
+      className="shadow-sm"
+      aria-label="Primary navigation"
+    >
       <Container>
         <Navbar.Brand as={NavLink} to="/">
           UW Dining Reviews
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="main-nav" />
-        <Navbar.Collapse id="main-nav">
+        <Navbar.Toggle aria-controls="main-navbar" />
+        <Navbar.Collapse id="main-navbar">
           <Nav className="me-auto">
             <Nav.Link as={NavLink} to="/" end>
               Home
@@ -19,41 +37,44 @@ export default function SiteNav({ currentUser, onSignOut }) {
             <Nav.Link as={NavLink} to="/reviews">
               Reviews
             </Nav.Link>
-            <Nav.Link as={NavLink} to="/menus">
-              Hall Stats
+            <Nav.Link as={NavLink} to="/hall-stats">
+              Hall Stats Overview
             </Nav.Link>
-            <Nav.Link as={NavLink} to="/sample-menu">
+            <Nav.Link as={NavLink} to="/menu-today">
               Menu Today
             </Nav.Link>
-            <Nav.Link as={NavLink} to="/my-stats">
+            <Nav.Link as={NavLink} to="/sample-menu">
+              Sample Menu
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/mystats">
               My Stats
             </Nav.Link>
             <Nav.Link as={NavLink} to="/about">
               About
             </Nav.Link>
           </Nav>
-          <Nav>
+
+          <div className="d-flex align-items-center gap-2">
             {currentUser ? (
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={onSignOut}
-                aria-label="Sign out"
-              >
-                Sign Out ({currentUser})
-              </Button>
+              <>
+                <span className="text-muted small d-none d-md-inline">
+                  Signed in as <strong>{currentUser}</strong>
+                </span>
+                <Button type="button" onClick={handleSignOut}>
+                  Sign out
+                </Button>
+              </>
             ) : (
               <Button
                 as={NavLink}
                 to="/auth"
-                size="sm"
+                type="button"
                 className="btn-nav-outline"
-                aria-label="Sign up or log in"
               >
                 Sign up / Login
               </Button>
             )}
-          </Nav>
+          </div>
         </Navbar.Collapse>
       </Container>
     </Navbar>
