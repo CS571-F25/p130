@@ -65,9 +65,18 @@ button.btn:focus {
   text-decoration: underline;
 }
 
-/* Pagination links */
-.page-link {
+/* === PAGINATION: FULLY RED THEMED === */
+.pagination-red .page-link {
   color: #c5050c;
+  border-color: #c5050c;
+  background-color: #ffffff;
+}
+
+.pagination-red .page-link:hover,
+.pagination-red .page-link:focus {
+  color: #8b0009;
+  border-color: #8b0009;
+  background-color: #ffffff;
 }
 
 .pagination-red .page-item.active .page-link {
@@ -128,20 +137,17 @@ button.btn:focus {
 }
 
 /* === YES/NO RADIOS ("Would order again?") === */
-/* Force Bootstrap radios to use UW red instead of blue */
 .form-check-input[type="radio"]:checked {
   background-color: #c5050c;
   border-color: #c5050c;
 }
 
-/* Also for focus outline */
 .form-check-input[type="radio"]:focus {
   border-color: #c5050c;
   box-shadow: 0 0 0 0.2rem rgba(197, 5, 12, 0.25);
 }
 
 /* === CANCEL BUTTON (variant="secondary") LOOK + SPACING === */
-/* White with red outline, separated vertically from Post review */
 .btn-secondary {
   background-color: #ffffff !important;
   color: #c5050c !important;
@@ -159,7 +165,6 @@ button.btn:focus {
 }
 
 /* === HALL STATS CARDS === */
-/* Make card borders clearly red so halls have a red accent */
 .hall-stats-card {
   border: 2px solid #c5050c !important;
 }

@@ -44,18 +44,12 @@ function safeSaveReviews(reviews) {
 export default function Reviews({ currentUser: currentUserProp }) {
   const location = useLocation();
 
-  // current user (from prop or cookie)
   const [currentUser, setCurrentUser] = useState(currentUserProp || null);
-
-  // all reviews (seed + user reviews)
   const [allReviews, setAllReviews] = useState(() => safeLoadReviews());
 
-  // filters
   const [hallFilter, setHallFilter] = useState("");
   const [itemFilter, setItemFilter] = useState("");
   const [reviewerFilter, setReviewerFilter] = useState("");
-
-  // add-review form visibility
   const [showForm, setShowForm] = useState(false);
 
   // sync user from prop / cookie
@@ -70,7 +64,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
     }
   }, [currentUserProp]);
 
-  // if navigated here with hall/item passed in state, use as starting filters
+  // incoming state from navigation
   useEffect(() => {
     if (location.state && location.state.hall) {
       setHallFilter(location.state.hall);
@@ -85,7 +79,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
     [hallFilter],
   );
 
-  // Apply filters and sort NEWEST → OLDEST so latest reviews get priority at the front
+  // FILTER + SORT NEWEST → OLDEST
   const filteredReviews = useMemo(() => {
     return allReviews
       .filter((r) => {
@@ -99,14 +93,15 @@ export default function Reviews({ currentUser: currentUserProp }) {
         }
         return true;
       })
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // newest first
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }, [allReviews, hallFilter, itemFilter, reviewerFilter]);
 
   const totalMatching = filteredReviews.length;
 
   const handleAddReview = (newReview) => {
     setAllReviews((prev) => {
-      const updated = [...prev, newReview];
+      // PREPEND new review so it’s guaranteed to be at the front even before sorting
+      const updated = [newReview, ...prev];
       safeSaveReviews(updated);
       return updated;
     });

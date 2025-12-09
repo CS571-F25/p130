@@ -2,13 +2,70 @@
 import React, { useMemo, useState } from "react";
 import { Card, Button, Badge } from "react-bootstrap";
 
-function toImagePathFromItemName(itemName) {
-  if (!itemName) return "/items/placeholder.jpeg";
-  const slug = itemName
+// Map from normalized item slug → actual filename in public/items
+const IMAGE_OVERRIDE_MAP = {
+  acai_bowl: "acai_bowl.jpeg",
+  bagel_and_cream_cheese: "bagel_cream_cheese.jpeg",
+  bagel_with_cream_cheese: "bagel_cream_cheese.jpeg",
+  bagel_cream_cheese: "bagel_cream_cheese.jpeg",
+  brownies: "brownies.jpeg",
+  caesar_salad: "caesar_salad.jpeg",
+  cheese_pizza: "cheese_pizza.jpeg",
+  cheeseburger: "cheeseburger.jpeg",
+  chicken_sandwich: "chicken_sandwich.jpeg",
+  chicken_tenders: "chicken_tenders.jpeg",
+  chili: "chili.jpeg",
+  chocolate_chip_cookies: "chocolate_chip_cookies.jpeg",
+  fried_rice: "fried_rice.jpeg",
+  fruit_cup: "fruit_cup.jpeg",
+  garden_salad: "garden_salad.jpeg",
+  grilled_cheese: "grilled_cheese.jpeg",
+  ham_and_cheese: "ham_cheese.jpeg",
+  ham_cheese: "ham_cheese.jpeg",
+  ice_cream_sundae: "ice_cream_sundae.jpeg",
+  mac_and_cheese: "mac_and_cheese.jpeg",
+  omelet: "omelet.jpeg",
+  pancakes: "pancakes.jpeg",
+  pasta_alfredo: "pasta_alfredo.jpeg",
+  pasta_marinara: "pasta_marinara.jpeg",
+  pb_smoothie: "pb_smoothie.jpeg",
+  peanut_butter_smoothie: "pb_smoothie.jpeg",
+  pepperoni_pizza: "pepperoni_pizza.jpeg",
+  protein_smoothie: "protein_smoothie.jpeg",
+  scrambled_eggs: "scrambled_eggs.jpeg",
+  soup_of_the_day: "soup_day.jpeg",
+  soup_day: "soup_day.jpeg",
+  stir_fry_noodles: "stir_fry_noodles.jpeg",
+  sushi_roll: "sushi_roll.jpeg",
+  tofu_stir_fry: "tofu_stir_fry.jpeg",
+  turkey_sub: "turkey_sub.jpeg",
+  veggie_burger: "veggie_burger.jpeg",
+  waffles: "waffles.jpeg",
+  yogurt_parfait: "yogurt_partfait.jpeg",
+  yogurt_partfait: "yogurt_partfait.jpeg",
+};
+
+function slugItemName(name) {
+  if (!name) return "";
+  return name
     .toLowerCase()
     .replace(/&/g, "and")
     .replace(/[^a-z0-9]+/g, "_")
     .replace(/^_+|_+$/g, "");
+}
+
+function toImagePathFromItemName(itemName) {
+  const slug = slugItemName(itemName);
+  if (!slug) {
+    return "/items/placeholder.jpeg";
+  }
+
+  const override = IMAGE_OVERRIDE_MAP[slug];
+  if (override) {
+    return `/items/${override}`;
+  }
+
+  // Default: try <slug>.jpeg
   return `/items/${slug}.jpeg`;
 }
 
