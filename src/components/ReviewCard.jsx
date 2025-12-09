@@ -57,16 +57,16 @@ function slugItemName(name) {
 function toImagePathFromItemName(itemName) {
   const slug = slugItemName(itemName);
   if (!slug) {
-    return "/items/placeholder.jpeg";
+    return "items/placeholder.jpeg";
   }
 
   const override = IMAGE_OVERRIDE_MAP[slug];
   if (override) {
-    return `/items/${override}`;
+    return `items/${override}`;
   }
 
   // Default: try <slug>.jpeg
-  return `/items/${slug}.jpeg`;
+  return `items/${slug}.jpeg`;
 }
 
 function formatDate(iso) {
@@ -115,8 +115,10 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
   );
 
   const handleImgError = () => {
-    setImgSrc("/items/placeholder.jpeg");
+    setImgSrc("items/placeholder.jpeg");
   };
+
+  const hasOrderAgain = typeof review.wouldOrderAgain === "boolean";
 
   return (
     <Card className="shadow-sm review-card">
@@ -156,14 +158,16 @@ export default function ReviewCard({ review, currentUser, onDelete }) {
           <div className="d-flex justify-content-between align-items-center">
             <div className="small text-muted">
               <span>Posted by </span>
-              <strong>{review.user || "Anonymous"}</strong>{" "}
-              {typeof review.wouldOrderAgain === "boolean" && (
+              <strong>{review.user || "Anonymous"}</strong>
+              {hasOrderAgain && (
                 <>
-                  ·{" "}
-                  <Badge bg={review.wouldOrderAgain ? "success" : "danger"}>
-                    {review.wouldOrderAgain
-                      ? "Would order again"
-                      : "Would not order again"}
+                  {" "}
+                  · <span>Order again: </span>
+                  <Badge
+                    bg={review.wouldOrderAgain ? "success" : "danger"}
+                    as="span"
+                  >
+                    {review.wouldOrderAgain ? "Yes" : "No"}
                   </Badge>
                 </>
               )}

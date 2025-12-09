@@ -44,7 +44,6 @@ function safeSaveReviews(reviews) {
 export default function Reviews({ currentUser: currentUserProp }) {
   const location = useLocation();
 
-  const [currentUser, setCurrentUser] = useState(currentUserProp || null);
   const [allReviews, setAllReviews] = useState(() => safeLoadReviews());
 
   const [hallFilter, setHallFilter] = useState("");
@@ -52,19 +51,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
   const [reviewerFilter, setReviewerFilter] = useState("");
   const [showForm, setShowForm] = useState(false);
 
-  // sync user from prop / cookie
-  useEffect(() => {
-    if (currentUserProp) {
-      setCurrentUser(currentUserProp);
-      return;
-    }
-    const cookieUser = getCurrentUserFromCookie();
-    if (cookieUser) {
-      setCurrentUser(cookieUser);
-    }
-  }, [currentUserProp]);
-
-  // incoming state from navigation
+  // read nav state for hall/item
   useEffect(() => {
     if (location.state && location.state.hall) {
       setHallFilter(location.state.hall);
@@ -73,6 +60,14 @@ export default function Reviews({ currentUser: currentUserProp }) {
       setItemFilter(location.state.item);
     }
   }, [location.state]);
+
+  // Compute effective user each render rather than keeping it in local state.
+  // This way, when you sign out (prop goes null and/or cookie is cleared),
+  // the reviews page re-renders with no current user and delete buttons vanish.
+  const effectiveUser = useMemo(
+    () => currentUserProp || getCurrentUserFromCookie() || null,
+    [currentUserProp],
+  );
 
   const availableItemsForFilter = useMemo(
     () => (hallFilter ? getItemsForHall(hallFilter) : []),
@@ -100,7 +95,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
 
   const handleAddReview = (newReview) => {
     setAllReviews((prev) => {
-      // PREPEND new review so it’s guaranteed to be at the front even before sorting
+      // PREPEND so new reviews are guaranteed at the front before sorting
       const updated = [newReview, ...prev];
       safeSaveReviews(updated);
       return updated;
@@ -208,7 +203,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
               <Button
                 type="button"
                 onClick={handleStartAdd}
-                disabled={!currentUser}
+                disabled={!effectiveUser}
               >
                 Add review
               </Button>
@@ -217,7 +212,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
 
           {showForm && (
             <ReviewForm
-              currentUser={currentUser}
+              currentUser={effectiveUser}
               onAddReview={handleAddReview}
               onCancel={handleCancelAdd}
               initialHall={
@@ -229,7 +224,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
             />
           )}
 
-          {!currentUser && (
+          {!effectiveUser && (
             <div className="mt-3 small text-muted">
               <Badge bg="secondary">Note</Badge>{" "}
               Sign in from the &quot;Sign up / Login&quot; tab to post new
@@ -242,7 +237,7 @@ export default function Reviews({ currentUser: currentUserProp }) {
       {/* Reviews list (pagination handled inside ReviewList) */}
       <ReviewList
         reviews={filteredReviews}
-        currentUser={currentUser}
+        currentUser={effectiveUser}
         onDeleteReview={handleDeleteReview}
       />
     </Container>
