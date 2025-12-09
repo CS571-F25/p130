@@ -120,17 +120,24 @@ export default function Auth({ currentUser, onLogin }) {
                 <Button
                   type="button"
                   size="sm"
-                  className="me-2"
+                  className={
+                    "me-2 auth-toggle-" +
+                    (mode === "login" ? "active" : "inactive")
+                  }
                   onClick={() => setMode("login")}
-                  disabled={mode === "login"}
+                  disabled={isSignedIn}
                 >
                   Login
                 </Button>
                 <Button
                   type="button"
                   size="sm"
+                  className={
+                    "auth-toggle-" +
+                    (mode === "signup" ? "active" : "inactive")
+                  }
                   onClick={() => setMode("signup")}
-                  disabled={mode === "signup"}
+                  disabled={isSignedIn}
                 >
                   Sign up
                 </Button>

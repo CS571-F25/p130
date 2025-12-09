@@ -2,7 +2,7 @@ main {
   padding-top: 4rem;
 }
 
-/* === BUTTONS: MAKE EVERYTHING RED === */
+/* === BUTTONS: MAKE EVERYTHING RED BY DEFAULT === */
 .btn,
 button.btn {
   background-color: #c5050c;
@@ -49,7 +49,7 @@ button.btn:focus {
   color: #ffffff;
 }
 
-/* Link-style buttons (e.g., item links in Hall Stats) */
+/* Link-style buttons (e.g., Hall Stats item names) */
 .btn-link {
   background-color: transparent;
   border-color: transparent;
@@ -112,4 +112,67 @@ button.btn:focus {
     width: 100%;
     height: 200px;
   }
+}
+
+/* === NAV LOGIN BUTTON: WHITE WITH RED OUTLINE === */
+.btn-nav-outline {
+  background-color: #ffffff !important;
+  color: #c5050c !important;
+  border-color: #c5050c !important;
+}
+
+.btn-nav-outline:hover,
+.btn-nav-outline:focus {
+  background-color: #c5050c !important;
+  color: #ffffff !important;
+}
+
+/* === YES/NO "ORDER AGAIN" TOGGLES (ToggleButton / btn-check pattern) === */
+.btn-check + .btn {
+  background-color: #ffffff;
+  color: #c5050c;
+  border-color: #c5050c;
+}
+
+.btn-check:checked + .btn,
+.btn-check:active + .btn {
+  background-color: #c5050c;
+  color: #ffffff;
+}
+
+/* === BADGES (review counts etc.) in My Stats === */
+.badge.bg-primary,
+.badge.bg-info,
+.badge.bg-success {
+  background-color: #c5050c !important;
+  color: #ffffff !important;
+}
+
+/* === HALL STATS CARDS === */
+.hall-stats-card {
+  border: 1px solid #c5050c;
+}
+
+.hall-stats-card .table thead th {
+  background-color: #f8f9fa;
+}
+
+/* Auth mode toggles: one filled, one outlined, no blue */
+.auth-toggle-active {
+  background-color: #c5050c !important;
+  border-color: #c5050c !important;
+  color: #ffffff !important;
+}
+
+.auth-toggle-inactive {
+  background-color: #ffffff !important;
+  border-color: #c5050c !important;
+  color: #c5050c !important;
+}
+
+.auth-toggle-inactive:hover,
+.auth-toggle-inactive:focus {
+  background-color: #c5050c !important;
+  border-color: #c5050c !important;
+  color: #ffffff !important;
 }

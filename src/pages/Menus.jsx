@@ -58,8 +58,8 @@ export default function Menus() {
     <Container className="py-4">
       <h1 className="mb-3">Hall Stats Overview</h1>
       <p className="text-muted mb-4">
-        See a quick snapshot of how popular core items are at each dining hall
-        based on reviews from this site. Click an item name to jump directly to
+        See a snapshot of how popular core items are at each dining hall based
+        on reviews from this site. Click an item name to jump directly to
         reviews filtered for that hall and item.
       </p>
 
@@ -71,7 +71,7 @@ export default function Menus() {
 
           return (
             <Col md={6} key={hall}>
-              <Card className="shadow-sm h-100">
+              <Card className="shadow-sm h-100 hall-stats-card">
                 <Card.Body>
                   <Card.Title as="h3" className="h5 mb-3">
                     {hall}
@@ -96,7 +96,7 @@ export default function Menus() {
                           <td>
                             <button
                               type="button"
-                              className="btn btn-link p-0 align-baseline"
+                              className="btn btn-link"
                               onClick={() =>
                                 handleItemClick(hall, row.item)
                               }

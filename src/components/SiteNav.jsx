@@ -47,6 +47,7 @@ export default function SiteNav({ currentUser, onSignOut }) {
                 as={NavLink}
                 to="/auth"
                 size="sm"
+                className="btn-nav-outline"
                 aria-label="Sign up or log in"
               >
                 Sign up / Login

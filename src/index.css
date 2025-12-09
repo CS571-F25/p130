@@ -14,10 +14,10 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  /* Bascom image with slightly stronger visibility */
+  /* Bascom image with a bit stronger visibility */
   background-image: linear-gradient(
-      rgba(255, 255, 255, 0.55),
-      rgba(255, 255, 255, 0.65)
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.6)
     ),
     url("/uw-hero.jpg");
   background-size: cover;
