@@ -108,7 +108,7 @@ export const HALL_ITEMS = {
   ],
 };
 
-// Alias used by older code (e.g., ReviewForm.jsx)
+// Alias used by some components
 export const ITEM_NAMES = MENU_ITEMS;
 
 // Helper used by ReviewForm and other components to get items for a hall
@@ -124,79 +124,50 @@ export function getItemsForHall(hall) {
   return ITEM_NAMES;
 }
 
-// One realistic image per item (Unsplash)
-const ITEM_IMAGE_MAP = {
-  Cheeseburger:
-    "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80",
-  "Veggie Burger":
-    "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=400&q=80",
-  "Chicken Sandwich":
-    "https://images.unsplash.com/photo-1615937691194-96f162d6cdec?auto=format&fit=crop&w=400&q=80",
-  "Chicken Tenders":
-    "https://images.unsplash.com/photo-1604908176997-1251884b08a6?auto=format&fit=crop&w=400&q=80",
-  "Mac and Cheese":
-    "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=400&q=80",
-  "Pasta with Marinara":
-    "https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=400&q=80",
-  "Pasta with Alfredo":
-    "https://images.unsplash.com/photo-1506354666786-959d6d497f1a?auto=format&fit=crop&w=400&q=80",
-  "Caesar Salad":
-    "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80",
-  "Garden Salad":
-    "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80",
-  "Fruit Cup":
-    "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=400&q=80",
-  "Soup of the Day":
-    "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=400&q=80",
-  Chili:
-    "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80",
-  "Cheese Pizza":
-    "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80",
-  "Pepperoni Pizza":
-    "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80",
-  Omelet:
-    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80",
-  "Scrambled Eggs":
-    "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=400&q=80",
-  Pancakes:
-    "https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=400&q=80",
-  Waffles:
-    "https://images.unsplash.com/photo-1551024601-0f07c2e59702?auto=format&fit=crop&w=400&q=80",
-  "Yogurt Parfait":
-    "https://images.unsplash.com/photo-1528838060463-3a0b54c4a3ab?auto=format&fit=crop&w=400&q=80",
-  Brownies:
-    "https://images.unsplash.com/photo-1606312619232-1ecb6f17032e?auto=format&fit=crop&w=400&q=80",
-  "Chocolate Chip Cookies":
-    "https://images.unsplash.com/photo-1548365328-9bdb072f3041?auto=format&fit=crop&w=400&q=80",
-  "Turkey Sub":
-    "https://images.unsplash.com/photo-1603048297172-c92544798d5a?auto=format&fit=crop&w=400&q=80",
-  "Ham & Cheese Sandwich":
-    "https://images.unsplash.com/photo-1540103713565-4a55a73215c0?auto=format&fit=crop&w=400&q=80",
-  "Bagel with Cream Cheese":
-    "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80",
-  "Fried Rice":
-    "https://images.unsplash.com/photo-1589307004173-3c95204d00f5?auto=format&fit=crop&w=400&q=80",
-  "Stir Fry Noodles":
-    "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=400&q=80",
-  "Tofu Stir Fry":
-    "https://images.unsplash.com/photo-1546069901-a8c6b68175e4?auto=format&fit=crop&w=400&q=80",
-  "Sushi Roll":
-    "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=400&q=80",
-  "Ice Cream Sundae":
-    "https://images.unsplash.com/photo-1505252585461-04db1eb84625?auto=format&fit=crop&w=400&q=80",
-  "Grilled Cheese":
-    "https://images.unsplash.com/photo-1546961329-78bef0414d7c?auto=format&fit=crop&w=400&q=80",
-  "Protein Smoothie":
-    "https://images.unsplash.com/photo-1542444459-db63c4b6d6b1?auto=format&fit=crop&w=400&q=80",
-  "Peanut Butter Smoothie":
-    "https://images.unsplash.com/photo-1583225272828-60adbf08b922?auto=format&fit=crop&w=400&q=80",
-  "Acai Bowl":
-    "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=400&q=80",
+/**
+ * Map each menu item to a file in public/items.
+ * Filenames are EXACTLY the ones you listed:
+ *   acai_bowl.jpeg, bagel_cream_cheese.jpeg, brownies.jpeg, ...
+ */
+const ITEM_FILE_MAP = {
+  "Acai Bowl": "/items/acai_bowl.jpeg",
+  "Bagel with Cream Cheese": "/items/bagel_cream_cheese.jpeg",
+  Brownies: "/items/brownies.jpeg",
+  "Caesar Salad": "/items/caesar_salad.jpeg",
+  "Cheese Pizza": "/items/cheese_pizza.jpeg",
+  Cheeseburger: "/items/cheeseburger.jpeg",
+  "Chicken Sandwich": "/items/chicken_sandwich.jpeg",
+  "Chicken Tenders": "/items/chicken_tenders.jpeg",
+  Chili: "/items/chili.jpeg",
+  "Chocolate Chip Cookies": "/items/chocolate_chip_cookies.jpeg",
+  "Fried Rice": "/items/fried_rice.jpeg",
+  "Fruit Cup": "/items/fruit_cup.jpeg",
+  "Garden Salad": "/items/garden_salad.jpeg",
+  "Grilled Cheese": "/items/grilled_cheese.jpeg",
+  "Ham & Cheese Sandwich": "/items/ham_cheese.jpeg",
+  "Ice Cream Sundae": "/items/ice_cream_sundae.jpeg",
+  "Mac and Cheese": "/items/mac_and_cheese.jpeg",
+  Omelet: "/items/omelet.jpeg",
+  Pancakes: "/items/pancakes.jpeg",
+  "Pasta with Alfredo": "/items/pasta_alfredo.jpeg",
+  "Pasta with Marinara": "/items/pasta_marinara.jpeg",
+  "Peanut Butter Smoothie": "/items/pb_smoothie.jpeg",
+  "Pepperoni Pizza": "/items/pepperoni_pizza.jpeg",
+  "Protein Smoothie": "/items/protein_smoothie.jpeg",
+  "Scrambled Eggs": "/items/scrambled_eggs.jpeg",
+  "Soup of the Day": "/items/soup_day.jpeg",
+  "Stir Fry Noodles": "/items/stir_fry_noodles.jpeg",
+  "Sushi Roll": "/items/sushi_roll.jpeg",
+  "Tofu Stir Fry": "/items/tofu_stir_fry.jpeg",
+  "Turkey Sub": "/items/turkey_sub.jpeg",
+  "Veggie Burger": "/items/veggie_burger.jpeg",
+  Waffles: "/items/waffles.jpeg",
+  "Yogurt Parfait": "/items/yogurt_partfait.jpeg",
 };
 
-const DEFAULT_IMAGE =
-  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80";
+// Use a safe default in case we ever reference an item with no image yet
+const DEFAULT_IMAGE = "/items/cheese_pizza.jpeg";
 
 export function getImageForItem(item) {
-  return ITEM_IMAGE_MAP[item] || DEFAULT_IMAGE;
+  return ITEM_FILE_MAP[item] || DEFAULT_IMAGE;
 }
