@@ -4,244 +4,353 @@ import {
   Container,
   Row,
   Col,
-  Card,
-  Button,
   Form,
-  Badge,
+  Button,
+  Pagination,
+  Card,
 } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
-import ReviewList from "../components/ReviewList.jsx";
+
+import ReviewCard from "../components/ReviewCard.jsx";
 import ReviewForm from "../components/ReviewForm.jsx";
 import { DINING_HALLS, getItemsForHall } from "../data/menu.js";
 import { INITIAL_REVIEWS } from "../data/seedReviews.js";
 import { getCurrentUserFromCookie } from "../utils/cookies.js";
 
-const STORAGE_KEY = "uwDiningAllReviews";
+const STORAGE_KEY = "uw-dining-reviews-v2";
+const PAGE_SIZE = 10;
 
-function safeLoadReviews() {
-  if (typeof window === "undefined") return INITIAL_REVIEWS;
+function hydrateInitialReviews() {
+  // Make sure every seeded review has a stable id and timestamps
+  return INITIAL_REVIEWS.map((r, index) => ({
+    id: r.id ?? `seed-${index}`,
+    hall: r.hall,
+    item: r.item,
+    rating: Number(r.rating ?? 0),
+    text: r.text ?? "",
+    // Seed authors use `author`; signed-in users use `user`
+    author: r.author ?? r.user ?? undefined,
+    user: r.user ?? undefined,
+    wouldOrderAgain:
+      typeof r.wouldOrderAgain === "boolean"
+        ? r.wouldOrderAgain
+        : typeof r.wouldAgain === "boolean"
+          ? r.wouldAgain
+          : false,
+    createdAt:
+      r.createdAt ??
+      new Date(Date.now() - (INITIAL_REVIEWS.length - index) * 3600_000)
+        .toISOString(),
+  }));
+}
+
+function loadStoredReviews() {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return INITIAL_REVIEWS;
+    if (!raw) return null;
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0
-      ? parsed
-      : INITIAL_REVIEWS;
+    if (!Array.isArray(parsed)) return null;
+    return parsed;
   } catch {
-    return INITIAL_REVIEWS;
+    return null;
   }
 }
 
-function safeSaveReviews(reviews) {
-  if (typeof window === "undefined") return;
+function saveStoredReviews(reviews) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
   } catch {
-    // ignore
+    // fail silently
   }
 }
 
-export default function Reviews({ currentUser: currentUserProp }) {
-  const location = useLocation();
+export default function Reviews() {
+  const [allReviews, setAllReviews] = useState(() => {
+    // First try to load existing combined list from localStorage
+    const stored = loadStoredReviews();
+    if (stored) return stored;
+    // Otherwise seed from INITIAL_REVIEWS
+    const seeded = hydrateInitialReviews();
+    saveStoredReviews(seeded);
+    return seeded;
+  });
 
-  const [allReviews, setAllReviews] = useState(() => safeLoadReviews());
+  const currentUser = getCurrentUserFromCookie();
 
   const [hallFilter, setHallFilter] = useState("");
   const [itemFilter, setItemFilter] = useState("");
-  const [reviewerFilter, setReviewerFilter] = useState("");
+  const [reviewerQuery, setReviewerQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [page, setPage] = useState(1);
+
+  // When hall changes, reset item filter so it stays consistent
+  useEffect(() => {
+    setItemFilter("");
+  }, [hallFilter]);
+
+  // --- Derived lists for filters ---
+  const availableItems = useMemo(() => {
+    if (!hallFilter) return [];
+    return getItemsForHall(hallFilter) ?? [];
+  }, [hallFilter]);
+
+  const reviewerOptions = useMemo(() => {
+    const names = new Set();
+    allReviews.forEach((r) => {
+      const name = r.user || r.author;
+      if (name) names.add(name);
+    });
+    return Array.from(names).sort((a, b) =>
+      a.toLowerCase().localeCompare(b.toLowerCase()),
+    );
+  }, [allReviews]);
+
+  // --- Filtered + sorted reviews ---
+  const filteredReviews = useMemo(() => {
+    const q = reviewerQuery.trim().toLowerCase();
+
+    let list = [...allReviews];
+
+    // Newest first
+    list.sort((a, b) => {
+      const da = new Date(a.createdAt).getTime() || 0;
+      const db = new Date(b.createdAt).getTime() || 0;
+      return db - da;
+    });
+
+    if (hallFilter) {
+      list = list.filter((r) => r.hall === hallFilter);
+    }
+
+    if (itemFilter) {
+      list = list.filter((r) => r.item === itemFilter);
+    }
+
+    if (q) {
+      list = list.filter((r) => {
+        // Safely support both user and author
+        const reviewerName = (r.user || r.author || "").toLowerCase();
+        return reviewerName.includes(q);
+      });
+    }
+
+    return list;
+  }, [allReviews, hallFilter, itemFilter, reviewerQuery]);
+
+  // --- Pagination ---
+  const totalPages = Math.max(1, Math.ceil(filteredReviews.length / PAGE_SIZE));
 
   useEffect(() => {
-    if (location.state && location.state.hall) {
-      setHallFilter(location.state.hall);
+    if (page > totalPages) {
+      setPage(totalPages);
     }
-    if (location.state && location.state.item) {
-      setItemFilter(location.state.item);
-    }
-  }, [location.state]);
+  }, [page, totalPages]);
 
-  // Compute effective user each render so sign-out immediately updates delete/add availability
-  const effectiveUser = useMemo(
-    () => currentUserProp || getCurrentUserFromCookie() || null,
-    [currentUserProp],
-  );
-
-  const availableItemsForFilter = useMemo(
-    () => (hallFilter ? getItemsForHall(hallFilter) : []),
-    [hallFilter],
-  );
-
-  // Filter + sort NEWEST → OLDEST
-  const filteredReviews = useMemo(() => {
-    return allReviews
-      .filter((r) => {
-        if (hallFilter && r.hall !== hallFilter) return false;
-        if (itemFilter && r.item !== itemFilter) return false;
-        if (
-          reviewerFilter &&
-          !r.user.toLowerCase().includes(reviewerFilter.toLowerCase())
-        ) {
-          return false;
-        }
-        return true;
-      })
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  }, [allReviews, hallFilter, itemFilter, reviewerFilter]);
-
-  const totalMatching = filteredReviews.length;
+  const pageReviews = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return filteredReviews.slice(start, start + PAGE_SIZE);
+  }, [filteredReviews, page]);
 
   const handleAddReview = (newReview) => {
+    const reviewWithMeta = {
+      ...newReview,
+      id: `user-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      author: newReview.user ?? currentUser ?? "Anonymous",
+    };
+
     setAllReviews((prev) => {
-      const updated = [newReview, ...prev];
-      safeSaveReviews(updated);
+      const updated = [reviewWithMeta, ...prev];
+      saveStoredReviews(updated);
       return updated;
     });
+
     setShowForm(false);
+    setPage(1);
   };
 
-  const handleDeleteReview = (idToDelete) => {
+  const handleDeleteReview = (id) => {
     setAllReviews((prev) => {
-      const updated = prev.filter((r) => r.id !== idToDelete);
-      safeSaveReviews(updated);
+      const updated = prev.filter((r) => r.id !== id);
+      saveStoredReviews(updated);
       return updated;
     });
   };
 
-  const handleStartAdd = () => setShowForm(true);
-  const handleCancelAdd = () => setShowForm(false);
-
-  const handleHallFilterChange = (value) => {
-    setHallFilter(value);
-    if (value && !getItemsForHall(value).includes(itemFilter)) {
-      setItemFilter("");
-    }
+  const handleClearFilters = () => {
+    setHallFilter("");
+    setItemFilter("");
+    setReviewerQuery("");
+    setPage(1);
   };
 
   return (
     <Container className="py-4">
-      <h1 className="mb-3">Reviews</h1>
-      <p className="text-muted mb-4">
-        Browse dining hall reviews, filter by hall, item, or reviewer, and add
-        your own experiences when you&apos;re signed in.
-      </p>
+      <header className="mb-4">
+        <h1 className="mb-2">Dining Reviews</h1>
+        <p className="text-muted mb-0">
+          Browse, filter, and contribute reviews of UW–Madison dining hall
+          items.
+        </p>
+      </header>
 
-      {/* Filters */}
-      <Card className="shadow-sm mb-3">
+      {/* Filters + Add Review */}
+      <Card className="mb-4">
         <Card.Body>
-          <Row className="g-3">
-            <Col md={4}>
+          <Row className="gy-3 align-items-end">
+            <Col xs={12} md={4}>
               <Form.Group controlId="filterHall">
                 <Form.Label>Dining hall</Form.Label>
                 <Form.Select
                   value={hallFilter}
-                  onChange={(e) => handleHallFilterChange(e.target.value)}
+                  onChange={(e) => {
+                    setHallFilter(e.target.value);
+                    setPage(1);
+                  }}
                 >
-                  <option value="">All dining halls</option>
-                  {DINING_HALLS.map((h) => (
-                    <option key={h} value={h}>
-                      {h}
+                  <option value="">All halls</option>
+                  {DINING_HALLS.map((hall) => (
+                    <option key={hall} value={hall}>
+                      {hall}
                     </option>
                   ))}
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col md={4}>
+
+            <Col xs={12} md={4}>
               <Form.Group controlId="filterItem">
                 <Form.Label>Item</Form.Label>
                 <Form.Select
                   value={itemFilter}
-                  onChange={(e) => setItemFilter(e.target.value)}
+                  onChange={(e) => {
+                    setItemFilter(e.target.value);
+                    setPage(1);
+                  }}
                   disabled={!hallFilter}
                 >
-                  <option value="">All items</option>
-                  {availableItemsForFilter.map((it) => (
-                    <option key={it} value={it}>
-                      {it}
+                  <option value="">
+                    {hallFilter ? "All items at this hall" : "Select a hall first"}
+                  </option>
+                  {availableItems.map((item) => (
+                    <option key={item} value={item}>
+                      {item}
                     </option>
                   ))}
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col md={4}>
+
+            <Col xs={12} md={4}>
               <Form.Group controlId="filterReviewer">
                 <Form.Label>Reviewer</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Filter by username..."
-                  value={reviewerFilter}
-                  onChange={(e) => setReviewerFilter(e.target.value)}
+                  placeholder={
+                    reviewerOptions.length
+                      ? `Search (${reviewerOptions.slice(0, 3).join(", ")}...)`
+                      : "Search by reviewer name"
+                  }
+                  value={reviewerQuery}
+                  onChange={(e) => {
+                    setReviewerQuery(e.target.value);
+                    setPage(1);
+                  }}
                 />
               </Form.Group>
             </Col>
           </Row>
-          <div className="mt-3 small text-muted">
-            Showing{" "}
-            <strong>
-              {totalMatching}{" "}
-              {totalMatching === 1 ? "matching review" : "matching reviews"}
-            </strong>
-          </div>
-        </Card.Body>
-      </Card>
 
-      {/* Add review section */}
-      <Card className="shadow-sm mb-4">
-        <Card.Body>
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <div>
-              <h2 className="h5 mb-1">Add a review</h2>
-              <p className="mb-0 text-muted">
-                You must be signed in to post. Your reviews are saved locally on
-                this browser.
-              </p>
-            </div>
-            {!showForm && (
+          <div className="d-flex justify-content-between align-items-center mt-3">
+            <Button
+              variant="outline-danger"
+              type="button"
+              onClick={handleClearFilters}
+            >
+              Clear filters
+            </Button>
+
+            {currentUser ? (
               <Button
                 type="button"
-                onClick={handleStartAdd}
-                disabled={!effectiveUser}
-                style={{
-                  backgroundColor: effectiveUser ? "#c5050c" : "#ffffff",
-                  border: "2px solid #c5050c",
-                  color: effectiveUser ? "#ffffff" : "#c5050c",
-                  opacity: effectiveUser ? 1 : 0.8,
-                }}
+                onClick={() => setShowForm((open) => !open)}
+                aria-expanded={showForm}
               >
-                Add review
+                {showForm ? "Hide review form" : "Add a review"}
+              </Button>
+            ) : (
+              <Button type="button" disabled className="btn-outline-danger">
+                Sign in to add a review
               </Button>
             )}
           </div>
 
-          {showForm && (
-            <ReviewForm
-              currentUser={effectiveUser}
-              onAddReview={handleAddReview}
-              onCancel={handleCancelAdd}
-              initialHall={
-                hallFilter || (location.state && location.state.hall) || ""
-              }
-              initialItem={
-                itemFilter || (location.state && location.state.item) || ""
-              }
-            />
-          )}
-
-          {!effectiveUser && (
-            <div className="mt-3 small text-muted">
-              <Badge bg="secondary">Note</Badge>{" "}
-              Sign in from the &quot;Sign up / Login&quot; tab to post new
-              reviews.
+          {showForm && currentUser && (
+            <div className="mt-3">
+              <ReviewForm
+                currentUser={currentUser}
+                onSubmit={handleAddReview}
+                onCancel={() => setShowForm(false)}
+              />
             </div>
           )}
         </Card.Body>
       </Card>
 
-      {/* Reviews list (pagination handled inside ReviewList) */}
-      <ReviewList
-        reviews={filteredReviews}
-        currentUser={effectiveUser}
-        onDeleteReview={handleDeleteReview}
-      />
+      {/* Reviews list */}
+      {pageReviews.length === 0 ? (
+        <p className="text-muted">No reviews match your filters.</p>
+      ) : (
+        <>
+          <Row className="gy-3">
+            {pageReviews.map((review) => (
+              <Col xs={12} md={6} key={review.id}>
+                <ReviewCard
+                  review={review}
+                  currentUser={currentUser}
+                  onDelete={() => handleDeleteReview(review.id)}
+                />
+              </Col>
+            ))}
+          </Row>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="d-flex justify-content-center mt-4">
+              <Pagination>
+                <Pagination.First
+                  disabled={page === 1}
+                  onClick={() => setPage(1)}
+                />
+                <Pagination.Prev
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                />
+                {Array.from({ length: totalPages }, (_, idx) => {
+                  const pageNum = idx + 1;
+                  return (
+                    <Pagination.Item
+                      key={pageNum}
+                      active={pageNum === page}
+                      onClick={() => setPage(pageNum)}
+                    >
+                      {pageNum}
+                    </Pagination.Item>
+                  );
+                })}
+                <Pagination.Next
+                  disabled={page === totalPages}
+                  onClick={() =>
+                    setPage((p) => Math.min(totalPages, p + 1))
+                  }
+                />
+                <Pagination.Last
+                  disabled={page === totalPages}
+                  onClick={() => setPage(totalPages)}
+                />
+              </Pagination>
+            </div>
+          )}
+        </>
+      )}
     </Container>
   );
 }
