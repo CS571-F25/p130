@@ -28,11 +28,13 @@ function saveAccounts(accounts) {
 }
 
 export default function Auth({ currentUser, onLogin }) {
-  const [mode, setMode] = useState("login"); // 'login' or 'signup'
+  const [mode, setMode] = useState("login"); // "login" or "signup"
   const [username, setUsername] = useState("");
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
+  const [accounts, setAccounts] = useState(() => loadAccounts());
 
+  // If there's a cookie but App doesn't know yet, sync it once.
   useEffect(() => {
     const cookieUser = getCurrentUserFromCookie();
     if (cookieUser && !currentUser && onLogin) {
@@ -40,48 +42,54 @@ export default function Auth({ currentUser, onLogin }) {
     }
   }, [currentUser, onLogin]);
 
+  const isSignedIn = Boolean(currentUser);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
 
-    if (!username.trim() || !pin.trim()) {
+    const rawUser = username.trim();
+    const rawPin = pin.trim();
+
+    if (!rawUser || !rawPin) {
       setError("Please enter both a username and a PIN.");
       return;
     }
 
-    if (pin.length < 4 || pin.length > 6) {
+    if (rawPin.length < 4 || rawPin.length > 6) {
       setError("PIN must be between 4 and 6 characters.");
       return;
     }
 
-    const accounts = loadAccounts();
-    const normalized = username.trim();
+    const normalized = rawUser;
 
     if (mode === "login") {
       if (!accounts[normalized]) {
         setError("This account does not exist. Please sign up first.");
         return;
       }
-      if (accounts[normalized].pin !== pin) {
+      if (accounts[normalized].pin !== rawPin) {
         setError("Incorrect PIN for this account.");
         return;
       }
       setCurrentUserCookie(normalized);
       if (onLogin) onLogin(normalized);
     } else {
-      // signup
+      // SIGN UP
       if (accounts[normalized]) {
         setError("That username is already taken. Please choose another.");
         return;
       }
-      accounts[normalized] = { pin };
-      saveAccounts(accounts);
+      const updated = {
+        ...accounts,
+        [normalized]: { pin: rawPin },
+      };
+      setAccounts(updated);
+      saveAccounts(updated);
       setCurrentUserCookie(normalized);
       if (onLogin) onLogin(normalized);
     }
   };
-
-  const isSignedIn = Boolean(currentUser);
 
   return (
     <Container className="py-4">

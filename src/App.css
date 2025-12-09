@@ -2,15 +2,18 @@ main {
   padding-top: 4rem;
 }
 
-/* === BUTTONS: ALL RED === */
-.btn {
+/* === BUTTONS: MAKE EVERYTHING RED === */
+.btn,
+button.btn {
   background-color: #c5050c;
   border-color: #c5050c;
   color: #ffffff;
 }
 
 .btn:hover,
-.btn:focus {
+.btn:focus,
+button.btn:hover,
+button.btn:focus {
   background-color: #8b0009;
   border-color: #8b0009;
   color: #ffffff;
@@ -24,7 +27,7 @@ main {
   opacity: 0.65;
 }
 
-/* Outline buttons should still read as red */
+/* Outline variants still red-themed */
 .btn-outline-primary,
 .btn-outline-secondary,
 .btn-outline-success,
@@ -46,8 +49,24 @@ main {
   color: #ffffff;
 }
 
-/* Pagination red */
-.pagination-red .page-link {
+/* Link-style buttons (e.g., item links in Hall Stats) */
+.btn-link {
+  background-color: transparent;
+  border-color: transparent;
+  color: #c5050c;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.btn-link:hover,
+.btn-link:focus {
+  background-color: transparent;
+  color: #8b0009;
+  text-decoration: underline;
+}
+
+/* Pagination links */
+.page-link {
   color: #c5050c;
 }
 
@@ -57,8 +76,7 @@ main {
   color: #ffffff;
 }
 
-/* === REVIEW CARDS === */
-/* Wide, horizontal cards, consistent image size, red outline */
+/* === REVIEW CARDS: WIDE, IMAGE LEFT, RED OUTLINE === */
 .review-card {
   border: 1px solid #c5050c;
   width: 100%;
