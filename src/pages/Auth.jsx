@@ -34,7 +34,6 @@ export default function Auth({ currentUser, onLogin }) {
   const [error, setError] = useState("");
   const [accounts, setAccounts] = useState(() => loadAccounts());
 
-  // If there's a cookie but App doesn't know yet, sync it once.
   useEffect(() => {
     const cookieUser = getCurrentUserFromCookie();
     if (cookieUser && !currentUser && onLogin) {
@@ -75,15 +74,11 @@ export default function Auth({ currentUser, onLogin }) {
       setCurrentUserCookie(normalized);
       if (onLogin) onLogin(normalized);
     } else {
-      // SIGN UP
       if (accounts[normalized]) {
         setError("That username is already taken. Please choose another.");
         return;
       }
-      const updated = {
-        ...accounts,
-        [normalized]: { pin: rawPin },
-      };
+      const updated = { ...accounts, [normalized]: { pin: rawPin } };
       setAccounts(updated);
       saveAccounts(updated);
       setCurrentUserCookie(normalized);
@@ -125,7 +120,6 @@ export default function Auth({ currentUser, onLogin }) {
                     (mode === "login" ? "active" : "inactive")
                   }
                   onClick={() => setMode("login")}
-                  disabled={isSignedIn}
                 >
                   Login
                 </Button>
@@ -137,7 +131,6 @@ export default function Auth({ currentUser, onLogin }) {
                     (mode === "signup" ? "active" : "inactive")
                   }
                   onClick={() => setMode("signup")}
-                  disabled={isSignedIn}
                 >
                   Sign up
                 </Button>

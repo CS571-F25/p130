@@ -96,7 +96,7 @@ export default function Menus() {
                           <td>
                             <button
                               type="button"
-                              className="btn btn-link"
+                              className="hall-item-link"
                               onClick={() =>
                                 handleItemClick(hall, row.item)
                               }

@@ -1,9 +1,17 @@
 // src/pages/SampleMenu.jsx
-import React, { useMemo, useState } from "react";
-import { Container, Row, Col, Card, Form, Button, ListGroup } from "react-bootstrap";
+import React, { useMemo, useState, useEffect } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  ListGroup,
+} from "react-bootstrap";
 import { DINING_HALLS, HALL_ITEMS } from "../data/menu.js";
 
-const MEALS = ["Breakfast", "Lunch", "Dinner"];
+const BASE_MEALS = ["Breakfast", "Lunch", "Dinner"];
 
 const HALL_SLUGS = {
   "Carson's Market": "carsons-market",
@@ -20,6 +28,17 @@ const MEAL_SLUGS = {
   Lunch: "lunch",
   Dinner: "dinner",
 };
+
+// Meals allowed per hall
+function getMealsForHall(hall) {
+  if (hall === "Shake Smart") {
+    return []; // no meal concept
+  }
+  if (hall === "Carson's Market") {
+    return ["Lunch", "Dinner"];
+  }
+  return BASE_MEALS;
+}
 
 // Get today's date in America/Chicago as YYYY-MM-DD
 function getTodaySlugCentral() {
@@ -42,14 +61,13 @@ function getExternalMenuLink(hall, meal, dateSlug) {
   }
 
   const hallSlug = HALL_SLUGS[hall];
-  const mealSlug = MEAL_SLUGS[meal];
+  const mealSlug = meal ? MEAL_SLUGS[meal] : null;
 
   if (!hallSlug) {
     return "https://wisc-housingdining.nutrislice.com/";
   }
 
   if (mealSlug && dateSlug) {
-    // /menu/four-lakes-market/lunch/2025-12-08
     return `https://wisc-housingdining.nutrislice.com/menu/${hallSlug}/${mealSlug}/${dateSlug}`;
   }
 
@@ -91,29 +109,44 @@ export default function SampleMenu() {
 
   const todaySlug = useMemo(() => getTodaySlugCentral(), []);
 
+  // Keep meal valid when hall changes
+  useEffect(() => {
+    const allowedMeals = getMealsForHall(hall);
+    if (allowedMeals.length === 0) {
+      setMeal("All day");
+    } else if (!allowedMeals.includes(meal)) {
+      setMeal(allowedMeals[0]);
+    }
+  }, [hall, meal]);
+
+  const allowedMeals = getMealsForHall(hall);
+
   const sampleItems = useMemo(
-    () => buildSampleMenu(hall, meal),
-    [hall, meal],
+    () => buildSampleMenu(hall, allowedMeals.length === 0 ? null : meal),
+    [hall, meal, allowedMeals.length],
   );
 
-  const externalUrl = getExternalMenuLink(hall, meal, todaySlug);
+  const externalUrl = getExternalMenuLink(
+    hall,
+    allowedMeals.length === 0 ? null : meal,
+    todaySlug,
+  );
   const externalLabel = getExternalButtonLabel(hall);
+
+  const displayMealText =
+    allowedMeals.length === 0 ? "all-day menu" : meal.toLowerCase();
 
   return (
     <Container className="py-4">
       <h1 className="mb-3">Menu Today</h1>
       <p className="text-muted mb-4">
         This page shows a Nutrislice-inspired <strong>example</strong> menu
-        using dining hall items from this app. Select a dining hall and a meal
-        to see what a typical lineup might look like, then jump to the official
-        Nutrislice or Shake Smart page for the real menu.
+        using dining hall items from this app. Select a dining hall (and meal,
+        where it makes sense) to see a sample lineup, then open the official
+        site for the real menu.
       </p>
 
       <h2 className="h4 mb-3">Today&apos;s Sample Menu</h2>
-      <p className="text-muted mb-4">
-        This page focuses only on what&apos;s being served—no ratings. Use the
-        red button to open the official menu for the selected hall and meal.
-      </p>
 
       <Card className="shadow-sm mb-4">
         <Card.Body>
@@ -136,20 +169,29 @@ export default function SampleMenu() {
             </Col>
 
             <Col md={4}>
-              <Form.Group controlId="sampleMeal">
-                <Form.Label>Meal</Form.Label>
-                <Form.Select
-                  value={meal}
-                  onChange={(e) => setMeal(e.target.value)}
-                  aria-label="Select meal for sample menu"
-                >
-                  {MEALS.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
+              {allowedMeals.length > 0 ? (
+                <Form.Group controlId="sampleMeal">
+                  <Form.Label>Meal</Form.Label>
+                  <Form.Select
+                    value={meal}
+                    onChange={(e) => setMeal(e.target.value)}
+                    aria-label="Select meal for sample menu"
+                  >
+                    {allowedMeals.map((m) => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              ) : (
+                <Form.Group>
+                  <Form.Label>Meal</Form.Label>
+                  <div className="form-control-plaintext">
+                    All-day menu (no meal time)
+                  </div>
+                </Form.Group>
+              )}
             </Col>
 
             <Col
@@ -171,14 +213,14 @@ export default function SampleMenu() {
 
           <div className="mt-3 small text-muted">
             <p className="mb-1">
-              {todayText} · Sample menu for <strong>{hall}</strong> (
-              {meal.toLowerCase()}) in Central Time.
+              {todayText} · Sample menu for <strong>{hall}</strong>{" "}
+              ({displayMealText}) in Central Time.
             </p>
             <p className="mb-0">
-              <strong>Disclaimer:</strong> This menu is an{" "}
-              <em>example</em> based on items in this app. It is{" "}
-              <strong>not</strong> the official menu for this date. For
-              real-time menus and nutrition details, please use{" "}
+              <strong>Disclaimer:</strong> This menu is an <em>example</em>{" "}
+              based on items in this app. It is <strong>not</strong> the
+              official menu for this date. For real-time menus and nutrition
+              details, please use{" "}
               <a
                 href="https://wisc-housingdining.nutrislice.com/"
                 target="_blank"
@@ -208,7 +250,7 @@ export default function SampleMenu() {
       <Card className="shadow-sm">
         <Card.Body>
           <h3 className="h5 mb-3">
-            Example {meal.toLowerCase()} menu for {hall}
+            Example {displayMealText} for {hall}
           </h3>
           {sampleItems.length === 0 ? (
             <p className="text-muted mb-0">
