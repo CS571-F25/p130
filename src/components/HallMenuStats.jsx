@@ -1,22 +1,32 @@
 // src/components/HallMenuStats.jsx
 import { Card, Table, Row, Col, Badge, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import {
-  DINING_HALLS,
-  HALL_ITEMS
-} from "../data/menu.js";
+import { DINING_HALLS, HALL_ITEMS } from "../data/menu.js";
 
 function computeStats(reviews, hall, item) {
-  const relevant = reviews.filter(
-    (r) => r.hall === hall && r.item === item
-  );
+  const relevant = reviews.filter((r) => r.hall === hall && r.item === item);
   const count = relevant.length;
   if (!count) {
     return { avgRating: null, percentAgain: null, count: 0 };
   }
-  const sum = relevant.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
+
+  const sum = relevant.reduce(
+    (acc, r) => acc + (Number(r.rating) || 0),
+    0,
+  );
   const avgRating = sum / count;
-  const againCount = relevant.filter((r) => r.wouldAgain).length;
+
+  // Support both wouldOrderAgain (new) and wouldAgain (old)
+  const againCount = relevant.filter((r) => {
+    if (typeof r.wouldOrderAgain === "boolean") {
+      return r.wouldOrderAgain;
+    }
+    if (typeof r.wouldAgain === "boolean") {
+      return r.wouldAgain;
+    }
+    return false;
+  }).length;
+
   const percentAgain = Math.round((againCount / count) * 100);
   return { avgRating, percentAgain, count };
 }

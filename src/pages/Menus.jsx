@@ -25,7 +25,18 @@ function computeStatsForHall(hallName) {
 
     const total = matching.reduce((sum, r) => sum + Number(r.rating || 0), 0);
     const avgRating = total / count;
-    const againCount = matching.filter((r) => r.wouldOrderAgain).length;
+
+    // Support both wouldOrderAgain (new) and wouldAgain (old)
+    const againCount = matching.filter((r) => {
+      if (typeof r.wouldOrderAgain === "boolean") {
+        return r.wouldOrderAgain;
+      }
+      if (typeof r.wouldAgain === "boolean") {
+        return r.wouldAgain;
+      }
+      return false;
+    }).length;
+
     const percentAgain = (againCount / count) * 100;
 
     return {
@@ -97,9 +108,7 @@ export default function Menus() {
                             <button
                               type="button"
                               className="hall-item-link"
-                              onClick={() =>
-                                handleItemClick(hall, row.item)
-                              }
+                              onClick={() => handleItemClick(hall, row.item)}
                             >
                               {row.item}
                             </button>
