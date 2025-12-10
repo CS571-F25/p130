@@ -49,3 +49,21 @@ a:hover {
   color: #8b0009;
   text-decoration: underline;
 }
+/* === RED PAGINATION THEME OVERRIDES === */
+
+.pagination .page-link {
+  color: #c5050c !important;         /* red text */
+  border: 1px solid #c5050c !important;
+  background-color: white !important;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #c5050c !important;  /* red background */
+  color: white !important;               /* white text */
+  border-color: #a00000 !important;      /* slightly darker red outline */
+}
+
+.pagination .page-link:hover {
+  background-color: #f8d7da !important;  /* light red hover */
+  color: #c5050c !important;
+}
