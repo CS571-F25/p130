@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Container, Card, Row, Col, Badge } from "react-bootstrap";
 import { getCurrentUserFromCookie } from "../utils/cookies.js";
 
-const STORAGE_KEY = "uwDiningAllReviews";
+const STORAGE_KEY = "uw-dining-reviews-v2";
 
 function safeLoadReviews() {
   if (typeof window === "undefined") return [];
