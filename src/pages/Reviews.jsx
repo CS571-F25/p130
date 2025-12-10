@@ -83,24 +83,26 @@ export default function Reviews() {
   const [showForm, setShowForm] = useState(false);
   const [page, setPage] = useState(1);
 
-  // Apply initial hall filter from navigation state (Home "View Reviews" links)
+  // Apply initial hall + item filters from navigation state (Home / Hall Ratings links)
   useEffect(() => {
     const state = location?.state;
     if (!state) return;
 
     const fromHall =
       state.hallFilter || state.hall || state.initialHall || "";
+    const fromItem =
+      state.itemFilter || state.item || state.initialItem || "";
 
-    if (fromHall && fromHall !== hallFilter) {
+    if (fromHall) {
       setHallFilter(fromHall);
+    }
+    if (fromItem) {
+      setItemFilter(fromItem);
+    }
+    if (fromHall || fromItem) {
       setPage(1);
     }
-  }, [location, hallFilter]);
-
-  // When hall changes, reset item filter
-  useEffect(() => {
-    setItemFilter("");
-  }, [hallFilter]);
+  }, [location]);
 
   // Items available for the selected hall
   const availableItems = useMemo(() => {
@@ -108,7 +110,7 @@ export default function Reviews() {
     return getItemsForHall(hallFilter) ?? [];
   }, [hallFilter]);
 
-  // List of distinct reviewer names (not used in placeholder anymore, but kept for logic if needed)
+  // Distinct reviewer names (not used in placeholder anymore)
   const reviewerOptions = useMemo(() => {
     const names = new Set();
     allReviews.forEach((r) => {
@@ -214,7 +216,9 @@ export default function Reviews() {
                 <Form.Select
                   value={hallFilter}
                   onChange={(e) => {
-                    setHallFilter(e.target.value);
+                    const value = e.target.value;
+                    setHallFilter(value);
+                    setItemFilter("");
                     setPage(1);
                   }}
                 >
